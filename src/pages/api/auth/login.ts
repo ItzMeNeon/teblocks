@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { apiFetch, json, SESSION_COOKIE } from '../../../lib/auth';
+import { API_CONFIGURATION_ERROR, apiFetch, json, SESSION_COOKIE } from '../../../lib/auth';
 
 export const prerender = false;
 
@@ -16,6 +16,9 @@ export const POST: APIRoute = async (context) => {
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(body),
 	});
+	if (response === API_CONFIGURATION_ERROR) {
+		return json({ error: 'Site authentication is not configured. Set API_BASE_URL in Cloudflare and redeploy.' }, 503);
+	}
 	if (!response) return json({ error: 'Authentication service is unavailable.' }, 503);
 
 	const responseBody = await response.json().catch(() => null) as { token?: unknown; error?: string } | null;

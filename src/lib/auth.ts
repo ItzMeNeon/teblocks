@@ -1,6 +1,7 @@
 import type { APIContext } from 'astro';
 
 export const SESSION_COOKIE = 'teblocks_session';
+export const API_CONFIGURATION_ERROR = 'API_CONFIGURATION_ERROR';
 
 export function apiBaseUrl(context: APIContext) {
 	const origin = context.locals.runtime.env.API_BASE_URL;
@@ -15,15 +16,24 @@ export function json(data: unknown, status = 200) {
 	});
 }
 
-export async function apiFetch(context: APIContext, path: string, init?: RequestInit) {
+export async function apiFetch(context: APIContext, path: string, init?: RequestInit): Promise<Response | null | typeof API_CONFIGURATION_ERROR> {
+	let origin: string;
 	try {
-		return await fetch(`${apiBaseUrl(context)}${path}`, init);
+		origin = apiBaseUrl(context);
+	} catch {
+		return API_CONFIGURATION_ERROR;
+	}
+	try {
+		return await fetch(`${origin}${path}`, init);
 	} catch {
 		return null;
 	}
 }
 
-export async function forwardedResponse(response: Response | null) {
+export async function forwardedResponse(response: Response | null | typeof API_CONFIGURATION_ERROR) {
+	if (response === API_CONFIGURATION_ERROR) {
+		return json({ error: 'Site authentication is not configured. Set API_BASE_URL in Cloudflare and redeploy.' }, 503);
+	}
 	if (!response) return json({ error: 'Authentication service is unavailable.' }, 503);
 	const body = await response.text();
 	return new Response(body, {
