@@ -24,7 +24,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						Ranked, quick play, and 100-player battle royale.
 					</p>
 					<div class="cta-row">
-						<a class="btn btn-primary" href="/play/">Play now</a>
+						<a class="btn btn-primary" href="#play">Play now</a>
 						<a class="btn btn-ghost" href="#modes">See the modes</a>
 					</div>
 				</div>
@@ -99,6 +99,13 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						allowfullscreen
 						title="TeBlocks -- play in browser"
 					></iframe>
+				</div>
+				<div class="play-actions" id="download">
+					<div>
+						<h3>Desktop download</h3>
+						<p>Download builds will be published here when they are ready.</p>
+					</div>
+					<a class="btn btn-ghost" href="/account/">Create an account</a>
 				</div>
 			</section>
 		</main>
@@ -269,6 +276,20 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		height: 100%;
 		border: 0;
 	}
+	.play-actions {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5em;
+		margin-top: 1.2em;
+		padding: 1.2em;
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		background: var(--panel);
+	}
+	.play-actions h3,
+	.play-actions p { margin: 0; }
+	.play-actions p { font-size: 0.92rem; }
 
 	/* ---------- RESPONSIVE ---------- */
 	@media (max-width: 860px) {
@@ -280,5 +301,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		.hero-board { height: 220px; order: -1; }
 		.mode-grid { grid-template-columns: 1fr; }
 		.spec-row { grid-template-columns: 1fr; gap: 0.4em; }
+		.play-actions { align-items: flex-start; flex-direction: column; }
 	}
 </style>

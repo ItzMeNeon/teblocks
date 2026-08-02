@@ -28,6 +28,10 @@ Outside of this repo, you can start a new project with this template using [C3](
 npm create cloudflare@latest -- --template=cloudflare/templates/astro-blog-starter-template
 ```
 
+## TeBlocks configuration
+
+Copy `.env.example` to `.env` for local development and set `PUBLIC_API_BASE_URL` to the Go auth server's origin. In production, configure the same build variable in Cloudflare. The Go server must allow the site origin through `CORS_ALLOWED_ORIGINS`, for example `https://teblocks.my.id`.
+
 A live public deployment of this template is available at [https://astro-blog-starter-template.templates.workers.dev](https://astro-blog-starter-template.templates.workers.dev)
 
 ## 🚀 Project Structure
