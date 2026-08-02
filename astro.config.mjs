@@ -7,11 +7,18 @@ import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://example.com",
+	site: "https://teblocks.my.id",
 	integrations: [mdx(), sitemap()],
 	adapter: cloudflare({
 		platformProxy: {
 			enabled: true,
 		},
 	}),
+	server: {
+		headers: {
+			"Cross-Origin-Opener-Policy": "same-origin",
+			"Cross-Origin-Embedder-Policy": "require-corp",
+		},
+	},
+	trailingSlash: "ignore",
 });
