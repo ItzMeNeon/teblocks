@@ -30,7 +30,7 @@ npm create cloudflare@latest -- --template=cloudflare/templates/astro-blog-start
 
 ## TeBlocks configuration
 
-Copy `.env.example` to `.env` for local development and set `PUBLIC_API_BASE_URL` to the Go auth server's origin. In production, configure the same build variable in Cloudflare. The Go server must allow the site origin through `CORS_ALLOWED_ORIGINS`, for example `https://teblocks.my.id`.
+Copy `.env.example` to `.env` for local development and set `API_BASE_URL` to the Go auth server's origin. In production, configure it as a Cloudflare secret. The website's auth routes proxy requests server-side, then store the session token only in a secure, HttpOnly cookie. The Go server must allow the site origin through `CORS_ALLOWED_ORIGINS` for other browser-to-server requests, for example `https://teblocks.my.id`.
 
 A live public deployment of this template is available at [https://astro-blog-starter-template.templates.workers.dev](https://astro-blog-starter-template.templates.workers.dev)
 

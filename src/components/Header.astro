@@ -16,6 +16,7 @@ import { SITE_TITLE } from '../consts';
 			<HeaderLink href="/#systems">Systems</HeaderLink>
 			<HeaderLink href="/#play">Play</HeaderLink>
 			<HeaderLink href="/account/">Account</HeaderLink>
+			<HeaderLink href="/profile/">Profile</HeaderLink>
 		</div>
 	</nav>
 </header>
@@ -76,5 +77,11 @@ import { SITE_TITLE } from '../consts';
 	.internal-links :global(a:hover) {
 		color: var(--text);
 		background: var(--panel);
+	}
+	@media (max-width: 720px) {
+		header { padding: 0 0.8em; }
+		nav { height: auto; min-height: 4.2em; }
+		.internal-links { gap: 0; }
+		.internal-links :global(a) { padding: 0.55em 0.45em; font-size: 0.8rem; }
 	}
 </style>

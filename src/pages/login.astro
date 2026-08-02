@@ -1,0 +1,72 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Log in | ${SITE_TITLE}`} description="Log in to your TeBlocks account." />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="login-panel" aria-labelledby="login-title">
+				<p class="eyebrow" style="--accent-color: var(--i)">Player account</p>
+				<h1 id="login-title">Log in</h1>
+				<form id="login-form">
+					<label for="username">Username</label>
+					<input id="username" name="username" type="text" autocomplete="username" required />
+					<label for="password">Password</label>
+					<input id="password" name="password" type="password" autocomplete="current-password" required />
+					<button type="submit">Log in</button>
+				</form>
+				<p id="form-status" role="status" aria-live="polite"></p>
+				<p>New to TeBlocks? <a href="/account/">Create an account</a>.</p>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.login-panel { max-width: 480px; margin: 5em auto 0; padding: 2em; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+	form { display: grid; gap: 0.55em; }
+	label { color: var(--text); font-size: 0.92rem; font-weight: 600; }
+	input { width: 100%; box-sizing: border-box; margin-bottom: 0.8em; padding: 0.75em 0.85em; border: 1px solid var(--line); border-radius: 6px; background: var(--board); color: var(--text); font: inherit; }
+	input:focus { outline: 2px solid var(--i); outline-offset: 2px; }
+	button { margin-top: 0.5em; padding: 0.85em 1.2em; border: 0; border-radius: 8px; background: var(--i); color: var(--board); font: inherit; font-weight: 700; cursor: pointer; }
+	button:disabled { cursor: wait; opacity: 0.7; }
+	#form-status { min-height: 1.65em; color: var(--text); font-size: 0.9rem; }
+	@media (max-width: 720px) { .login-panel { margin-top: 3em; padding: 1.4em; } }
+</style>
+
+<script>
+	const form = document.querySelector('#login-form');
+	const status = document.querySelector('#form-status');
+
+	form.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		if (!form.reportValidity()) return;
+
+		const submitButton = form.querySelector('button');
+		submitButton.disabled = true;
+		status.textContent = 'Logging in…';
+		try {
+			const response = await fetch('/api/auth/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(Object.fromEntries(new FormData(form))),
+			});
+			const body = await response.json().catch(() => ({}));
+			if (!response.ok) throw new Error(body.error || 'Unable to log in.');
+			form.reset();
+			window.location.assign('/profile/');
+		} catch (error) {
+			status.textContent = error instanceof Error ? error.message : 'Unable to log in.';
+			submitButton.disabled = false;
+		}
+	});
+</script>

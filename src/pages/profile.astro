@@ -1,0 +1,72 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Profile | ${SITE_TITLE}`} description="Your TeBlocks player profile." />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="profile-panel" aria-labelledby="profile-title">
+				<p class="eyebrow" style="--accent-color: var(--t)">Player profile</p>
+				<h1 id="profile-title">Your profile</h1>
+				<p id="profile-status" role="status" aria-live="polite">Loading profile…</p>
+				<dl id="profile-details" hidden>
+					<div><dt>Username</dt><dd id="profile-username"></dd></div>
+					<div><dt>Email</dt><dd id="profile-email"></dd></div>
+					<div><dt>Email status</dt><dd id="profile-verification"></dd></div>
+				</dl>
+				<button id="logout-button" type="button" hidden>Log out</button>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.profile-panel { max-width: 560px; margin: 5em auto 0; padding: 2em; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+	dl { margin: 2em 0; border-top: 1px solid var(--line); }
+	dl div { display: grid; grid-template-columns: 140px 1fr; gap: 1em; padding: 0.9em 0; border-bottom: 1px solid var(--line); }
+	dt { color: var(--dim-2); font-family: "JetBrains Mono", monospace; font-size: 0.8rem; text-transform: uppercase; }
+	dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+	button { padding: 0.85em 1.2em; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
+	@media (max-width: 720px) { .profile-panel { margin-top: 3em; padding: 1.4em; } dl div { grid-template-columns: 1fr; gap: 0.3em; } }
+</style>
+
+<script>
+	const status = document.querySelector('#profile-status');
+	const details = document.querySelector('#profile-details');
+	const logoutButton = document.querySelector('#logout-button');
+
+	async function loadProfile() {
+		const response = await fetch('/api/auth/me');
+		if (response.status === 401) {
+			window.location.replace('/login/');
+			return;
+		}
+		const body = await response.json().catch(() => ({}));
+		if (!response.ok) {
+			status.textContent = body.error || 'Unable to load your profile.';
+			return;
+		}
+		document.querySelector('#profile-username').textContent = body.username;
+		document.querySelector('#profile-email').textContent = body.email;
+		document.querySelector('#profile-verification').textContent = body.email_verified ? 'Verified' : 'Not verified';
+		status.hidden = true;
+		details.hidden = false;
+		logoutButton.hidden = false;
+	}
+
+	logoutButton.addEventListener('click', async () => {
+		await fetch('/api/auth/logout', { method: 'POST' });
+		window.location.assign('/');
+	});
+
+	loadProfile();
+</script>

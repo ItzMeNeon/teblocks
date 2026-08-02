@@ -32,6 +32,7 @@ import { SITE_TITLE } from '../consts';
 					<p class="notice">Use at least 8 characters with uppercase, lowercase, a number, and a special character.</p>
 				</form>
 				<p id="form-status" class="status" role="status" aria-live="polite"></p>
+				<p class="login-link">Already registered? <a href="/login/">Log in</a></p>
 
 				<section id="verification-panel" class="verification-panel" aria-labelledby="verification-title" hidden>
 					<h2 id="verification-title">Verify your email</h2>
@@ -94,7 +95,6 @@ import { SITE_TITLE } from '../consts';
 </style>
 
 <script>
-	const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
 	const registrationForm = document.querySelector('#registration-form');
 	const verificationForm = document.querySelector('#verification-form');
 	const verificationPanel = document.querySelector('#verification-panel');
@@ -106,7 +106,7 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	async function post(path, body) {
-		const response = await fetch(`${apiBaseUrl.replace(/\/$/, '')}${path}`, {
+		const response = await fetch(path, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(body),
@@ -128,7 +128,7 @@ import { SITE_TITLE } from '../consts';
 		setStatus('Creating account…');
 
 		try {
-			const response = await post('/register', Object.fromEntries(formData));
+			const response = await post('/api/auth/register', Object.fromEntries(formData));
 			if (!response.user_id) throw new Error('The server returned an invalid registration response.');
 			userId = response.user_id;
 			registrationForm.reset();
@@ -152,7 +152,7 @@ import { SITE_TITLE } from '../consts';
 		setStatus('Verifying email…');
 
 		try {
-			await post('/verify', { user_id: userId, code });
+			await post('/api/auth/verify', { user_id: userId, code });
 			verificationForm.reset();
 			verificationPanel.hidden = true;
 			setStatus('Email verified. Your TeBlocks account is ready.');
