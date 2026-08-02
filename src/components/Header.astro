@@ -11,7 +11,8 @@ import { SITE_TITLE } from '../consts';
 			</span>
 			{SITE_TITLE}
 		</a>
-		<div class="internal-links">
+		<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-links">Menu</button>
+		<div id="site-links" class="internal-links">
 			<HeaderLink href="/#modes">Modes</HeaderLink>
 			<HeaderLink href="/#systems">Systems</HeaderLink>
 			<HeaderLink href="/#play">Play</HeaderLink>
@@ -42,7 +43,7 @@ import { SITE_TITLE } from '../consts';
 		display: flex;
 		align-items: center;
 		gap: 0.6em;
-		font-family: "Rubik", sans-serif;
+				font-family: "Atkinson", sans-serif;
 		font-weight: 700;
 		font-size: 1.1rem;
 		color: var(--text);
@@ -66,6 +67,7 @@ import { SITE_TITLE } from '../consts';
 		display: flex;
 		gap: 0.4em;
 	}
+	.menu-toggle { display: none; padding: .55em .7em; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--text); font: 700 .78rem "Atkinson", sans-serif; cursor: pointer; }
 	.internal-links :global(a) {
 		padding: 0.6em 0.9em;
 		color: var(--dim);
@@ -80,9 +82,11 @@ import { SITE_TITLE } from '../consts';
 	}
 	@media (max-width: 720px) {
 		header { padding: 0 0.8em; }
-		nav { height: auto; min-height: 4.2em; }
-		.internal-links { gap: 0; }
-		.internal-links :global(a) { padding: 0.55em 0.45em; font-size: 0.8rem; }
+		nav { position: relative; height: auto; min-height: 4.2em; }
+		.menu-toggle { display: block; }
+		.internal-links { position: absolute; top: calc(100% + 1px); left: -.8em; right: -.8em; display: none; flex-direction: column; gap: 0; padding: .55em .8em .8em; border-bottom: 1px solid var(--line); background: rgba(10, 12, 16, .97); box-shadow: var(--shadow); }
+		.internal-links.open { display: flex; }
+		.internal-links :global(a) { padding: .7em .65em; font-size: .9rem; }
 	}
 </style>
 
@@ -96,4 +100,16 @@ import { SITE_TITLE } from '../consts';
 			// Keep the sign-up link when auth state cannot be checked.
 		});
 	}
+
+	const menuToggle = document.querySelector('.menu-toggle');
+	const siteLinks = document.querySelector('#site-links');
+	menuToggle?.addEventListener('click', () => {
+		const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+		menuToggle.setAttribute('aria-expanded', String(!expanded));
+		siteLinks?.classList.toggle('open', !expanded);
+	});
+	siteLinks?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+		menuToggle?.setAttribute('aria-expanded', 'false');
+		siteLinks.classList.remove('open');
+	}));
 </script>

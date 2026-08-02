@@ -47,7 +47,7 @@ html {
 }
 
 body {
-	font-family: "Inter", "Atkinson", sans-serif;
+	font-family: "Atkinson", ui-sans-serif, sans-serif;
 	margin: 0;
 	padding: 0;
 	background: var(--board);
@@ -71,7 +71,7 @@ main {
 }
 
 h1, h2, h3, h4, h5, h6 {
-	font-family: "Rubik", "Inter", sans-serif;
+	font-family: "Atkinson", ui-sans-serif, sans-serif;
 	margin: 0 0 0.5rem 0;
 	color: var(--text);
 	line-height: 1.15;
@@ -92,7 +92,7 @@ a:hover { color: var(--text); }
 p { margin: 0 0 1em; color: var(--dim); }
 
 code, .mono {
-	font-family: "JetBrains Mono", ui-monospace, monospace;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 code {
 	padding: 2px 6px;
@@ -155,4 +155,3 @@ hr { border: none; border-top: 1px solid var(--line); margin: 3em 0; }
 	clip-path: inset(50%);
 	white-space: nowrap;
 }
-
