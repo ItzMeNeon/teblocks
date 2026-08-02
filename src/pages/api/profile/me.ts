@@ -1,12 +1,20 @@
 import type { APIRoute } from 'astro';
-import { authenticatedApiFetch, forwardedResponse, SESSION_COOKIE } from '../../../lib/auth';
+import { apiFetch, authenticatedApiFetch, forwardedResponse, SESSION_COOKIE } from '../../../lib/auth';
 
 export const prerender = false;
 
 export const GET: APIRoute = async (context) => {
-	const response = await authenticatedApiFetch(context, '/profile/me');
-	if (response instanceof Response && response.status === 401) context.cookies.delete(SESSION_COOKIE, { path: '/' });
-	return forwardedResponse(response);
+	const token = context.cookies.get(SESSION_COOKIE)?.value;
+	const response = await authenticatedApiFetch(context, `/profile/me?token=${encodeURIComponent(token ?? '')}`);
+	// Keep the identity page usable while the extended profile endpoint rolls out.
+	// The legacy endpoint already powers login/session checks and is safe to use
+	// as a read-only fallback when the new route is not deployed yet.
+	let profileResponse = response;
+	if (response instanceof Response && (response.status === 404 || response.status === 405) && token) {
+		profileResponse = await apiFetch(context, `/me?token=${encodeURIComponent(token)}`);
+	}
+	if (profileResponse instanceof Response && profileResponse.status === 401) context.cookies.delete(SESSION_COOKIE, { path: '/' });
+	return forwardedResponse(profileResponse);
 };
 
 export const PATCH: APIRoute = async (context) => {
