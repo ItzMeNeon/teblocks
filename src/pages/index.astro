@@ -8,44 +8,277 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={`${SITE_TITLE} -- competitive block stacking`} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
 		<Header />
 		<main>
-			<iframe frameborder="0" src="https://itch.io/embed-upload/18639633?color=333333" allowfullscreen="" width="1600" height="920"></iframe>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<!-- HERO -->
+			<section class="hero">
+				<div class="hero-copy">
+					<p class="eyebrow" style="--accent-color: var(--i)">Server-authoritative &middot; SRS &middot; 7-bag</p>
+					<h1>Stack fast.<br />Play fair.</h1>
+					<p class="lede">
+						A competitive block-stacking game built from the rules up: real SRS rotation and
+						wall kicks, a fair 7-bag randomizer, and a server that never trusts the client.
+						Ranked, quick play, and 100-player battle royale.
+					</p>
+					<div class="cta-row">
+						<a class="btn btn-primary" href="/play/">Play now</a>
+						<a class="btn btn-ghost" href="#modes">See the modes</a>
+					</div>
+				</div>
+				<div class="hero-board" aria-hidden="true">
+					<div class="stack">
+						<div class="piece piece-i" style="--d:0"></div>
+						<div class="piece piece-l" style="--d:1"></div>
+						<div class="piece piece-o" style="--d:2"></div>
+						<div class="piece piece-t" style="--d:3"></div>
+						<div class="piece piece-s" style="--d:4"></div>
+					</div>
+				</div>
+			</section>
+
+			<!-- MODES -->
+			<section class="section" id="modes">
+				<p class="eyebrow" style="--accent-color: var(--t)">Modes</p>
+				<h2>Three ways to play</h2>
+				<div class="mode-grid">
+					<article class="mode-card">
+						<span class="mode-tag" style="background: var(--z)"></span>
+						<h3>Ranked</h3>
+						<p>Strict 1v1 matchmaking with rating stakes. Promotion, demotion, and a
+							leaderboard that means something.</p>
+					</article>
+					<article class="mode-card">
+						<span class="mode-tag" style="background: var(--i)"></span>
+						<h3>Quick Play</h3>
+						<p>A persistent climbing lobby. Top out, jump back in instantly. Altitude
+							is the score -- send garbage, take garbage, keep climbing.</p>
+					</article>
+					<article class="mode-card">
+						<span class="mode-tag" style="background: var(--o)"></span>
+						<h3>Battle Royale</h3>
+						<p>100 players, one board each, elimination targeting. Last stack
+							standing wins.</p>
+					</article>
+				</div>
+			</section>
+
+			<!-- SYSTEMS -->
+			<section class="section" id="systems">
+				<p class="eyebrow" style="--accent-color: var(--s)">Under the hood</p>
+				<h2>Built on the real rules</h2>
+				<div class="spec-sheet">
+					<div class="spec-row">
+						<span class="spec-label mono">ROTATION</span>
+						<span class="spec-value">Super Rotation System with full wall-kick tables, I-piece and JLSTZ handled separately</span>
+					</div>
+					<div class="spec-row">
+						<span class="spec-label mono">RANDOMIZER</span>
+						<span class="spec-value">7-bag -- every piece appears once per bag, no droughts, no floods</span>
+					</div>
+					<div class="spec-row">
+						<span class="spec-label mono">AUTHORITY</span>
+						<span class="spec-value">Every board, lock, and line clear is simulated server-side. The client predicts, the server decides</span>
+					</div>
+					<div class="spec-row">
+						<span class="spec-label mono">PROTOCOL</span>
+						<span class="spec-value">Binary over WebSocket -- no JSON on the hot path, built for low latency</span>
+					</div>
+				</div>
+			</section>
+
+			<!-- PLAY -->
+			<section class="section" id="play">
+				<p class="eyebrow" style="--accent-color: var(--j)">Play in browser</p>
+				<h2>Drop in now</h2>
+				<div class="embed-frame">
+					<iframe
+						src="https://itch.io/embed-upload/18639633?color=0a0c10"
+						allowfullscreen
+						title="TeBlocks -- play in browser"
+					></iframe>
+				</div>
+			</section>
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	/* ---------- HERO ---------- */
+	.hero {
+		display: grid;
+		grid-template-columns: 1.1fr 0.9fr;
+		align-items: center;
+		gap: 3em;
+		padding: 5em 0 4em;
+		min-height: 70vh;
+	}
+	.hero-copy .lede {
+		max-width: 46ch;
+		font-size: 1.05rem;
+	}
+	.cta-row {
+		display: flex;
+		gap: 0.8em;
+		margin-top: 1.6em;
+		flex-wrap: wrap;
+	}
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.85em 1.5em;
+		border-radius: 8px;
+		font-weight: 600;
+		font-size: 0.95rem;
+		transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), background 0.15s ease, border-color 0.15s ease;
+	}
+	.btn:active { transform: scale(0.96); }
+	.btn-primary {
+		background: var(--i);
+		color: #06141a;
+	}
+	.btn-primary:hover { background: #5be8e6; color: #06141a; }
+	.btn-ghost {
+		background: transparent;
+		border: 1px solid var(--line);
+		color: var(--text);
+	}
+	.btn-ghost:hover { border-color: var(--dim); color: var(--text); }
+
+	/* Falling block stack -- the signature element */
+	.hero-board {
+		position: relative;
+		height: 320px;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		background: var(--board-raised);
+		overflow: hidden;
+	}
+	.hero-board::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background-image: linear-gradient(var(--line) 1px, transparent 1px);
+		background-size: 100% 32px;
+		opacity: 0.5;
+	}
+	.stack {
+		display: flex;
+		flex-direction: column-reverse;
+		align-items: center;
+		gap: 4px;
+		padding-bottom: 20px;
+		position: relative;
+	}
+	.piece {
+		width: 88px;
+		height: 32px;
+		border-radius: 5px;
+		opacity: 0;
+		transform: translateY(-140px);
+		animation: drop 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		animation-delay: calc(var(--d) * 0.12s + 0.15s);
+		box-shadow: inset 0 -3px 0 rgba(0,0,0,0.25), inset 0 3px 0 rgba(255,255,255,0.15);
+	}
+	.piece-i { background: var(--i); width: 132px; }
+	.piece-l { background: var(--l); }
+	.piece-o { background: var(--o); width: 66px; }
+	.piece-t { background: var(--t); }
+	.piece-s { background: var(--s); }
+
+	@keyframes drop {
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.piece { animation: none; opacity: 1; transform: none; }
+	}
+
+	/* ---------- MODES ---------- */
+	.mode-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.2em;
+		margin-top: 1.8em;
+	}
+	.mode-card {
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		padding: 1.6em;
+		transition: border-color 0.15s ease, transform 0.15s ease;
+	}
+	.mode-card:hover {
+		border-color: var(--dim-2);
+		transform: translateY(-2px);
+	}
+	.mode-tag {
+		display: block;
+		width: 22px;
+		height: 22px;
+		border-radius: 5px;
+		margin-bottom: 0.9em;
+	}
+	.mode-card h3 { margin-bottom: 0.4em; }
+	.mode-card p { margin: 0; font-size: 0.92rem; }
+
+	/* ---------- SYSTEMS (spec sheet) ---------- */
+	.spec-sheet {
+		margin-top: 1.8em;
+		border-top: 1px solid var(--line);
+	}
+	.spec-row {
+		display: grid;
+		grid-template-columns: 160px 1fr;
+		gap: 1.5em;
+		padding: 1.1em 0;
+		border-bottom: 1px solid var(--line);
+	}
+	.spec-label {
+		font-size: 0.78rem;
+		color: var(--dim-2);
+		letter-spacing: 0.08em;
+		padding-top: 0.15em;
+	}
+	.spec-value {
+		color: var(--text);
+		font-size: 0.98rem;
+	}
+
+	/* ---------- PLAY / EMBED (the actual bug fix) ---------- */
+	.embed-frame {
+		margin-top: 1.8em;
+		position: relative;
+		width: 100%;
+		aspect-ratio: 1600 / 920;
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		overflow: hidden;
+		background: var(--board-raised);
+	}
+	.embed-frame iframe {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+
+	/* ---------- RESPONSIVE ---------- */
+	@media (max-width: 860px) {
+		.hero {
+			grid-template-columns: 1fr;
+			padding: 3em 0 2.5em;
+			min-height: auto;
+		}
+		.hero-board { height: 220px; order: -1; }
+		.mode-grid { grid-template-columns: 1fr; }
+		.spec-row { grid-template-columns: 1fr; gap: 0.4em; }
+	}
+</style>
