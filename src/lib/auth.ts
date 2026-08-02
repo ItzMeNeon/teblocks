@@ -2,9 +2,10 @@ import type { APIContext } from 'astro';
 
 export const SESSION_COOKIE = 'teblocks_session';
 export const API_CONFIGURATION_ERROR = 'API_CONFIGURATION_ERROR';
+const DEFAULT_API_BASE_URL = 'https://backend.teblocks.my.id';
 
 export function apiBaseUrl(context: APIContext) {
-	const origin = context.locals.runtime?.env?.API_BASE_URL || import.meta.env.API_BASE_URL;
+	const origin = context.locals.runtime?.env?.API_BASE_URL || import.meta.env.API_BASE_URL || DEFAULT_API_BASE_URL;
 	if (!origin) throw new Error('API_BASE_URL is not configured.');
 	return origin.replace(/\/+$/, '');
 }
