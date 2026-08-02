@@ -15,7 +15,7 @@ import { SITE_TITLE } from '../consts';
 			<HeaderLink href="/#modes">Modes</HeaderLink>
 			<HeaderLink href="/#systems">Systems</HeaderLink>
 			<HeaderLink href="/#play">Play</HeaderLink>
-			<HeaderLink href="/account/">Account</HeaderLink>
+			<HeaderLink href="/account/" data-account-link>Account</HeaderLink>
 			<HeaderLink href="/profile/">Profile</HeaderLink>
 		</div>
 	</nav>
@@ -85,3 +85,15 @@ import { SITE_TITLE } from '../consts';
 		.internal-links :global(a) { padding: 0.55em 0.45em; font-size: 0.8rem; }
 	}
 </style>
+
+<script>
+	const accountLink = document.querySelector('[data-account-link]');
+
+	if (accountLink) {
+		fetch('/api/auth/me').then((response) => {
+			if (response.ok) accountLink.remove();
+		}).catch(() => {
+			// Keep the sign-up link when auth state cannot be checked.
+		});
+	}
+</script>

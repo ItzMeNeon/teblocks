@@ -30,6 +30,14 @@ export async function apiFetch(context: APIContext, path: string, init?: Request
 	}
 }
 
+export async function authenticatedApiFetch(context: APIContext, path: string, init?: RequestInit): Promise<Response | null | typeof API_CONFIGURATION_ERROR> {
+	const token = context.cookies.get(SESSION_COOKIE)?.value;
+	if (!token) return new Response(JSON.stringify({ error: 'Not authenticated.' }), { status: 401 });
+	const headers = new Headers(init?.headers);
+	headers.set('Authorization', `Bearer ${token}`);
+	return apiFetch(context, path, { ...init, headers });
+}
+
 export async function forwardedResponse(response: Response | null | typeof API_CONFIGURATION_ERROR) {
 	if (response === API_CONFIGURATION_ERROR) {
 		return json({ error: 'Site authentication is not configured. Set API_BASE_URL in Cloudflare and redeploy.' }, 503);

@@ -1,11 +1,18 @@
 # TeBlocks Server -- Auth HTTP API Reference
 
 Base URL: `http://localhost:8080` in dev, your deployed server's origin in
-production (e.g. `https://api.teblocks.my.id` -- adjust to whatever you
-actually deploy the Go server as). Not the same origin as the Astro site.
+production (currently `https://backend.teblocks.my.id`). Not the same origin
+as the Astro site.
 
 All endpoints are JSON in, JSON out, `Content-Type: application/json`.
 Error responses are always `{"error": "message"}` with a non-2xx status.
+
+## Player profile extension
+
+The website now includes a competitive player profile. The required backend
+contract is specified in [`PROFILE_SERVER_REQUIREMENTS.md`](./PROFILE_SERVER_REQUIREMENTS.md).
+It adds authenticated `GET /profile/me`, `PATCH /profile/me`, and paginated
+`GET /profile/me/matches` endpoints, plus rank and match-stat persistence.
 
 ## CORS
 
