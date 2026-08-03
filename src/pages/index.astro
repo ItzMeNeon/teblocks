@@ -7,300 +7,562 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={`${SITE_TITLE} -- competitive block stacking`} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<!-- HERO -->
-			<section class="hero">
-				<div class="hero-copy">
-					<p class="eyebrow" style="--accent-color: var(--i)">Server-authoritative &middot; SRS &middot; 7-bag</p>
-					<h1>Stack fast.<br />Play fair.</h1>
-					<p class="lede">
-						A competitive block-stacking game built from the rules up: real SRS rotation and
-						wall kicks, a fair 7-bag randomizer, and a server that never trusts the client.
-						Ranked, quick play, and 100-player battle royale.
-					</p>
-					<div class="cta-row">
-						<a class="btn btn-primary" href="#play">Play now</a>
-						<a class="btn btn-ghost" href="#modes">See the modes</a>
-					</div>
-				</div>
-				<div class="hero-board" aria-hidden="true">
-					<div class="stack">
-						<div class="piece piece-i" style="--d:0"></div>
-						<div class="piece piece-l" style="--d:1"></div>
-						<div class="piece piece-o" style="--d:2"></div>
-						<div class="piece piece-t" style="--d:3"></div>
-						<div class="piece piece-s" style="--d:4"></div>
-					</div>
-				</div>
-			</section>
+  <head>
+    <BaseHead title={`${SITE_TITLE} — competitive block stacking`} description={SITE_DESCRIPTION} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <!-- HERO -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <p class="eyebrow" style="--accent-color: var(--accent)">Server-authoritative · SRS · 7-bag</p>
+          <h1 id="hero-title">Stack fast.<br />Play fair.</h1>
+          <p class="lede">A competitive block-stacking game built from the rules up: real SRS rotation and wall kicks, a fair 7-bag randomizer, and a server that never trusts the client. Ranked, quick play, and 100-player battle royale.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#play">Play now</a>
+            <a class="btn btn-secondary" href="#modes">See the modes</a>
+          </div>
+        </div>
+        <div class="hero-board" aria-hidden="true">
+          <canvas id="hero-canvas"></canvas>
+        </div>
+      </section>
 
-			<!-- MODES -->
-			<section class="section" id="modes">
-				<p class="eyebrow" style="--accent-color: var(--t)">Modes</p>
-				<h2>Three ways to play</h2>
-				<div class="mode-grid">
-					<article class="mode-card">
-						<span class="mode-tag" style="background: var(--z)"></span>
-						<h3>Ranked</h3>
-						<p>Strict 1v1 matchmaking with rating stakes. Promotion, demotion, and a
-							leaderboard that means something.</p>
-					</article>
-					<article class="mode-card">
-						<span class="mode-tag" style="background: var(--i)"></span>
-						<h3>Quick Play</h3>
-						<p>A persistent climbing lobby. Top out, jump back in instantly. Altitude
-							is the score -- send garbage, take garbage, keep climbing.</p>
-					</article>
-					<article class="mode-card">
-						<span class="mode-tag" style="background: var(--o)"></span>
-						<h3>Battle Royale</h3>
-						<p>100 players, one board each, elimination targeting. Last stack
-							standing wins.</p>
-					</article>
-				</div>
-			</section>
+      <!-- MODES -->
+      <section class="section" id="modes" aria-labelledby="modes-title">
+        <div class="section-header">
+          <p class="eyebrow" style="--accent-color: var(--i)">Modes</p>
+          <h2 id="modes-title">Three ways to play</h2>
+        </div>
+        <div class="mode-grid">
+          <article class="mode-card panel panel-hover">
+            <div class="mode-icon" style="--mode-color: var(--z)"></div>
+            <h3>Ranked</h3>
+            <p>Strict 1v1 matchmaking with rating stakes. Promotion, demotion, and a leaderboard that means something.</p>
+            <span class="mode-tag">Competitive</span>
+          </article>
+          <article class="mode-card panel panel-hover">
+            <div class="mode-icon" style="--mode-color: var(--i)"></div>
+            <h3>Quick Play</h3>
+            <p>A persistent climbing lobby. Top out, jump back in instantly. Altitude is the score — send garbage, take garbage, keep climbing.</p>
+            <span class="mode-tag">Endless</span>
+          </article>
+          <article class="mode-card panel panel-hover">
+            <div class="mode-icon" style="--mode-color: var(--o)"></div>
+            <h3>Battle Royale</h3>
+            <p>100 players, one board each, elimination targeting. Last stack standing wins.</p>
+            <span class="mode-tag">Survival</span>
+          </article>
+        </div>
+      </section>
 
-			<!-- SYSTEMS -->
-			<section class="section" id="systems">
-				<p class="eyebrow" style="--accent-color: var(--s)">Under the hood</p>
-				<h2>Built on the real rules</h2>
-				<div class="spec-sheet">
-					<div class="spec-row">
-						<span class="spec-label mono">ROTATION</span>
-						<span class="spec-value">Super Rotation System with full wall-kick tables, I-piece and JLSTZ handled separately</span>
-					</div>
-					<div class="spec-row">
-						<span class="spec-label mono">RANDOMIZER</span>
-						<span class="spec-value">7-bag -- every piece appears once per bag, no droughts, no floods</span>
-					</div>
-					<div class="spec-row">
-						<span class="spec-label mono">AUTHORITY</span>
-						<span class="spec-value">Every board, lock, and line clear is simulated server-side. The client predicts, the server decides</span>
-					</div>
-					<div class="spec-row">
-						<span class="spec-label mono">PROTOCOL</span>
-						<span class="spec-value">Binary over WebSocket -- no JSON on the hot path, built for low latency</span>
-					</div>
-				</div>
-			</section>
+      <!-- SYSTEMS -->
+      <section class="section" id="systems" aria-labelledby="systems-title">
+        <div class="section-header">
+          <p class="eyebrow" style="--accent-color: var(--s)">Under the hood</p>
+          <h2 id="systems-title">Built on the real rules</h2>
+        </div>
+        <div class="spec-sheet panel">
+          <div class="spec-row">
+            <span class="spec-label mono">ROTATION</span>
+            <span class="spec-value">Super Rotation System with full wall-kick tables, I-piece and JLSTZ handled separately</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-label mono">RANDOMIZER</span>
+            <span class="spec-value">7-bag — every piece appears once per bag, no droughts, no floods</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-label mono">AUTHORITY</span>
+            <span class="spec-value">Every board, lock, and line clear is simulated server-side. The client predicts, the server decides</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-label mono">PROTOCOL</span>
+            <span class="spec-value">Binary over WebSocket — no JSON on the hot path, built for low latency</span>
+          </div>
+        </div>
+      </section>
 
-			<!-- PLAY -->
-			<section class="section" id="play">
-				<p class="eyebrow" style="--accent-color: var(--j)">Play in browser</p>
-				<h2>Drop in now</h2>
-				<div class="embed-frame">
-					<iframe
-						src="https://itch.io/embed-upload/18639633?color=0a0c10"
-						allowfullscreen
-						title="TeBlocks -- play in browser"
-					></iframe>
-				</div>
-				<div class="play-actions" id="download">
-					<div>
-						<h3>Desktop download</h3>
-						<p>Download builds will be published here when they are ready.</p>
-					</div>
-					<a class="btn btn-ghost" href="/account/">Create an account</a>
-				</div>
-			</section>
-		</main>
-		<Footer />
-	</body>
+      <!-- PLAY -->
+      <section class="section" id="play" aria-labelledby="play-title">
+        <div class="section-header">
+          <p class="eyebrow" style="--accent-color: var(--l)">Play in browser</p>
+          <h2 id="play-title">Drop in now</h2>
+        </div>
+        <div class="embed-frame panel">
+          <iframe
+            src="https://itch.io/embed-upload/18639633?color=0d0d12"
+            allowfullscreen
+            title="TeBlocks — play in browser"
+          ></iframe>
+        </div>
+        <p class="embed-hint">Click the board to capture the keyboard, then play.</p>
+        <ul class="controls" aria-label="Game controls">
+          <li><kbd>←</kbd><kbd>→</kbd> Move</li>
+          <li><kbd>↓</kbd> Soft drop</li>
+          <li><kbd>Z</kbd><kbd>X</kbd> Rotate</li>
+          <li><kbd>Shift</kbd> Hold</li>
+          <li><kbd>Space</kbd> Hard drop</li>
+        </ul>
+        <div class="play-actions">
+          <div>
+            <h3>Desktop download</h3>
+            <p>Download builds will be published here when they are ready.</p>
+          </div>
+          <a class="btn btn-secondary" href="/account/">Create an account</a>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
 </html>
 
 <style>
-	/* ---------- HERO ---------- */
-	.hero {
-		display: grid;
-		grid-template-columns: 1.1fr 0.9fr;
-		align-items: center;
-		gap: 3em;
-		padding: 5em 0 4em;
-		min-height: 70vh;
-	}
-	.hero-copy .lede {
-		max-width: 46ch;
-		font-size: 1.05rem;
-	}
-	.cta-row {
-		display: flex;
-		gap: 0.8em;
-		margin-top: 1.6em;
-		flex-wrap: wrap;
-	}
-	.btn {
-		display: inline-flex;
-		align-items: center;
-		padding: 0.85em 1.5em;
-		border-radius: 8px;
-		font-weight: 600;
-		font-size: 0.95rem;
-		transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), background 0.15s ease, border-color 0.15s ease;
-	}
-	.btn:active { transform: scale(0.96); }
-	.btn-primary {
-		background: var(--i);
-		color: #06141a;
-	}
-	.btn-primary:hover { background: #5be8e6; color: #06141a; }
-	.btn-ghost {
-		background: transparent;
-		border: 1px solid var(--line);
-		color: var(--text);
-	}
-	.btn-ghost:hover { border-color: var(--dim); color: var(--text); }
+  /* ---------- HERO ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 3rem;
+    padding: 5rem 0 4rem;
+    min-height: 70vh;
+  }
+  .hero-content { max-width: 60ch; }
+  .hero-content .lede {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
 
-	/* Falling block stack -- the signature element */
-	.hero-board {
-		position: relative;
-		height: 320px;
-		display: flex;
-		align-items: flex-end;
-		justify-content: center;
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		background: var(--board-raised);
-		overflow: hidden;
-	}
-	.hero-board::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		background-image: linear-gradient(var(--line) 1px, transparent 1px);
-		background-size: 100% 32px;
-		opacity: 0.5;
-	}
-	.stack {
-		display: flex;
-		flex-direction: column-reverse;
-		align-items: center;
-		gap: 4px;
-		padding-bottom: 20px;
-		position: relative;
-	}
-	.piece {
-		width: 88px;
-		height: 32px;
-		border-radius: 5px;
-		opacity: 0;
-		transform: translateY(-140px);
-		animation: drop 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-		animation-delay: calc(var(--d) * 0.12s + 0.15s);
-		box-shadow: inset 0 -3px 0 rgba(0,0,0,0.25), inset 0 3px 0 rgba(255,255,255,0.15);
-	}
-	.piece-i { background: var(--i); width: 132px; }
-	.piece-l { background: var(--l); }
-	.piece-o { background: var(--o); width: 66px; }
-	.piece-t { background: var(--t); }
-	.piece-s { background: var(--s); }
+  /* Hero board — canvas simulation */
+  .hero-board {
+    position: relative;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #hero-canvas {
+    display: block;
+    border-radius: var(--radius);
+    box-shadow:
+      0 0 0 1px var(--border),
+      0 0 60px -10px var(--accent-glow),
+      0 20px 60px rgba(0, 0, 0, 0.6);
+    max-width: 100%;
+    height: auto;
+  }
 
-	@keyframes drop {
-		to { opacity: 1; transform: translateY(0); }
-	}
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 3rem 0 2.5rem;
+      min-height: auto;
+      text-align: center;
+    }
+    .hero-content { max-width: 100%; }
+    .hero-cta { justify-content: center; }
+    .hero-board { height: 240px; order: -1; }
+  }
 
-	@media (prefers-reduced-motion: reduce) {
-		.piece { animation: none; opacity: 1; transform: none; }
-	}
+  /* ---------- SECTION HEADER ---------- */
+  .section-header { text-align: center; max-width: 60ch; margin: 0 auto 3rem; }
+  .section-header .eyebrow { margin-bottom: 0.5rem; }
+  .section-header h2 { margin-bottom: 0.5rem; }
+  .section-header p { color: var(--text-muted); font-size: 1.1rem; }
 
-	/* ---------- MODES ---------- */
-	.mode-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1.2em;
-		margin-top: 1.8em;
-	}
-	.mode-card {
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		padding: 1.6em;
-		transition: border-color 0.15s ease, transform 0.15s ease;
-	}
-	.mode-card:hover {
-		border-color: var(--dim-2);
-		transform: translateY(-2px);
-	}
-	.mode-tag {
-		display: block;
-		width: 22px;
-		height: 22px;
-		border-radius: 5px;
-		margin-bottom: 0.9em;
-	}
-	.mode-card h3 { margin-bottom: 0.4em; }
-	.mode-card p { margin: 0; font-size: 0.92rem; }
+  /* ---------- MODES ---------- */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .mode-card {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    gap: 1rem;
+    transition: all var(--transition-base);
+  }
+  .mode-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 1px var(--accent),
+      0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+  .mode-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--mode-color), color-mix(in srgb, var(--mode-color) 70%, black));
+    box-shadow: 0 0 24px color-mix(in srgb, var(--mode-color) 50%, transparent);
+    flex-shrink: 0;
+  }
+  .mode-card h3 { font-size: 1.25rem; margin: 0.25rem 0 0; }
+  .mode-card p { margin: 0; font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; flex: 1; }
+  .mode-tag {
+    align-self: flex-start;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
 
-	/* ---------- SYSTEMS (spec sheet) ---------- */
-	.spec-sheet {
-		margin-top: 1.8em;
-		border-top: 1px solid var(--line);
-	}
-	.spec-row {
-		display: grid;
-		grid-template-columns: 160px 1fr;
-		gap: 1.5em;
-		padding: 1.1em 0;
-		border-bottom: 1px solid var(--line);
-	}
-	.spec-label {
-		font-size: 0.78rem;
-		color: var(--dim-2);
-		letter-spacing: 0.08em;
-		padding-top: 0.15em;
-	}
-	.spec-value {
-		color: var(--text);
-		font-size: 0.98rem;
-	}
+  @media (max-width: 860px) {
+    .mode-grid { grid-template-columns: 1fr; }
+  }
 
-	/* ---------- PLAY / EMBED (the actual bug fix) ---------- */
-	.embed-frame {
-		margin-top: 1.8em;
-		position: relative;
-		width: 100%;
-		aspect-ratio: 1600 / 920;
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		overflow: hidden;
-		background: var(--board-raised);
-	}
-	.embed-frame iframe {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		border: 0;
-	}
-	.play-actions {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1.5em;
-		margin-top: 1.2em;
-		padding: 1.2em;
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		background: var(--panel);
-	}
-	.play-actions h3,
-	.play-actions p { margin: 0; }
-	.play-actions p { font-size: 0.92rem; }
+  /* ---------- SYSTEMS (spec sheet) ---------- */
+  .spec-sheet { overflow: hidden; }
+  .spec-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition-fast);
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row:hover { background: var(--panel-hover); }
+  .spec-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding-top: 0.15rem;
+  }
+  .spec-value { color: var(--text-dim); font-size: 0.95rem; line-height: 1.5; }
 
-	/* ---------- RESPONSIVE ---------- */
-	@media (max-width: 860px) {
-		.hero {
-			grid-template-columns: 1fr;
-			padding: 3em 0 2.5em;
-			min-height: auto;
-		}
-		.hero-board { height: 220px; order: -1; }
-		.mode-grid { grid-template-columns: 1fr; }
-		.spec-row { grid-template-columns: 1fr; gap: 0.4em; }
-		.play-actions { align-items: flex-start; flex-direction: column; }
-	}
+  @media (max-width: 640px) {
+    .spec-row { grid-template-columns: 1fr; gap: 0.4rem; }
+  }
+
+  /* ---------- PLAY / EMBED ---------- */
+  .embed-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-elevated);
+  }
+  .embed-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .embed-hint {
+    margin: 1rem 0 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem 1.5rem;
+    margin: 0.5rem 0 1.5rem;
+    padding: 1rem 1.5rem;
+    list-style: none;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .controls li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+  kbd {
+    min-width: 2rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    background: var(--bg-elevated);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-align: center;
+    box-shadow: 0 2px 0 var(--border);
+  }
+  .play-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .play-actions h3 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+  .play-actions p { margin: 0; font-size: 0.9rem; color: var(--text-dim); }
+
+  @media (max-width: 640px) {
+    .play-actions { flex-direction: column; align-items: stretch; }
+    .play-actions .btn { width: 100%; }
+  }
+
+  /* ---------- REDUCED MOTION ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    #hero-canvas { opacity: 0.6; }
+  }
 </style>
+
+<script>
+  const canvas = document.querySelector('#hero-canvas');
+  const context = canvas && canvas.getContext('2d');
+
+  if (canvas && context) {
+    const COLS = 10;
+    const ROWS = 14;
+    const boardHost = canvas.closest('.hero-board');
+    const cellMax = 28;
+    const cell = Math.max(
+      16,
+      Math.min(cellMax, Math.floor(Math.min((boardHost?.clientWidth ?? 400) / COLS, (boardHost?.clientHeight ?? 350) / ROWS) - 2))
+    );
+    const W = COLS * cell;
+    const H = ROWS * cell;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = `${W}px`;
+    canvas.style.height = `${H}px`;
+    context.scale(dpr, dpr);
+
+    const COLORS = { I: '#00e5ff', J: '#60a5fa', L: '#fb923c', O: '#ffd700', S: '#4ade80', T: '#c084fc', Z: '#f87171' };
+    const SHAPES = {
+      I: [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
+      J: [[1, 0, 0], [1, 1, 1], [0, 0, 0]],
+      L: [[0, 0, 1], [1, 1, 1], [0, 0, 0]],
+      O: [[1, 1], [1, 1]],
+      S: [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
+      T: [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
+      Z: [[1, 1, 0], [0, 1, 1], [0, 0, 0]],
+    };
+    const KICKS = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-2, 0], [2, 0]];
+    const DROP_MS = 480;
+
+    let board = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+    let piece = null;
+    let pending = null;
+    let over = false;
+    let overSince = 0;
+    let bag = [];
+    let dropAcc = 0;
+
+    function take() {
+      if (!bag.length) {
+        bag = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
+        for (let i = bag.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [bag[i], bag[j]] = [bag[j], bag[i]];
+        }
+      }
+      return bag.pop();
+    }
+
+    function collides(matrix, row, col) {
+      for (let r = 0; r < matrix.length; r += 1) {
+        for (let c = 0; c < matrix[r].length; c += 1) {
+          if (!matrix[r][c]) continue;
+          const y = row + r;
+          const x = col + c;
+          if (x < 0 || x >= COLS || y >= ROWS) return true;
+          if (y >= 0 && board[y][x]) return true;
+        }
+      }
+      return false;
+    }
+
+    function spawn() {
+      const type = take();
+      const matrix = SHAPES[type].map((row) => row.slice());
+      const col = Math.floor((COLS - matrix[0].length) / 2);
+      piece = { type, matrix, row: 0, col, spun: false, spinAt: performance.now() + 800 + Math.random() * 2000 };
+      if (collides(matrix, 0, col)) {
+        over = true;
+        overSince = performance.now();
+      }
+      dropAcc = 0;
+    }
+
+    function merge(matrix, row, col, color) {
+      for (let r = 0; r < matrix.length; r += 1) {
+        for (let c = 0; c < matrix[r].length; c += 1) {
+          if (!matrix[r][c]) continue;
+          const y = row + r;
+          const x = col + c;
+          if (y >= 0 && y < ROWS && x >= 0 && x < COLS) board[y][x] = color;
+        }
+      }
+    }
+
+    function rotate(direction) {
+      if (!piece) return;
+      const m = piece.matrix;
+      const rotated = m[0].map((_, c) => m.map((row) => row[c]));
+      if (direction === 1) rotated.forEach((row) => row.reverse());
+      else rotated.reverse();
+      for (const [dx, dy] of KICKS) {
+        if (!collides(rotated, piece.row + dy, piece.col + dx)) {
+          piece.matrix = rotated;
+          piece.row += dy;
+          piece.col += dx;
+          return;
+        }
+      }
+    }
+
+    function lock() {
+      merge(piece.matrix, piece.row, piece.col, COLORS[piece.type]);
+      const full = [];
+      for (let r = 0; r < ROWS; r += 1) {
+        if (board[r].every(Boolean)) full.push(r);
+      }
+      piece = null;
+      if (full.length) pending = { rows: full, until: performance.now() + 260 };
+      else spawn();
+    }
+
+    function resolveClear() {
+      const rows = pending.rows.sort((a, b) => a - b);
+      pending = null;
+      for (const r of rows) board.splice(r, 1);
+      while (board.length < ROWS) board.unshift(Array(COLS).fill(null));
+      spawn();
+    }
+
+    function drawBlock(x, y, color) {
+      context.fillStyle = color;
+      context.fillRect(x, y, cell, cell);
+      context.fillStyle = 'rgba(255,255,255,0.25)';
+      context.fillRect(x, y, cell, 2);
+      context.fillRect(x, y, 2, cell);
+      context.fillStyle = 'rgba(0,0,0,0.35)';
+      context.fillRect(x + cell - 2, y, 2, cell);
+      context.fillRect(x, y + cell - 2, cell, 2);
+    }
+
+    function drawPiece(matrix, row, col, color) {
+      for (let r = 0; r < matrix.length; r += 1) {
+        for (let c = 0; c < matrix[r].length; c += 1) {
+          if (matrix[r][c]) drawBlock((col + c) * cell, (row + r) * cell, color);
+        }
+      }
+    }
+
+    function draw(now) {
+      context.clearRect(0, 0, W, H);
+
+      context.strokeStyle = 'rgba(42,42,58,0.7)';
+      context.lineWidth = 1;
+      context.beginPath();
+      for (let c = 1; c < COLS; c += 1) {
+        context.moveTo(c * cell + 0.5, 0);
+        context.lineTo(c * cell + 0.5, H);
+      }
+      for (let r = 1; r < ROWS; r += 1) {
+        context.moveTo(0, r * cell + 0.5);
+        context.lineTo(W, r * cell + 0.5);
+      }
+      context.stroke();
+
+      for (let r = 0; r < ROWS; r += 1) {
+        for (let c = 0; c < COLS; c += 1) {
+          if (board[r][c]) drawBlock(c * cell, r * cell, board[r][c]);
+        }
+      }
+
+      if (pending) {
+        const progress = 1 - Math.max(0, (pending.until - now) / 260);
+        for (const r of pending.rows) {
+          context.fillStyle = `rgba(240,240,245,${0.8 * progress})`;
+          context.fillRect(0, r * cell, W, cell);
+        }
+      }
+
+      if (piece && !over) drawPiece(piece.matrix, piece.row, piece.col, COLORS[piece.type]);
+
+      if (over) {
+        const progress = Math.min(1, (now - overSince) / 500);
+        context.fillStyle = `rgba(13,13,18,${0.5 + 0.5 * progress})`;
+        context.fillRect(0, 0, W, H);
+        context.fillStyle = `rgba(240,240,245,${progress})`;
+        context.font = '700 16px "JetBrains Mono", monospace';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText('TOP OUT', W / 2, H / 2);
+      }
+    }
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion) {
+      const scene = [
+        ['O', 'O', null, 'S', 'S', null, 'L', 'L'],
+        ['O', 'O', 'T', 'S', 'S', null, 'L', 'L'],
+        [null, 'T', 'T', 'T', null, null, null, null],
+      ];
+      for (let r = 0; r < scene.length && r < ROWS; r += 1) {
+        for (let c = 0; c < scene[r].length && c < COLS; c += 1) {
+          if (scene[r][c]) board[ROWS - 1 - r][c] = COLORS[scene[r][c]];
+        }
+      }
+      draw(performance.now());
+    } else {
+      spawn();
+      let last = performance.now();
+      function frame(now) {
+        const dt = Math.min(100, now - last);
+        last = now;
+        if (over) {
+          if (now - overSince > 1500) {
+            board = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+            over = false;
+            spawn();
+          }
+        } else if (pending) {
+          if (now >= pending.until) resolveClear();
+        } else if (piece) {
+          if (!piece.spun && now >= piece.spinAt) {
+            piece.spun = true;
+            rotate(1);
+          }
+          dropAcc += dt;
+          while (dropAcc >= DROP_MS) {
+            dropAcc -= DROP_MS;
+            if (!collides(piece.matrix, piece.row + 1, piece.col)) piece.row += 1;
+            else { lock(); break; }
+          }
+        }
+        draw(now);
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+  }
+</script>
