@@ -11,14 +11,19 @@ import { SITE_TITLE } from '../consts';
 			</span>
 			{SITE_TITLE}
 		</a>
-		<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-links">Menu</button>
-		<div id="site-links" class="internal-links">
-			<HeaderLink href="/#modes">Modes</HeaderLink>
-			<HeaderLink href="/#systems">Systems</HeaderLink>
-			<HeaderLink href="/#play">Play</HeaderLink>
-			<HeaderLink href="/account/" data-account-link>Account</HeaderLink>
-			<HeaderLink href="/profile/">Profile</HeaderLink>
+
+		<div class="nav-links" id="nav-links">
+			<a href="/#modes">Modes</a>
+			<a href="/leaderboards/">Leaderboards</a>
+			<a href="/#systems">Systems</a>
+			<a href="/#play">Play</a>
+			<a href="/users">Find players</a>
+			<span class="nav-divider" aria-hidden="true"></span>
+			<a href="/account/" data-account-link class="nav-cta">Create account</a>
+			<a href="/profile/" data-profile-link>Profile</a>
 		</div>
+
+		<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
 	</nav>
 </header>
 <style>
@@ -27,9 +32,8 @@ import { SITE_TITLE } from '../consts';
 		top: 0;
 		z-index: 20;
 		padding: 0 1.5em;
-		background: rgba(10, 12, 16, 0.85);
-		backdrop-filter: blur(10px);
-		border-bottom: 1px solid var(--line);
+		background: var(--bg);
+		border-bottom: 1px solid var(--border);
 	}
 	nav {
 		max-width: 1080px;
@@ -37,79 +41,158 @@ import { SITE_TITLE } from '../consts';
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 4.2em;
+		height: 3.8em;
+		gap: 1em;
 	}
 	.brand {
 		display: flex;
 		align-items: center;
-		gap: 0.6em;
-		font-family: "Atkinson", sans-serif;
+		gap: 0.5em;
+		font-family: var(--font-ui);
 		font-weight: 700;
-		font-size: 1.1rem;
+		font-size: 1rem;
 		color: var(--text);
 		letter-spacing: -0.01em;
+		flex-shrink: 0;
 	}
 	.brand:hover { color: var(--text); }
 
-	/* O-piece mark: a tight 2x2 block grid, matching the actual tetromino */
 	.mark {
 		display: grid;
-		grid-template-columns: 7px 7px;
-		grid-template-rows: 7px 7px;
+		grid-template-columns: 6px 6px;
+		grid-template-rows: 6px 6px;
 		gap: 2px;
 	}
 	.mark span {
-		background: var(--o);
-		border-radius: 1.5px;
+		background: var(--accent);
+		border-radius: 1px;
 	}
 
-	.internal-links {
+	.nav-links {
 		display: flex;
-		gap: 0.4em;
+		align-items: center;
+		gap: 0.2em;
 	}
-	.menu-toggle { display: none; padding: .55em .7em; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--text); font: 700 .78rem "Atkinson", sans-serif; cursor: pointer; }
-	.internal-links :global(a) {
-		padding: 0.6em 0.9em;
-		color: var(--dim);
-		font-size: 0.92rem;
+	.nav-links a {
+		padding: 0.5em 0.75em;
+		color: var(--text-dim);
+		font-size: 0.88rem;
 		font-weight: 500;
-		border-radius: 6px;
+		border-radius: var(--radius);
 		transition: color 0.15s ease, background 0.15s ease;
+		text-decoration: none;
 	}
-	.internal-links :global(a:hover) {
+	.nav-links a:hover {
 		color: var(--text);
 		background: var(--panel);
 	}
+	.nav-links a.active {
+		color: var(--text);
+		font-weight: 600;
+	}
+	.nav-links a.active::after {
+		content: "";
+		display: block;
+		width: 18px;
+		height: 2px;
+		margin: 0.35em auto 0;
+		border-radius: 1px;
+		background: var(--accent);
+	}
+	.nav-divider {
+		width: 1px;
+		height: 1.4em;
+		background: var(--border);
+		margin: 0 0.4em;
+	}
+	.nav-cta {
+		background: var(--accent);
+		color: var(--bg);
+		font-weight: 600;
+		border: 1px solid var(--accent);
+		border-radius: 6px;
+	}
+	.nav-cta:hover {
+		background: var(--accent-dim);
+		border-color: var(--accent-dim);
+		color: var(--bg);
+	}
+	[data-profile-link] {
+		border: 1px solid var(--border);
+		border-radius: 6px;
+	}
+	[data-profile-link]:hover {
+		border-color: var(--border-bright);
+	}
+
+	.menu-toggle { display: none; padding: .45em .6em; border: 1px solid var(--border); border-radius: var(--radius); background: transparent; color: var(--text); font: 600 .75rem var(--font-ui); cursor: pointer; }
+
 	@media (max-width: 720px) {
 		header { padding: 0 0.8em; }
-		nav { position: relative; height: auto; min-height: 4.2em; }
+		nav { position: relative; height: auto; min-height: 3.8em; }
 		.menu-toggle { display: block; }
-		.internal-links { position: absolute; top: calc(100% + 1px); left: -.8em; right: -.8em; display: none; flex-direction: column; gap: 0; padding: .55em .8em .8em; border-bottom: 1px solid var(--line); background: rgba(10, 12, 16, .97); box-shadow: var(--shadow); }
-		.internal-links.open { display: flex; }
-		.internal-links :global(a) { padding: .7em .65em; font-size: .9rem; }
+		.nav-links {
+			position: absolute;
+			top: calc(100% + 1px);
+			left: 0;
+			right: 0;
+			display: none;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0;
+			padding: .6em .7em .7em;
+			border-bottom: 1px solid var(--border);
+			background: var(--bg);
+			box-shadow: var(--shadow);
+		}
+		.nav-links.open { display: flex; }
+		.nav-links a {
+			padding: .7em .5em;
+			font-size: .95rem;
+			border-radius: 6px;
+		}
+		.nav-links a.active::after {
+			display: none;
+		}
+		.nav-divider {
+			width: 100%;
+			height: 1px;
+			margin: 0.4em 0;
+		}
+		.nav-cta {
+			text-align: center;
+		}
 	}
 </style>
 
 <script>
-	const accountLink = document.querySelector('[data-account-link]');
+	const accountLinks = document.querySelectorAll('[data-account-link]');
+	const profileLinks = document.querySelectorAll('[data-profile-link]');
 
-	if (accountLink) {
-		fetch('/api/auth/me').then((response) => {
-			if (response.ok) accountLink.remove();
-		}).catch(() => {
-			// Keep the sign-up link when auth state cannot be checked.
-		});
-	}
+	fetch('/api/auth/me').then((response) => {
+		if (response.ok) {
+			accountLinks.forEach((link) => {
+				link.textContent = 'Account';
+				link.classList.remove('nav-cta');
+				link.removeAttribute('data-account-link');
+			});
+			profileLinks.forEach((link) => {
+				link.removeAttribute('data-profile-link');
+			});
+		}
+	}).catch(() => {
+		// Keep the sign-up link when auth state cannot be checked.
+	});
 
 	const menuToggle = document.querySelector('.menu-toggle');
-	const siteLinks = document.querySelector('#site-links');
+	const navLinks = document.querySelector('#nav-links');
 	menuToggle?.addEventListener('click', () => {
 		const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
 		menuToggle.setAttribute('aria-expanded', String(!expanded));
-		siteLinks?.classList.toggle('open', !expanded);
+		navLinks?.classList.toggle('open', !expanded);
 	});
-	siteLinks?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+	navLinks?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
 		menuToggle?.setAttribute('aria-expanded', 'false');
-		siteLinks.classList.remove('open');
+		navLinks.classList.remove('open');
 	}));
 </script>

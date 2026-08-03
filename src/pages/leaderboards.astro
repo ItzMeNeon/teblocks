@@ -1,0 +1,339 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Leaderboards | ${SITE_TITLE}`} description="Top players and rankings across all game modes." />
+		<style>
+			.leaderboard-panel {
+				max-width: 880px;
+				margin: 3em auto 0;
+				padding: 2em;
+				border: 1px solid var(--line);
+				border-radius: var(--radius);
+				background: var(--panel);
+			}
+			.leaderboard-header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 1em;
+				margin-bottom: 1.5em;
+				flex-wrap: wrap;
+			}
+			.leaderboard-header h1 {
+				margin: 0;
+				font-size: 1.6rem;
+			}
+			.leaderboard-header-actions {
+				display: flex;
+				align-items: center;
+				gap: 0.6em;
+			}
+			.search-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4em;
+				padding: 0.5em 0.9em;
+				border: 1px solid var(--border);
+				border-radius: 6px;
+				background: transparent;
+				color: var(--text-dim);
+				font: 600 .82rem var(--font-ui);
+				text-decoration: none;
+				transition: all 0.15s ease;
+			}
+			.search-link:hover {
+				color: var(--text);
+				border-color: var(--border-bright);
+				background: var(--panel);
+			}
+			.mode-tabs {
+				display: flex;
+				gap: 0.4em;
+				padding: 0.3em;
+				border-radius: 8px;
+				background: var(--board);
+				border: 1px solid var(--line);
+			}
+			.mode-tab {
+				padding: 0.45em 0.9em;
+				border-radius: 6px;
+				border: 0;
+				background: transparent;
+				color: var(--text-dim);
+				font: 600 .82rem var(--font-ui);
+				cursor: pointer;
+				transition: all 0.15s ease;
+			}
+			.mode-tab:hover {
+				color: var(--text);
+				background: var(--panel);
+			}
+			.mode-tab[aria-selected="true"] {
+				background: var(--accent);
+				color: var(--bg);
+			}
+			.leaderboard-table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92rem;
+			}
+			.leaderboard-table thead th {
+				text-align: left;
+				padding: 0.75em 1em;
+				border-bottom: 1px solid var(--line);
+				color: var(--text-muted);
+				font-size: 0.72rem;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+			.leaderboard-table tbody tr {
+				border-bottom: 1px solid var(--line);
+				transition: background 0.15s ease;
+			}
+			.leaderboard-table tbody tr:hover {
+				background: var(--panel-hover);
+			}
+			.leaderboard-table tbody tr:last-child {
+				border-bottom: 0;
+			}
+			.leaderboard-table td {
+				padding: 0.9em 1em;
+				vertical-align: middle;
+			}
+			.rank-cell {
+				font-family: var(--font-mono);
+				font-weight: 700;
+				font-size: 0.9rem;
+				color: var(--text-muted);
+				width: 3.5rem;
+			}
+			.rank-cell.rank-1 { color: #ffd740; }
+			.rank-cell.rank-2 { color: #c0c0c0; }
+			.rank-cell.rank-3 { color: #cd7f32; }
+			.player-cell {
+				display: flex;
+				align-items: center;
+				gap: 0.75em;
+			}
+			.player-avatar {
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, var(--i), var(--j));
+				display: grid;
+				place-items: center;
+				color: var(--board);
+				font: 700 .78rem var(--font-ui);
+				flex-shrink: 0;
+				overflow: hidden;
+			}
+			.player-avatar img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			.player-name {
+				font-weight: 600;
+				color: var(--text);
+			}
+			.rank-badge {
+				display: inline-block;
+				padding: 0.2em 0.55em;
+				border-radius: 4px;
+				background: var(--bg-elevated);
+				border: 1px solid var(--border);
+				font-size: 0.72rem;
+				font-weight: 600;
+				color: var(--text-dim);
+			}
+			.stat-cell {
+				font-family: var(--font-mono);
+				font-size: 0.88rem;
+				color: var(--text-dim);
+			}
+			.stat-cell.positive { color: var(--s); }
+			.win-rate {
+				font-size: 0.82rem;
+				color: var(--text-muted);
+			}
+			.loading-state {
+				text-align: center;
+				padding: 3em;
+				color: var(--text-muted);
+			}
+			.empty-state {
+				text-align: center;
+				padding: 3em;
+				color: var(--text-muted);
+			}
+			.error-state {
+				text-align: center;
+				padding: 2em;
+				color: var(--danger);
+			}
+			.retry-btn {
+				margin-top: 1em;
+				padding: 0.6em 1.2em;
+				border: 1px solid var(--border);
+				border-radius: 6px;
+				background: transparent;
+				color: var(--text);
+				font: inherit;
+				font-weight: 600;
+				cursor: pointer;
+			}
+			.retry-btn:hover {
+				background: var(--panel-hover);
+				border-color: var(--border-bright);
+			}
+			@media (max-width: 640px) {
+				.leaderboard-panel { margin-top: 2em; padding: 1.25em; }
+				.leaderboard-table thead th,
+				.leaderboard-table td { padding: 0.7em 0.6em; }
+				.leaderboard-header { flex-direction: column; align-items: flex-start; }
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="leaderboard-panel" aria-labelledby="leaderboard-title">
+			<div class="leaderboard-header">
+				<h1 id="leaderboard-title">Leaderboards</h1>
+				<div class="leaderboard-header-actions">
+					<a class="search-link" href="/users">Find players</a>
+					<div class="mode-tabs" role="tablist" aria-label="Game mode">
+						<button class="mode-tab" role="tab" aria-selected="false" data-mode="ranked_1v1">Ranked 1v1</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-mode="quick_play">Quick Play</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-mode="battle_royale">Battle Royale</button>
+					</div>
+				</div>
+			</div>
+				<div id="leaderboard-content">
+					<div class="loading-state" role="status">Loading leaderboard...</div>
+				</div>
+			</section>
+		</main>
+		<Footer />
+		<script>
+			const content = document.getElementById('leaderboard-content');
+			const tabs = document.querySelectorAll('.mode-tab');
+			let currentMode = 'ranked_1v1';
+
+			function renderRow(entry, index) {
+				const rank = index + 1;
+				const rankClass = rank <= 3 ? `rank-${rank}` : '';
+				const avatarLetter = (entry.username || '?').slice(0, 1).toUpperCase();
+				const avatarUrl = entry.avatar_url;
+				const winRate = entry.win_rate != null ? `${entry.win_rate.toFixed(1)}%` : '--';
+				const rankName = entry.rank_name || entry.rank || 'Unranked';
+				return `
+					<tr>
+						<td class="rank-cell ${rankClass}">#${rank}</td>
+						<td>
+							<div class="player-cell">
+								<div class="player-avatar">
+									${avatarUrl ? `<img src="${avatarUrl}" alt="">` : avatarLetter}
+								</div>
+								<span class="player-name">${entry.username || 'Unknown'}</span>
+							</div>
+						</td>
+						<td><span class="rank-badge">${rankName}</span></td>
+						<td class="stat-cell">${entry.rating ?? '--'}</td>
+						<td class="stat-cell">${entry.matches_played ?? 0}</td>
+						<td class="stat-cell win-rate">${winRate}</td>
+					</tr>
+				`;
+			}
+
+			async function loadLeaderboard(mode, attempts = 2) {
+				content.innerHTML = '<div class="loading-state" role="status">Loading leaderboard...</div>';
+				for (let attempt = 0; attempt < attempts; attempt += 1) {
+					try {
+						const controller = new AbortController();
+						const timeout = window.setTimeout(() => controller.abort(), 8000);
+						const response = await fetch(`/api/leaderboards?mode=${encodeURIComponent(mode)}&limit=20`, { signal: controller.signal });
+						window.clearTimeout(timeout);
+						if (response.status === 404 || response.status === 405) {
+							content.innerHTML = `
+								<div class="empty-state">
+									<p>Leaderboards are not available yet.</p>
+									<p style="font-size:0.85rem;margin-top:0.5rem">Complete ranked matches to populate the rankings.</p>
+								</div>
+							`;
+							return;
+						}
+						if (!response.ok) {
+							const body = await response.json().catch(() => ({}));
+							content.innerHTML = `<div class="error-state"><p>${body.error || 'Failed to load leaderboard.'}</p></div>`;
+							return;
+						}
+						const data = await response.json();
+						const entries = data.entries || data.leaderboard || data;
+						if (!entries || !entries.length) {
+							content.innerHTML = `
+								<div class="empty-state">
+									<p>No rankings yet.</p>
+									<p style="font-size:0.85rem;margin-top:0.5rem">Be the first to compete in this mode.</p>
+								</div>
+							`;
+							return;
+						}
+						content.innerHTML = `
+							<div style="overflow-x:auto">
+								<table class="leaderboard-table">
+									<thead>
+										<tr>
+											<th>Rank</th>
+											<th>Player</th>
+											<th>Rank</th>
+											<th>Rating</th>
+											<th>Matches</th>
+											<th>Win rate</th>
+										</tr>
+									</thead>
+									<tbody>${entries.map((entry, i) => renderRow(entry, i)).join('')}</tbody>
+								</table>
+							</div>
+						`;
+						return;
+					} catch {
+						if (attempt === attempts - 1) {
+							content.innerHTML = `
+								<div class="error-state">
+									<p>Leaderboard is temporarily unavailable.</p>
+									<button class="retry-btn" type="button">Retry</button>
+								</div>
+							`;
+							content.querySelector('.retry-btn')?.addEventListener('click', () => loadLeaderboard(mode));
+						} else {
+							await new Promise((resolve) => window.setTimeout(resolve, 400 * (attempt + 1)));
+						}
+					}
+				}
+			}
+
+			tabs.forEach((tab) => {
+				tab.addEventListener('click', () => {
+					const mode = tab.dataset.mode;
+					if (!mode || mode === currentMode) return;
+					currentMode = mode;
+					tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+					loadLeaderboard(mode);
+				});
+			});
+
+			const initialTab = document.querySelector(`.mode-tab[data-mode="${currentMode}"]`);
+			if (initialTab) initialTab.setAttribute('aria-selected', 'true');
+			loadLeaderboard(currentMode);
+		</script>
+	</body>
+</html>

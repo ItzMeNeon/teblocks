@@ -1,0 +1,265 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Find players | ${SITE_TITLE}`} description="Search for TeBlocks players by username." />
+		<style>
+			.search-panel {
+				max-width: 720px;
+				margin: 3em auto 0;
+				padding: 2em;
+				border: 1px solid var(--line);
+				border-radius: var(--radius);
+				background: var(--panel);
+			}
+			.search-panel h1 {
+				margin: 0 0 0.3em;
+				font-size: 1.6rem;
+			}
+			.search-panel .subtitle {
+				margin: 0 0 1.5em;
+				color: var(--text-dim);
+				font-size: 0.95rem;
+			}
+			.search-form {
+				display: flex;
+				gap: 0.6em;
+			}
+			.search-input {
+				flex: 1;
+				padding: 0.75em 1em;
+				border: 1px solid var(--line);
+				border-radius: 6px;
+				background: var(--board);
+				color: var(--text);
+				font: inherit;
+				font-size: 1rem;
+			}
+			.search-input::placeholder { color: var(--text-muted); }
+			.search-input:focus {
+				outline: 2px solid var(--accent);
+				outline-offset: 2px;
+				border-color: var(--accent);
+			}
+			.search-btn {
+				padding: 0.75em 1.4em;
+				border: 0;
+				border-radius: 6px;
+				background: var(--accent);
+				color: var(--bg);
+				font: 700 0.95rem var(--font-ui);
+				cursor: pointer;
+				white-space: nowrap;
+			}
+			.search-btn:hover { background: var(--accent-dim); }
+			.search-btn:disabled { opacity: 0.6; cursor: wait; }
+			.results-area {
+				margin-top: 1.5em;
+			}
+			.result-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 0.5em;
+			}
+			.result-item {
+				display: flex;
+				align-items: center;
+				gap: 0.85em;
+				padding: 0.85em 1em;
+				border: 1px solid var(--line);
+				border-radius: 6px;
+				background: var(--bg-elevated);
+				text-decoration: none;
+				transition: border-color 0.15s ease, background 0.15s ease;
+			}
+			.result-item:hover {
+				border-color: var(--border-bright);
+				background: var(--panel-hover);
+			}
+			.result-avatar {
+				width: 36px;
+				height: 36px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, var(--i), var(--j));
+				display: grid;
+				place-items: center;
+				color: var(--board);
+				font: 700 .85rem var(--font-ui);
+				flex-shrink: 0;
+				overflow: hidden;
+			}
+			.result-avatar img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			.result-info {
+				flex: 1;
+				min-width: 0;
+			}
+			.result-name {
+				font-weight: 600;
+				color: var(--text);
+				font-size: 0.95rem;
+			}
+			.result-meta {
+				font-size: 0.8rem;
+				color: var(--text-muted);
+				margin-top: 0.15em;
+			}
+			.result-rank {
+				font-size: 0.75rem;
+				font-weight: 600;
+				padding: 0.25em 0.6em;
+				border-radius: 4px;
+				background: var(--bg);
+				border: 1px solid var(--border);
+				color: var(--text-dim);
+				flex-shrink: 0;
+			}
+			.state {
+				text-align: center;
+				padding: 2em;
+				color: var(--text-muted);
+			}
+			.state.error { color: var(--danger); }
+			.retry-btn {
+				margin-top: 1em;
+				padding: 0.6em 1.2em;
+				border: 1px solid var(--border);
+				border-radius: 6px;
+				background: transparent;
+				color: var(--text);
+				font: inherit;
+				font-weight: 600;
+				cursor: pointer;
+			}
+			.retry-btn:hover {
+				background: var(--panel-hover);
+				border-color: var(--border-bright);
+			}
+			@media (max-width: 640px) {
+				.search-panel { margin-top: 2em; padding: 1.25em; }
+				.search-form { flex-direction: column; }
+				.search-btn { width: 100%; }
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="search-panel" aria-labelledby="search-title">
+				<h1 id="search-title">Find players</h1>
+				<p class="subtitle">Search for TeBlocks players by username.</p>
+				<form class="search-form" id="search-form" role="search">
+					<label class="sr-only" for="search-query">Username</label>
+					<input
+						id="search-query"
+						class="search-input"
+						type="text"
+						placeholder="Enter a username..."
+						autocomplete="off"
+						minlength="2"
+						maxlength="24"
+						required
+					/>
+					<button class="search-btn" type="submit">Search</button>
+				</form>
+				<div class="results-area" id="results-area"></div>
+			</section>
+		</main>
+		<Footer />
+		<script>
+			const form = document.getElementById('search-form');
+			const input = document.getElementById('search-query');
+			const resultsArea = document.getElementById('results-area');
+
+			function avatarLetter(name) {
+				return (name || '?').slice(0, 1).toUpperCase();
+			}
+
+			function renderResults(entries) {
+				if (!entries || !entries.length) {
+					resultsArea.innerHTML = '<p class="state">No players found. Try a different search term.</p>';
+					return;
+				}
+				resultsArea.innerHTML = `
+					<ul class="result-list">
+						${entries.map((entry) => `
+							<li>
+								<a class="result-item" href="/profile/${entry.user_id}">
+									<div class="result-avatar">
+										${entry.avatar_url ? `<img src="${entry.avatar_url}" alt="">` : avatarLetter(entry.username)}
+									</div>
+									<div class="result-info">
+										<div class="result-name">${entry.username || 'Unknown'}</div>
+										<div class="result-meta">${entry.rank || 'Unranked'}${entry.rating != null ? ` · ${entry.rating} rating` : ''}</div>
+									</div>
+									<span class="result-rank">${entry.rank || '—'}</span>
+								</a>
+							</li>
+						`).join('')}
+					</ul>
+				`;
+			}
+
+			async function searchUsers(query, attempts = 2) {
+				resultsArea.innerHTML = '<p class="state" role="status">Searching...</p>';
+				for (let attempt = 0; attempt < attempts; attempt += 1) {
+					try {
+						const controller = new AbortController();
+						const timeout = window.setTimeout(() => controller.abort(), 8000);
+						const response = await fetch(`/api/users?q=${encodeURIComponent(query)}&limit=10`, { signal: controller.signal });
+						window.clearTimeout(timeout);
+						if (response.status === 404 || response.status === 405) {
+							resultsArea.innerHTML = '<p class="state">Player search is not available yet.</p>';
+							return;
+						}
+						if (!response.ok) {
+							const body = await response.json().catch(() => ({}));
+							resultsArea.innerHTML = `<p class="state error">${body.error || 'Search failed.'}</p>`;
+							return;
+						}
+						const data = await response.json();
+						const entries = data.entries || data.players || data.users || data;
+						renderResults(entries);
+						return;
+					} catch {
+						if (attempt === attempts - 1) {
+							resultsArea.innerHTML = `
+								<p class="state error">Search is temporarily unavailable.</p>
+								<button class="retry-btn" type="button">Retry</button>
+							`;
+							resultsArea.querySelector('.retry-btn')?.addEventListener('click', () => searchUsers(query));
+						} else {
+							await new Promise((resolve) => window.setTimeout(resolve, 400 * (attempt + 1)));
+						}
+					}
+				}
+			}
+
+			form.addEventListener('submit', (event) => {
+				event.preventDefault();
+				const query = input.value.trim();
+				if (!query || query.length < 2) return;
+				searchUsers(query);
+			});
+
+			const urlParams = new URLSearchParams(window.location.search);
+			const initialQuery = urlParams.get('q');
+			if (initialQuery) {
+				input.value = initialQuery;
+				searchUsers(initialQuery);
+			}
+		</script>
+	</body>
+</html>

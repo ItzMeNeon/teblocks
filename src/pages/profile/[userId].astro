@@ -1,0 +1,587 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+
+export const prerender = false;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Profile | ${SITE_TITLE}`} description="TeBlocks player profile." />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div id="profile-status" class="loading" role="status" aria-live="polite">Loading player profile...</div>
+			<section id="profile" class="profile" hidden aria-labelledby="profile-name">
+				<div id="profile-banner" class="profile-banner">
+					<img id="banner-image" alt="" hidden />
+					<div class="banner-blocks" aria-hidden="true">
+						<i></i><i></i><i></i><i></i>
+					</div>
+				</div>
+				<div class="profile-card">
+					<div class="identity-row">
+						<div class="avatar-wrap">
+							<div id="avatar" class="avatar">
+								<img id="avatar-image" alt="" hidden />
+								<span id="avatar-initial">?</span>
+							</div>
+						</div>
+						<div class="identity">
+							<p class="eyebrow" style="--accent-color: var(--i)">
+								<span class="presence"></span> Player profile
+							</p>
+							<h1 id="profile-name">Player</h1>
+							<p class="player-meta">
+								<span id="verification-badge" class="verification-badge">Unverified</span>
+								<span id="member-since"></span>
+							</p>
+						</div>
+						<div class="profile-actions" id="profile-actions"></div>
+					</div>
+					<div class="profile-grid">
+						<section class="about-card" aria-labelledby="about-title">
+							<div class="section-heading">
+								<p class="eyebrow" style="--accent-color: var(--t)">Player card</p>
+								<h2 id="about-title">About</h2>
+							</div>
+							<p id="player-bio" class="player-bio">No profile note yet.</p>
+							<form id="bio-form" class="bio-form" hidden>
+								<label class="sr-only" for="profile-bio">Profile note</label>
+								<input id="profile-bio" maxlength="120" placeholder="Add a short profile note" />
+								<button class="button compact" type="submit">Save</button>
+							</form>
+							<p id="bio-status" class="form-status" role="status"></p>
+						</section>
+						<section class="rank-card" aria-labelledby="rank-title">
+							<div class="section-heading">
+								<p class="eyebrow" style="--accent-color: var(--o)">Competitive</p>
+								<h2 id="rank-title">Rank progress</h2>
+							</div>
+							<div class="rank-display">
+								<span id="rank-glyph" class="rank-glyph">?</span>
+								<div>
+									<strong id="rank-name">Unranked</strong>
+									<p id="rank-copy">Play your first ranked match to place.</p>
+								</div>
+							</div>
+							<div class="progress-label">
+								<span>Placement status</span>
+								<span id="placement-count">0 / 5</span>
+							</div>
+							<div class="progress-track">
+								<span id="placement-progress"></span>
+							</div>
+						</section>
+					</div>
+					<section class="stats-section" aria-labelledby="stats-title">
+						<div class="section-heading">
+							<p class="eyebrow" style="--accent-color: var(--s)">Performance</p>
+							<h2 id="stats-title">Player statistics</h2>
+						</div>
+						<div class="stats-grid">
+							<div class="stat">
+								<span>Rating</span>
+								<strong id="stat-rating">--</strong>
+								<small id="rating-detail">No rating yet</small>
+							</div>
+							<div class="stat">
+								<span>Matches</span>
+								<strong id="stat-matches">0</strong>
+								<small id="matches-detail">Start your first game</small>
+							</div>
+							<div class="stat">
+								<span>Win rate</span>
+								<strong id="stat-win-rate">--</strong>
+								<small id="win-detail">Pending matches</small>
+							</div>
+							<div class="stat">
+								<span>Best streak</span>
+								<strong id="stat-streak">0</strong>
+								<small id="streak-detail">Build a run</small>
+							</div>
+						</div>
+					</section>
+					<div class="lower-grid">
+						<section class="activity-card" aria-labelledby="activity-title">
+							<div class="section-heading">
+								<p class="eyebrow" style="--accent-color: var(--z)">Timeline</p>
+								<h2 id="activity-title">Recent activity</h2>
+							</div>
+							<div id="match-list" class="match-list">
+								<p class="activity-empty">Loading recent matches...</p>
+							</div>
+						</section>
+						<div class="account-card" id="account-card">
+							<div class="account-card-header">
+								<span class="eyebrow" style="--accent-color: var(--j)">Player</span>
+								<strong id="account-card-title">Account details</strong>
+							</div>
+							<dl>
+								<div id="email-row">
+									<dt>Email</dt>
+									<dd id="profile-email"></dd>
+								</div>
+								<div>
+									<dt>Player ID</dt>
+									<dd>
+										<button id="copy-id" class="copy-id" type="button">
+											<span id="profile-id"></span> <b>Copy</b>
+										</button>
+									</dd>
+								</div>
+							</dl>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.loading { max-width: 920px; margin: 5em auto; color: var(--dim); }
+	.profile { max-width: 920px; margin: 3.5em auto 0; }
+	.profile-card, .stats-section, .activity-card, .account-card {
+		border: 1px solid var(--line);
+		background: linear-gradient(145deg, rgba(22,26,33,.98), rgba(14,17,23,.98));
+		box-shadow: var(--shadow);
+	}
+	.profile-card { border-radius: 0 0 var(--radius) var(--radius); }
+	.profile-banner {
+		position: relative;
+		height: 174px;
+		overflow: hidden;
+		border: 1px solid var(--line);
+		border-bottom: 0;
+		border-radius: var(--radius) var(--radius) 0 0;
+		background: radial-gradient(circle at 75% 20%, rgba(61,219,217,.27), transparent 30%), linear-gradient(112deg, #101925, #251a37 56%, #30200d);
+	}
+	.profile-banner img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.banner-blocks {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: end;
+		gap: 13px;
+		padding-left: 10%;
+		pointer-events: none;
+	}
+	.banner-blocks i {
+		width: 64px;
+		height: 64px;
+		margin-bottom: -24px;
+		transform: rotate(45deg);
+		border: 1px solid rgba(236,239,243,.17);
+		background: rgba(236,239,243,.08);
+	}
+	.banner-blocks i:nth-child(2) { height: 112px; background: rgba(176,132,245,.22); }
+	.banner-blocks i:nth-child(3) { height: 50px; background: rgba(245,213,71,.18); }
+	.banner-blocks i:nth-child(4) { height: 86px; background: rgba(111,224,122,.16); }
+	.media-control {
+		position: absolute;
+		z-index: 2;
+		display: inline-flex;
+		align-items: center;
+		cursor: pointer;
+		border: 1px solid rgba(236,239,243,.28);
+		border-radius: 7px;
+		background: rgba(10,12,16,.78);
+		color: var(--text);
+		font-size: .76rem;
+		font-weight: 700;
+		backdrop-filter: blur(6px);
+	}
+	.media-control input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+	}
+	.media-control span { padding: .55em .75em; }
+	.banner-control { right: 1em; top: 1em; }
+	.avatar-wrap { position: relative; flex: 0 0 auto; margin-top: -64px; }
+	.avatar {
+		width: 112px;
+		height: 112px;
+		display: grid;
+		place-items: center;
+		overflow: hidden;
+		border: 5px solid var(--panel);
+		border-radius: 22px;
+		background: linear-gradient(135deg, var(--i), var(--j));
+		color: var(--board);
+		box-shadow: 0 10px 26px rgba(0,0,0,.4);
+		font: 800 3.3rem "Atkinson", sans-serif;
+	}
+	.avatar img { width: 100%; height: 100%; object-fit: cover; }
+	.avatar-control { right: -8px; bottom: -6px; }
+	.identity-row { display: flex; align-items: flex-end; gap: 1.25em; padding: 0 2em 1.8em; }
+	.identity { flex: 1; min-width: 0; }
+	.identity .eyebrow { margin: 0 0 .25em; }
+	.presence {
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--s);
+		box-shadow: 0 0 0 3px rgba(111,224,122,.14);
+	}
+	.identity h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.4rem); overflow-wrap: anywhere; }
+	.player-meta { display: flex; gap: .7em; align-items: center; margin: .25em 0 0; font-size: .85rem; }
+	.verification-badge {
+		padding: .15em .55em;
+		border-radius: 20px;
+		background: rgba(245,99,122,.13);
+		color: var(--z);
+		font-weight: 700;
+	}
+	.verification-badge.verified { background: rgba(111,224,122,.13); color: var(--s); }
+	.profile-actions { display: flex; gap: .6em; }
+	.button {
+		padding: .72em 1em;
+		border: 1px solid var(--i);
+		border-radius: 7px;
+		background: var(--i);
+		color: var(--board);
+		font: 700 .86rem "Atkinson", sans-serif;
+		cursor: pointer;
+	}
+	.button:hover { filter: brightness(1.1); }
+	.button:disabled { opacity: .6; cursor: wait; }
+	.button.secondary { border-color: var(--line); background: transparent; color: var(--text); }
+	.button.danger { border-color: rgba(245,99,122,.35); background: transparent; color: var(--z); }
+	.button.compact { padding: .55em .8em; }
+	.profile-grid, .lower-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 1em; margin-top: 1em; }
+	.about-card, .rank-card { min-height: 185px; padding: 1.6em; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+	.section-heading .eyebrow { margin-bottom: .35em; }
+	.section-heading h2 { font-size: 1.35rem; }
+	.player-bio { min-height: 2.3em; margin: 1.1em 0 .8em; color: var(--text); }
+	.bio-form { display: flex; gap: .55em; }
+	.bio-form input {
+		min-width: 0;
+		flex: 1;
+		padding: .56em .7em;
+		border: 1px solid var(--line);
+		border-radius: 6px;
+		background: var(--board);
+		color: var(--text);
+		font: inherit;
+	}
+	.form-status { min-height: 1.1em; margin: .45em 0 0; color: var(--dim); font-size: .74rem; }
+	.rank-display { display: flex; gap: 1em; align-items: center; margin: 1.2em 0; }
+	.rank-glyph {
+		display: grid;
+		place-items: center;
+		width: 48px;
+		height: 48px;
+		border: 1px solid rgba(245,213,71,.35);
+		border-radius: 50%;
+		color: var(--o);
+		background: rgba(245,213,71,.07);
+		font: 800 1.5rem "Atkinson", sans-serif;
+	}
+	.rank-display strong { font-size: 1.1rem; }
+	.rank-display p { margin: 0; font-size: .8rem; }
+	.progress-label { display: flex; justify-content: space-between; color: var(--dim); font-size: .75rem; }
+	.progress-track {
+		height: 5px;
+		overflow: hidden;
+		border-radius: 99px;
+		background: var(--board);
+	}
+	.progress-track span { display: block; height: 100%; background: var(--o); transition: width .3s ease; }
+	.stats-section, .activity-card, .account-card { padding: 1.6em; border-radius: var(--radius); }
+	.stats-section { margin-top: 1em; }
+	.stats-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		margin-top: 1.2em;
+		border-top: 1px solid var(--line);
+		border-left: 1px solid var(--line);
+	}
+	.stat {
+		padding: 1em;
+		border-right: 1px solid var(--line);
+		border-bottom: 1px solid var(--line);
+	}
+	.stat span, .stat small { display: block; }
+	.stat span { color: var(--dim); font: .72rem ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
+	.stat strong { display: block; margin: .18em 0; font: 700 1.8rem "Atkinson", sans-serif; }
+	.stat small { color: var(--dim-2); font-size: .75rem; }
+	.match-list { margin-top: 1em; }
+	.match {
+		display: flex;
+		align-items: center;
+		gap: .8em;
+		padding: .75em 0;
+		border-top: 1px solid var(--line);
+	}
+	.result {
+		min-width: 42px;
+		text-align: center;
+		border-radius: 5px;
+		padding: .25em;
+		font: 700 .7rem "JetBrains Mono", monospace;
+	}
+	.result.win { background: rgba(111,224,122,.15); color: var(--s); }
+	.result.loss, .result.abandoned { background: rgba(245,99,122,.14); color: var(--z); }
+	.result.draw { background: rgba(245,213,71,.12); color: var(--o); }
+	.match strong, .match small { display: block; }
+	.match small { color: var(--dim); font-size: .75rem; }
+	.rating-change { margin-left: auto; font: 700 .9rem "JetBrains Mono", monospace; }
+	.rating-change.positive { color: var(--s); }
+	.rating-change.negative { color: var(--z); }
+	.activity-empty { margin: 1.3em 0 .2em; font-size: .86rem; }
+	.account-card { min-width: 0; }
+	.account-card-header {
+		display: flex;
+		flex-direction: column;
+		gap: .25em;
+		margin-bottom: 1em;
+	}
+	.account-card-header .eyebrow { display: block; }
+	.account-card-header strong { font: 600 1.15rem "Rubik", sans-serif; }
+	.account-card dl { margin: 1em 0 0; }
+	.account-card dl div { padding: .7em 0; border-top: 1px solid var(--line); }
+	dt { color: var(--dim-2); font: .7rem "JetBrains Mono", monospace; text-transform: uppercase; }
+	dd { margin: .15em 0 0; overflow-wrap: anywhere; color: var(--text); font-size: .85rem; }
+	.copy-id {
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--text);
+		cursor: pointer;
+		font: inherit;
+		text-align: left;
+	}
+	.copy-id b { color: var(--i); font-size: .77rem; }
+	@media (max-width: 720px) {
+		.profile { margin-top: 2em; }
+		.profile-banner { height: 135px; }
+		.identity-row { flex-wrap: wrap; padding: 0 1.15em 1.2em; }
+		.avatar { width: 88px; height: 88px; font-size: 2.5rem; }
+		.profile-actions { width: 100%; }
+		.profile-actions .button { flex: 1; }
+		.profile-grid, .lower-grid { grid-template-columns: 1fr; }
+		.stats-section, .activity-card, .account-card, .about-card, .rank-card { padding: 1.25em; }
+		.stats-grid { grid-template-columns: repeat(2, 1fr); }
+	}
+</style>
+
+<script>
+	const status = document.querySelector('#profile-status');
+	const profileEl = document.querySelector('#profile');
+	const bioForm = document.querySelector('#bio-form');
+	const bioInput = document.querySelector('#profile-bio');
+	const bioStatus = document.querySelector('#bio-status');
+	const matchList = document.querySelector('#match-list');
+	const profileActions = document.querySelector('#profile-actions');
+	const accountCardTitle = document.querySelector('#account-card-title');
+	const userId = window.location.pathname.replace('/profile/', '').replace('/', '') || '';
+
+	const text = (selector, value) => { document.querySelector(selector).textContent = value; };
+	const formatDate = (value) => value ? new Intl.DateTimeFormat(undefined, { month: 'short', year: 'numeric' }).format(new Date(value)) : '';
+	const setImage = (image, fallback, url, alt) => {
+		image.hidden = !url;
+		if (fallback) fallback.hidden = Boolean(url);
+		if (url) { image.src = url; image.alt = alt; }
+	};
+	async function copyText(value, button, label) {
+		try {
+			await navigator.clipboard.writeText(value);
+			const original = button.textContent;
+			button.textContent = label;
+			window.setTimeout(() => { button.textContent = original; }, 1600);
+		} catch {
+			window.prompt('Copy this value:', value);
+		}
+	}
+	function showRetry(message) {
+		status.innerHTML = '';
+		const copy = document.createElement('span');
+		copy.textContent = message;
+		const retry = document.createElement('button');
+		retry.className = 'button compact';
+		retry.type = 'button';
+		retry.textContent = 'Try again';
+		retry.addEventListener('click', loadProfile);
+		status.append(copy, retry);
+	}
+	async function request(path, options = {}, attempts = 3) {
+		for (let attempt = 0; attempt < attempts; attempt += 1) {
+			const controller = new AbortController();
+			const timeout = window.setTimeout(() => controller.abort(), 8000);
+			try {
+				const response = await fetch(path, { ...options, signal: controller.signal, cache: 'no-store' });
+				window.clearTimeout(timeout);
+				if (response.status >= 500 && attempt < attempts - 1) {
+					await new Promise((resolve) => window.setTimeout(resolve, 300 * (attempt + 1)));
+					continue;
+				}
+				return response;
+			} catch (error) {
+				window.clearTimeout(timeout);
+				if (attempt === attempts - 1) throw error;
+				await new Promise((resolve) => window.setTimeout(resolve, 300 * (attempt + 1)));
+			}
+		}
+		throw new Error('Request failed');
+	}
+	function renderMatches(matches) {
+		if (!matches?.length) {
+			matchList.innerHTML = '<p class="activity-empty">No completed matches yet.</p>';
+			return;
+		}
+		matchList.replaceChildren(...matches.map((match) => {
+			const item = document.createElement('article');
+			const change = Number(match.rating_change);
+			const mode = String(match.mode || 'match').replaceAll('_', ' ');
+			item.className = 'match';
+			item.innerHTML = `<span class="result ${match.result}">${match.result}</span><div><strong>${match.opponent?.username || mode}</strong><small>${mode} · ${new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(match.completed_at))}</small></div>${Number.isFinite(change) ? `<span class="rating-change ${change >= 0 ? 'positive' : 'negative'}">${change >= 0 ? '+' : ''}${change}</span>` : ''}`;
+			return item;
+		}));
+	}
+	async function loadMatches(targetUserId) {
+		try {
+			const endpoint = targetUserId ? `/api/profile/${encodeURIComponent(targetUserId)}/matches` : '/api/profile/matches?limit=8';
+			const response = await request(endpoint);
+			if (!response.ok) { renderMatches([]); return; }
+			renderMatches((await response.json()).matches);
+		} catch {
+			renderMatches([]);
+		}
+	}
+	async function uploadMedia(kind, input) {
+		const file = input.files?.[0];
+		if (!file) return;
+		if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+			bioStatus.textContent = 'Choose a PNG, JPEG, or WebP image under 5 MB.';
+			input.value = '';
+			return;
+		}
+		const form = new FormData();
+		form.append('file', file);
+		bioStatus.textContent = `Uploading ${kind}...`;
+		try {
+			const response = await request(`/api/profile/media/${kind}`, { method: 'POST', body: form }, 1);
+			const body = await response.json().catch(() => ({}));
+			if (!response.ok) {
+				bioStatus.textContent = body.error || `Unable to upload ${kind}.`;
+				return;
+			}
+			const url = body.url || body[`${kind}_url`];
+			if (!url) {
+				bioStatus.textContent = 'Upload completed but no image URL was returned.';
+				return;
+			}
+			const imageEl = document.querySelector(`#${kind}-image`);
+			const fallbackEl = document.querySelector(kind === 'avatar' ? '#avatar-initial' : '.banner-blocks');
+			setImage(imageEl, fallbackEl, url, kind === 'avatar' ? `${document.querySelector('#profile-name').textContent}'s avatar` : 'Profile banner');
+			bioStatus.textContent = `${kind[0].toUpperCase() + kind.slice(1)} updated.`;
+		} catch {
+			bioStatus.textContent = `The ${kind} upload timed out. Please try again.`;
+		}
+	}
+	async function loadProfile() {
+		const isOwnProfile = !userId;
+		const endpoint = isOwnProfile ? '/api/profile/me' : `/api/profile/${encodeURIComponent(userId)}`;
+		try {
+			const response = await request(endpoint);
+			if (response.status === 401) { window.location.replace('/login/'); return; }
+			const body = await response.json().catch(() => ({}));
+			if (!response.ok) {
+				if (response.status === 404) {
+					showRetry('Player not found.');
+				} else {
+					showRetry(body.error || 'Unable to load this profile.');
+				}
+				return;
+			}
+			const isOwn = isOwnProfile || body.is_own;
+			text('#profile-name', body.username);
+			text('#avatar-initial', (body.username || '?').slice(0, 1).toUpperCase());
+			text('#profile-id', body.user_id);
+			text('#member-since', body.created_at ? `Joined ${formatDate(body.created_at)}` : 'TeBlocks player');
+			const badge = document.querySelector('#verification-badge');
+			badge.textContent = body.email_verified ? 'Verified account' : 'Email not verified';
+			badge.classList.toggle('verified', Boolean(body.email_verified));
+			text('#player-bio', body.bio || 'No profile note yet.');
+			if (isOwn) {
+				bioInput.value = body.bio || '';
+				bioForm.hidden = false;
+				profileActions.innerHTML = '<button id="share-button" class="button secondary" type="button">Share</button><button id="logout-button" class="button danger" type="button">Log out</button>';
+				accountCardTitle.innerHTML = '<span class="eyebrow" style="--accent-color: var(--j)">Private</span><span>Account details</span>';
+				const emailRow = document.getElementById('email-row');
+				if (emailRow) emailRow.hidden = false;
+				const shareBtn = document.getElementById('share-button');
+				if (shareBtn) shareBtn.addEventListener('click', (event) => copyText(window.location.href, event.currentTarget, 'Link copied'));
+				const copyBtn = document.getElementById('copy-id');
+				if (copyBtn) copyBtn.addEventListener('click', () => copyText(body.user_id, copyBtn, 'Copied'));
+				const logoutBtn = document.getElementById('logout-button');
+				if (logoutBtn) logoutBtn.addEventListener('click', async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.assign('/'); });
+			} else {
+				bioForm.hidden = true;
+				profileActions.innerHTML = '';
+				accountCardTitle.innerHTML = '<span class="eyebrow" style="--accent-color: var(--j)">Public</span><span>Player info</span>';
+				const emailRow = document.getElementById('email-row');
+				if (emailRow) emailRow.hidden = true;
+			}
+			const ranked = body.ranked || {};
+			const stats = body.stats || {};
+			const placed = ranked.is_placed;
+			text('#rank-name', ranked.rank_division ? `${ranked.rank} ${ranked.rank_division}` : (ranked.rank || 'Unranked'));
+			text('#rank-glyph', placed ? (ranked.rank || '?').slice(0, 1).toUpperCase() : '?');
+			text('#rank-copy', placed ? `${ranked.rating} rating` : 'Play ranked matches to place.');
+			const played = ranked.placement_matches_played || 0;
+			const required = ranked.placement_matches_required || 5;
+			text('#placement-count', `${played} / ${required}`);
+			document.querySelector('#placement-progress').style.width = `${Math.min(100, played / required * 100)}%`;
+			text('#stat-rating', ranked.rating ?? '--');
+			text('#rating-detail', placed ? (ranked.rank || 'Ranked') : 'No rating yet');
+			text('#stat-matches', stats.matches_played || 0);
+			text('#matches-detail', `${stats.wins || 0} wins · ${stats.losses || 0} losses`);
+			text('#stat-win-rate', stats.win_rate == null ? '--' : `${stats.win_rate}%`);
+			text('#win-detail', stats.win_rate == null ? 'Pending matches' : 'All completed games');
+			text('#stat-streak', stats.best_win_streak || 0);
+			text('#streak-detail', stats.current_win_streak ? `${stats.current_win_streak} current` : 'Build a run');
+			status.hidden = true;
+			profileEl.hidden = false;
+			loadMatches(isOwn ? null : body.user_id);
+		} catch {
+			showRetry('Unable to load this profile.');
+		}
+	}
+	bioForm?.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		const button = bioForm.querySelector('button');
+		button.disabled = true;
+		bioStatus.textContent = 'Saving...';
+		try {
+			const response = await request('/api/profile/me', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bio: bioInput.value.trim() || null }) }, 1);
+			const body = await response.json().catch(() => ({}));
+			if (!response.ok) {
+				bioStatus.textContent = body.error || 'Unable to save your profile note.';
+				return;
+			}
+			text('#player-bio', body.bio || 'No profile note yet.');
+			bioStatus.textContent = 'Profile note saved.';
+		} catch {
+			bioStatus.textContent = 'The profile service timed out. Please try again.';
+		} finally {
+			button.disabled = false;
+		}
+	});
+	document.querySelector('#avatar-upload')?.addEventListener('change', (event) => uploadMedia('avatar', event.currentTarget));
+	document.querySelector('#banner-upload')?.addEventListener('change', (event) => uploadMedia('banner', event.currentTarget));
+	loadProfile();
+</script>

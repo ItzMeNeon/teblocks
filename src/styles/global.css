@@ -1,75 +1,64 @@
 /*
-  TeBlocks — osu!-inspired dark competitive theme.
-  Clean panels, vibrant accents, subtle glow, crisp typography.
+  TeBlocks — osu!-inspired dark theme.
+  Clean, flat panels, minimal glow, classic layout.
 */
-
 :root {
   /* Core neutrals */
-  --bg: #0d0d12;
-  --bg-elevated: #14141c;
-  --panel: #1a1a24;
-  --panel-hover: #1f1f2c;
-  --border: #2a2a3a;
-  --border-bright: #3a3a4f;
+  --bg: #0a0a0f;
+  --bg-elevated: #12121a;
+  --panel: #16161e;
+  --panel-hover: #1c1c26;
+  --border: #26263a;
+  --border-bright: #3a3a50;
 
   /* Text */
-  --text: #f0f0f5;
-  --text-dim: #9a9aa8;
-  --text-muted: #6a6a7a;
+  --text: #e8e8f0;
+  --text-dim: #8a8aa0;
+  --text-muted: #5a5a70;
 
-  /* Accent — primary brand (osu! cyan) */
-  --accent: #00e5ff;
-  --accent-dim: #00b8cc;
-  --accent-glow: rgba(0, 229, 255, 0.35);
-  --accent-glow-strong: rgba(0, 229, 255, 0.55);
+  /* Accent — osu! cyan, slightly muted */
+  --accent: #00b8d4;
+  --accent-dim: #0097a7;
+  --accent-glow: rgba(0, 184, 212, 0.15);
+  --accent-glow-strong: rgba(0, 184, 212, 0.3);
 
-  /* Tetromino accents (kept for game identity) */
-  --i: #00e5ff;
-  --o: #ffd700;
-  --t: #c084fc;
-  --s: #4ade80;
-  --z: #f87171;
-  --j: #60a5fa;
-  --l: #fb923c;
+  /* Tetromino accents */
+  --i: #00b8d4;
+  --o: #ffd740;
+  --t: #b388ff;
+  --s: #69f0ae;
+  --z: #ff5252;
+  --j: #448aff;
+  --l: #ffab40;
 
   /* Semantic */
-  --success: #4ade80;
-  --success-glow: rgba(74, 222, 128, 0.35);
-  --warning: #fbbf24;
-  --danger: #f87171;
-  --danger-glow: rgba(248, 113, 113, 0.35);
+  --success: #69f0ae;
+  --success-glow: rgba(105, 240, 174, 0.15);
+  --warning: #ffd740;
+  --danger: #ff5252;
+  --danger-glow: rgba(255, 82, 82, 0.15);
 
-  /* Layout */
-  --radius: 12px;
-  --radius-sm: 8px;
-  --radius-lg: 16px;
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 0 1px var(--border), 0 4px 24px rgba(0, 0, 0, 0.4);
-  --focus-ring: 0 0 0 3px var(--accent-glow);
+/* Layout aliases for backward compatibility */
+--line: var(--border);
+--dim: var(--text-dim);
+--dim-2: var(--text-muted);
+--board: var(--bg-elevated);
+  --radius-sm: 4px;
+  --radius-lg: 8px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 0 1px var(--border);
+  --focus-ring: 0 0 0 2px var(--accent-glow);
 
   /* Transitions */
   --transition-fast: 120ms ease-out;
   --transition-base: 200ms ease-out;
-  --transition-slow: 350ms ease-out;
+  --transition-slow: 300ms ease-out;
 
   /* Typography */
-  --font-ui: "Atkinson", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-display: "Atkinson", ui-sans-serif, system-ui, sans-serif;
-}
-
-@font-face {
-  font-family: "Atkinson";
-  src: url("/fonts/atkinson-regular.woff") format("woff");
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Atkinson";
-  src: url("/fonts/atkinson-bold.woff") format("woff");
-  font-weight: 700;
-  font-display: swap;
+  --font-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 * {
@@ -91,19 +80,6 @@ body {
   font-size: 16px;
   line-height: 1.65;
   min-height: 100vh;
-
-  /* Subtle animated grid background */
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 229, 255, 0.06), transparent),
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 100% 100%, 48px 48px, 48px 48px;
-  background-position: center top, center top, center top;
-  background-attachment: fixed;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body { background-attachment: scroll; }
 }
 
 /* Selection */
@@ -120,21 +96,21 @@ body {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* Layout */
 main {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 1.5rem 5rem;
+  padding: 0 1.5rem 4rem;
 }
 
 @media (max-width: 720px) {
-  main { padding: 0 1rem 4rem; }
+  main { padding: 0 1rem 3rem; }
 }
 
 /* Typography */
@@ -142,35 +118,33 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 700;
   color: var(--text);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   margin: 0 0 0.75rem;
 }
-h1 { font-size: clamp(2.5rem, 5.5vw, 4rem); }
-h2 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
-h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); }
 
 p { margin: 0 0 1rem; color: var(--text-dim); }
 
 a {
   color: var(--accent);
   text-decoration: none;
-  transition: color var(--transition-fast), text-shadow var(--transition-fast);
+  transition: color var(--transition-fast);
 }
-a:hover { color: var(--text); text-shadow: 0 0 8px var(--accent-glow); }
+a:hover { color: var(--text); }
 
 strong, b { font-weight: 700; color: var(--text); }
 
 code, .mono { font-family: var(--font-mono); }
 code {
-  padding: 0.15em 0.5em;
+  padding: 0.1em 0.4em;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
   font-size: 0.85em;
 }
-
-.mono { font-family: var(--font-mono); }
 
 /* Eyebrow / category label */
 .eyebrow {
@@ -178,20 +152,19 @@ code {
   align-items: center;
   gap: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 0.75rem;
 }
 .eyebrow::before {
   content: "";
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 2px;
   background: var(--accent);
-  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 /* Buttons */
@@ -200,27 +173,28 @@ code {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.85rem 1.5rem;
+  padding: 0.7rem 1.25rem;
   border: 1px solid transparent;
   border-radius: var(--radius);
   font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  background: transparent;
+  color: var(--text);
 }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  background: var(--accent);
   color: var(--bg);
-  border-color: transparent;
-  box-shadow: 0 4px 20px var(--accent-glow);
+  border-color: var(--accent);
 }
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 28px var(--accent-glow-strong);
+  background: var(--accent-dim);
+  border-color: var(--accent-dim);
 }
 .btn-primary:active:not(:disabled) { transform: translateY(0); }
 
@@ -250,24 +224,23 @@ code {
   border-color: var(--danger);
 }
 .btn-danger:hover:not(:disabled) {
-  background: rgba(248, 113, 113, 0.1);
-  box-shadow: 0 0 20px var(--danger-glow);
+  background: rgba(255, 82, 82, 0.08);
 }
 
-.btn-sm { padding: 0.6rem 1rem; font-size: 0.8rem; }
-.btn-lg { padding: 1rem 2rem; font-size: 1rem; }
+.btn-sm { padding: 0.45rem 0.85rem; font-size: 0.78rem; }
+.btn-lg { padding: 0.9rem 1.75rem; font-size: 0.95rem; }
 
 /* Inputs */
 .input {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.7rem 0.9rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg-elevated);
   color: var(--text);
   font-family: var(--font-ui);
-  font-size: 1rem;
-  transition: all var(--transition-fast);
+  font-size: 0.95rem;
+  transition: border-color var(--transition-fast);
 }
 .input::placeholder { color: var(--text-muted); }
 .input:hover { border-color: var(--border-bright); }
@@ -275,7 +248,6 @@ code {
   outline: none;
   border-color: var(--accent);
   box-shadow: var(--focus-ring);
-  background: var(--panel);
 }
 
 /* Cards / Panels */
@@ -283,12 +255,11 @@ code {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-glow);
 }
 .panel-hover:hover { border-color: var(--border-bright); }
 
 /* Section spacing */
-.section { padding: 5rem 0; }
+.section { padding: 3.5rem 0; }
 .section + .section { border-top: 1px solid var(--border); }
 
 /* Utility */
@@ -306,5 +277,5 @@ code {
 
 @media (max-width: 720px) {
   body { font-size: 15px; }
-  .section { padding: 3.5rem 0; }
+  .section { padding: 2.5rem 0; }
 }
