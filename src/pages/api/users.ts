@@ -3,18 +3,6 @@ import { apiFetch, json, forwardedResponse } from '../../lib/auth';
 
 export const prerender = false;
 
-async function withTimeout<T>(promise: Promise<T>, ms = 8000): Promise<T> {
-	let timeout: ReturnType<typeof setTimeout>;
-	const timeoutPromise = new Promise<never>((_, reject) => {
-		timeout = setTimeout(() => reject(new Error('Request timed out.')), ms);
-	});
-	try {
-		return await Promise.race([promise, timeoutPromise]);
-	} finally {
-		clearTimeout(timeout);
-	}
-}
-
 export const GET: APIRoute = async (context) => {
 	const query = new URL(context.request.url).searchParams;
 	const q = query.get('q')?.trim();
@@ -26,10 +14,17 @@ export const GET: APIRoute = async (context) => {
 	}
 	const limit = Math.min(20, Math.max(1, parseInt(query.get('limit') || '10', 10) || 10));
 	const search = new URLSearchParams({ q, limit: String(limit) });
-	const response = await withTimeout(apiFetch(context, `/users?${search}`), 8000);
-	if (response === null) return json({ error: 'User search is unavailable.' }, 503);
-	if (response === API_CONFIGURATION_ERROR) return json({ error: 'Site authentication is not configured.' }, 503);
-	if (response.status === 404 || response.status === 405) return json({ entries: [] }, 200);
-	if (response.status >= 500) return json({ error: 'User search failed.' }, response.status);
-	return forwardedResponse(response);
+	try {
+		const controller = new AbortController();
+		const timeout = setTimeout(() => controller.abort(), 8000);
+		const response = await apiFetch(context, `/users?${search}`, { signal: controller.signal });
+		clearTimeout(timeout);
+		if (response === null) return json({ error: 'User search is unavailable.' }, 503);
+		if (response === API_CONFIGURATION_ERROR) return json({ error: 'Site authentication is not configured.' }, 503);
+		if (response.status === 404 || response.status === 405) return json({ entries: [] }, 200);
+		if (response.status >= 500) return json({ error: 'User search failed.' }, response.status);
+		return forwardedResponse(response);
+	} catch {
+		return json({ error: 'User search is unavailable.' }, 503);
+	}
 };
