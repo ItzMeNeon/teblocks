@@ -23,7 +23,7 @@ import { SITE_TITLE } from '../consts';
 			(async function() {
 				const status = document.getElementById('profile-redirect');
 				try {
-					const response = await fetch('/api/auth/me');
+					const response = await fetch('/api/auth/me', { credentials: 'include' });
 					if (!response.ok) {
 						status.innerHTML = 'Please <a href="/login/">log in</a> to view your profile.';
 						return;

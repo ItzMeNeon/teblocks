@@ -218,7 +218,7 @@ import { SITE_TITLE } from '../consts';
 					try {
 						const controller = new AbortController();
 						const timeout = window.setTimeout(() => controller.abort(), 8000);
-						const response = await fetch(`/api/users?q=${encodeURIComponent(query)}&limit=10`, { signal: controller.signal });
+						const response = await fetch(`/api/users?q=${encodeURIComponent(query)}&limit=10`, { signal: controller.signal, credentials: 'include' });
 						window.clearTimeout(timeout);
 						if (response.status === 404 || response.status === 405) {
 							resultsArea.innerHTML = '<p class="state">Player search is not available yet.</p>';

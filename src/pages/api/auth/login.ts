@@ -32,6 +32,7 @@ export const POST: APIRoute = async (context) => {
 		path: '/',
 		sameSite: 'lax',
 		secure: context.url.protocol === 'https:',
+		maxAge: 30 * 24 * 60 * 60,
 	});
 	return json({ status: 'authenticated' });
 };

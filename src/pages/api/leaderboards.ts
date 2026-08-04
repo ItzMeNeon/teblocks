@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { apiFetch, json, forwardedResponse } from '../../lib/auth';
+import { apiFetch, json, forwardedResponse, API_CONFIGURATION_ERROR } from '../../lib/auth';
 
 export const prerender = false;
 

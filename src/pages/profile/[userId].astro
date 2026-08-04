@@ -510,6 +510,8 @@ export const prerender = false;
 				return;
 			}
 			const isOwn = isOwnProfile || body.is_own;
+			setImage(document.querySelector('#banner-image'), document.querySelector('.banner-blocks'), body.banner_url, 'Profile banner');
+			setImage(document.querySelector('#avatar-image'), document.querySelector('#avatar-initial'), body.avatar_url, `${body.username || 'Player'}'s avatar`);
 			text('#profile-name', body.username);
 			text('#avatar-initial', (body.username || '?').slice(0, 1).toUpperCase());
 			text('#profile-id', body.user_id);
