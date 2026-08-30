@@ -43,11 +43,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					>
 						<source src="/media/teblockspreview.webm" type="video/webm" />
 					</video>
-					<div class="hero-video-overlay">
-						<span class="hero-badge hero-badge-live"><span class="hero-pulse"></span>Live preview</span>
-						<span class="hero-badge hero-badge-tag">Ranked · Quick Play · Battle Royale</span>
-					</div>
-					<div class="hero-video-scrim"></div>
 				</div>
 			</div>
 			</section>
@@ -258,9 +253,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			.hero-video-frame {
 				position: relative;
 				z-index: 1;
-				width: 100%;
-				max-width: 460px;
-				aspect-ratio: 10 / 11;
+				width: auto;
+				max-width: 100%;
 				border-radius: 18px;
 				overflow: hidden;
 				border: 1px solid var(--border-bright);
@@ -268,65 +262,12 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				box-shadow: var(--shadow), 0 0 0 1px rgba(46, 230, 255, 0.08);
 			}
 			.hero-video {
-				position: absolute;
-				inset: 0;
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
 				display: block;
-			}
-			.hero-video-scrim {
-				position: absolute;
-				inset: 0;
-				pointer-events: none;
-				background:
-					linear-gradient(to top, rgba(6, 9, 18, 0.85) 0%, rgba(6, 9, 18, 0) 42%),
-					linear-gradient(120deg, rgba(46, 230, 255, 0.12), rgba(79, 140, 255, 0.05) 60%, transparent);
-				z-index: 1;
-			}
-			.hero-video-overlay {
-				position: absolute;
-				inset: auto 0 0 0;
-				z-index: 2;
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.5rem;
-				padding: 0.9rem;
-				pointer-events: none;
-			}
-			.hero-badge {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.4rem;
-				padding: 0.35rem 0.7rem;
-				border-radius: 999px;
-				font-family: var(--font-mono);
-				font-size: 0.68rem;
-				font-weight: 700;
-				letter-spacing: 0.04em;
-				text-transform: uppercase;
-				color: var(--text);
-				background: rgba(6, 9, 18, 0.6);
-				border: 1px solid var(--border);
-				backdrop-filter: blur(6px);
-			}
-			.hero-badge-live {
-				color: #03121a;
-				background: linear-gradient(135deg, var(--accent), var(--accent-2));
-				border-color: transparent;
-			}
-			.hero-pulse {
-				width: 8px;
-				height: 8px;
-				border-radius: 50%;
-				background: #03121a;
-				box-shadow: 0 0 0 0 rgba(3, 18, 26, 0.6);
-				animation: hero-pulse 1.8s ease-out infinite;
-			}
-			@keyframes hero-pulse {
-				0% { box-shadow: 0 0 0 0 rgba(3, 18, 26, 0.6); }
-				70% { box-shadow: 0 0 0 7px rgba(3, 18, 26, 0); }
-				100% { box-shadow: 0 0 0 0 rgba(3, 18, 26, 0); }
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 70vh;
+				object-fit: contain;
 			}
 			@media (max-width: 860px) {
 				.hero {
