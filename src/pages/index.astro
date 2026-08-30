@@ -16,13 +16,13 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			<!-- HERO -->
 			<section class="hero" id="play" aria-labelledby="hero-title">
 				<div class="hero-content">
-					<p class="eyebrow" style="--accent-color: var(--accent)">Server-authoritative · SRS · 7-bag</p>
-					<h1 id="hero-title">Stack fast.<br />Play fair.</h1>
-					<p class="lede">
-						A competitive block-stacking game built from the rules up — real SRS rotation and wall
-						kicks, a fair 7-bag randomizer, and a server that never trusts the client. Ranked,
-						quick play, and 100-player battle royale.
-					</p>
+				<p class="eyebrow" style="--accent-color: var(--accent)">Built on Techmino · Server-authoritative · SRS</p>
+				<h1 id="hero-title">Stack fast.<br />Play fair.</h1>
+				<p class="lede">
+					A competitive block-stacking game built on Techmino — real SRS rotation and wall kicks,
+					a fair 7-bag randomizer, and a server that never trusts the client. Climb the ranked
+					ladder, drop into Casual MP rooms, or chase records in Minigames.
+				</p>
 					<div class="hero-cta">
 						<a class="btn btn-primary btn-lg" href="#download">Download client</a>
 						<a class="btn btn-secondary btn-lg" href="/leaderboards/">Leaderboards</a>
@@ -83,23 +83,29 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			<section class="section" id="modes" aria-labelledby="modes-title">
 				<div class="section-header">
 					<p class="eyebrow" style="--accent-color: var(--accent-2)">Modes</p>
-					<h2 id="modes-title">Three ways to play</h2>
+					<h2 id="modes-title">Ways to play</h2>
 				</div>
 				<div class="mode-grid">
 					<article class="mode-card panel panel-hover">
 						<div class="mode-icon" style="--mode-color: var(--z)"></div>
 						<h3>Ranked</h3>
-						<p>Strict 1v1 matchmaking with rating stakes. Promotion, demotion, and a leaderboard that means something.</p>
+						<p>Strict 1v1 matchmaking with rating stakes. Climb the competitive ladder with promotion, demotion, and a leaderboard that means something.</p>
 						<span class="mode-tag">Competitive</span>
 					</article>
 					<article class="mode-card panel panel-hover">
 						<div class="mode-icon" style="--mode-color: var(--i)"></div>
-						<h3>Quick Play</h3>
-						<p>A persistent climbing lobby. Top out, jump back in instantly. Send garbage, take garbage, keep climbing.</p>
-						<span class="mode-tag">Endless</span>
+						<h3>Casual MP</h3>
+						<p>Make a room or jump into someone else's. Play with everyone — no rating pressure, just drop in and stack together.</p>
+						<span class="mode-tag">Multiplayer</span>
 					</article>
 					<article class="mode-card panel panel-hover">
 						<div class="mode-icon" style="--mode-color: var(--o)"></div>
+						<h3>Minigames</h3>
+						<p>Bite-sized challenges: 40 Lines, Sprint, and Missions. Chase your best time and high score at your own pace.</p>
+						<span class="mode-tag">Single-player</span>
+					</article>
+					<article class="mode-card panel panel-hover">
+						<div class="mode-icon" style="--mode-color: var(--t)"></div>
 						<h3>Battle Royale</h3>
 						<p>100 players, one board each, elimination targeting. Last stack standing wins.</p>
 						<span class="mode-tag">Survival</span>
@@ -394,7 +400,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			/* ---------- MODES ---------- */
 			.mode-grid {
 				display: grid;
-				grid-template-columns: repeat(3, 1fr);
+				grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 				gap: 1.5rem;
 			}
 			.mode-card {
