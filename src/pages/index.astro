@@ -59,6 +59,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 							</defs>
 							<path id="online-area" fill="url(#graph-fill)" stroke="none" d="" />
 							<polyline id="online-line" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="" />
+							<circle id="online-dot" r="4" fill="var(--accent)" cx="0" cy="0" />
 						</svg>
 					</div>
 					<div class="online-list panel" aria-label="Online players">
@@ -128,21 +129,36 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			const onlineCount = document.getElementById('online-count');
 			const onlineLine = document.getElementById('online-line');
 			const onlineArea = document.getElementById('online-area');
+			const onlineDot = document.getElementById('online-dot');
 			const onlineList = document.getElementById('online-players');
 
-			function renderGraph(history) {
-				if (!onlineLine || !onlineArea) return;
-				const data = (history && history.length ? history : [0, 0]);
-				const W = 600;
-				const H = 160;
-				const pad = 8;
+			const GRAPH_W = 600;
+			const GRAPH_H = 160;
+			const GRAPH_PAD = 10;
+			const GRAPH_MAX_POINTS = 120;
+			let graphHistory = [];
+
+			function renderGraph(series) {
+				if (!onlineLine || !onlineArea || !onlineDot) return;
+				const data = series && series.length ? series : [0];
 				const max = Math.max(5, ...data);
 				const min = Math.min(...data, 0);
-				const x = (i) => pad + (data.length === 1 ? 0 : (i / (data.length - 1)) * (W - 2 * pad));
-				const y = (v) => H - pad - ((v - min) / (max - min || 1)) * (H - 2 * pad);
+				const n = data.length;
+				const x = (i) => GRAPH_PAD + (n === 1 ? (GRAPH_W - 2 * GRAPH_PAD) / 2 : (i / (n - 1)) * (GRAPH_W - 2 * GRAPH_PAD));
+				const y = (v) => GRAPH_H - GRAPH_PAD - ((v - min) / ((max - min) || 1)) * (GRAPH_H - 2 * GRAPH_PAD);
 				const pts = data.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
-				onlineLine.setAttribute('points', pts);
-				onlineArea.setAttribute('d', `M ${x(0).toFixed(1)},${H - pad} L ${pts.replace(/ /g, ' L ')} L ${x(data.length - 1).toFixed(1)},${H - pad} Z`);
+				if (n === 1) {
+					const yy = y(data[0]).toFixed(1);
+					onlineLine.setAttribute('points', `${GRAPH_PAD},${yy} ${GRAPH_W - GRAPH_PAD},${yy}`);
+					onlineArea.setAttribute('d', `M ${GRAPH_PAD},${GRAPH_H - GRAPH_PAD} L ${GRAPH_PAD},${yy} L ${GRAPH_W - GRAPH_PAD},${yy} L ${GRAPH_W - GRAPH_PAD},${GRAPH_H - GRAPH_PAD} Z`);
+					onlineDot.setAttribute('cx', String((GRAPH_W) / 2));
+					onlineDot.setAttribute('cy', yy);
+				} else {
+					onlineLine.setAttribute('points', pts);
+					onlineArea.setAttribute('d', `M ${x(0).toFixed(1)},${GRAPH_H - GRAPH_PAD} L ${pts.replace(/ /g, ' L ')} L ${x(n - 1).toFixed(1)},${GRAPH_H - GRAPH_PAD} Z`);
+					onlineDot.setAttribute('cx', x(n - 1).toFixed(1));
+					onlineDot.setAttribute('cy', y(data[n - 1]).toFixed(1));
+				}
 			}
 
 			function renderList(players) {
@@ -172,8 +188,15 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					const res = await fetch('/api/players/online', { cache: 'no-store' });
 					if (!res.ok) return;
 					const body = await res.json();
-					if (onlineCount) onlineCount.textContent = (body.count ?? 0).toLocaleString();
-					renderGraph(body.history);
+					const count = body.count ?? 0;
+					if (onlineCount) onlineCount.textContent = count.toLocaleString();
+					const serverHistory = Array.isArray(body.history) ? body.history : [];
+					if (!graphHistory.length && serverHistory.length) {
+						graphHistory = serverHistory.slice(-GRAPH_MAX_POINTS);
+					}
+					graphHistory.push(count);
+					if (graphHistory.length > GRAPH_MAX_POINTS) graphHistory.shift();
+					renderGraph(graphHistory);
 					renderList(body.players);
 				} catch {
 					/* keep last good values */
