@@ -258,6 +258,7 @@ export const prerender = false;
 		height: 1px;
 		opacity: 0;
 	}
+	.media-control[hidden] { display: none; }
 	.media-control span { padding: .55em .75em; }
 	.banner-control { right: 1em; top: 1em; }
 	.avatar-wrap { position: relative; flex: 0 0 auto; margin-top: -64px; }
@@ -318,6 +319,7 @@ export const prerender = false;
 	.section-heading h2 { font-size: 1.35rem; }
 	.player-bio { min-height: 2.3em; margin: 1.1em 0 .8em; color: var(--text); }
 	.bio-form { display: flex; gap: .55em; }
+	.bio-form[hidden] { display: none; }
 	.bio-form input {
 		min-width: 0;
 		flex: 1;
