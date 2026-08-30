@@ -28,15 +28,28 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						<a class="btn btn-secondary btn-lg" href="/leaderboards/">Leaderboards</a>
 					</div>
 				</div>
-				<div class="hero-board" aria-hidden="true">
-					<div class="hero-glow"></div>
-					<canvas id="hero-canvas" tabindex="0" aria-label="Interactive TeBlocks preview. Use arrow keys to play."></canvas>
-					<div class="hero-hud">
-						<div class="hud-item"><span class="hud-label">Score</span><span id="hud-score" class="hud-value">0</span></div>
-						<div class="hud-item"><span class="hud-label">Lines</span><span id="hud-lines" class="hud-value">0</span></div>
-						<div class="hud-item"><span class="hud-label">Level</span><span id="hud-level" class="hud-value">1</span></div>
+			<div class="hero-board">
+				<div class="hero-glow"></div>
+				<div class="hero-video-frame">
+					<video
+						id="hero-video"
+						class="hero-video"
+						autoplay
+						loop
+						muted
+						playsinline
+						preload="auto"
+						aria-label="TeBlocks gameplay preview"
+					>
+						<source src="/media/teblockspreview.webm" type="video/webm" />
+					</video>
+					<div class="hero-video-overlay">
+						<span class="hero-badge hero-badge-live"><span class="hero-pulse"></span>Live preview</span>
+						<span class="hero-badge hero-badge-tag">Ranked · Quick Play · Battle Royale</span>
 					</div>
+					<div class="hero-video-scrim"></div>
 				</div>
+			</div>
 			</section>
 
 			<!-- PLAYERS ONLINE NOW -->
@@ -206,389 +219,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			setInterval(loadOnline, 15000);
 		</script>
 
-		<script>
-			// ----- Hero Tetris preview -----
-			const canvas = document.querySelector('#hero-canvas');
-			const context = canvas && canvas.getContext('2d');
-
-			if (canvas && context) {
-				const COLS = 10;
-				const ROWS = 20;
-				const HIDDEN_ROWS = 2;
-				const TOTAL_ROWS = ROWS + HIDDEN_ROWS;
-				const boardHost = canvas.closest('.hero-board');
-				const cellMax = 26;
-				const cell = Math.max(16, Math.min(cellMax, Math.floor(Math.min((boardHost?.clientWidth ?? 400) / COLS, (boardHost?.clientHeight ?? 420) / ROWS) - 2)));
-				const W = COLS * cell;
-				const H = ROWS * cell;
-				const dpr = window.devicePixelRatio || 1;
-				canvas.width = W * dpr;
-				canvas.height = H * dpr;
-				canvas.style.width = `${W}px`;
-				canvas.style.height = `${H}px`;
-				context.scale(dpr, dpr);
-
-				const COLORS = { I: '#2ee6ff', J: '#5b9dff', L: '#ffb15e', O: '#ffd166', S: '#5cf2a8', T: '#b388ff', Z: '#ff6b8b' };
-				const SHAPES = {
-					I: [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
-					J: [[1, 0, 0], [1, 1, 1], [0, 0, 0]],
-					L: [[0, 0, 1], [1, 1, 1], [0, 0, 0]],
-					O: [[1, 1], [1, 1]],
-					S: [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
-					T: [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
-					Z: [[1, 1, 0], [0, 1, 1], [0, 0, 0]],
-				};
-				const WALL_KICKS = {
-					normal: [[0, 0], [-1, 0], [1, 0], [0, -1], [-1, -1], [1, -1]],
-					I: [[0, 0], [-2, 0], [2, 0], [-1, 0], [1, 0], [0, -1], [0, -2]],
-				};
-				const POINTS = { single: 100, double: 300, triple: 500, tetris: 800, softDrop: 1, hardDrop: 2 };
-				const LINES_PER_LEVEL = 10;
-				const BASE_GRAVITY = 800;
-				const MIN_GRAVITY = 50;
-				const LOCK_DELAY = 500;
-				const MAX_LOCK_RESETS = 15;
-
-				let board = Array.from({ length: TOTAL_ROWS }, () => Array(COLS).fill(null));
-				let piece = null;
-				let nextType = null;
-				let pending = null;
-				let over = false;
-				let overSince = 0;
-				let bag = [];
-				let dropAcc = 0;
-				let score = 0;
-				let lines = 0;
-				let level = 1;
-				let lockTimer = 0;
-				let lockResets = 0;
-				let lastMoveTime = 0;
-				let softDropping = false;
-				let gameStarted = false;
-
-				const scoreEl = document.getElementById('hud-score');
-				const linesEl = document.getElementById('hud-lines');
-				const levelEl = document.getElementById('hud-level');
-
-				function updateHud() {
-					if (scoreEl) scoreEl.textContent = score.toLocaleString();
-					if (linesEl) linesEl.textContent = lines;
-					if (levelEl) levelEl.textContent = level;
-				}
-				function gravity() {
-					return Math.max(MIN_GRAVITY, BASE_GRAVITY - (level - 1) * 70);
-				}
-				function take() {
-					if (!bag.length) {
-						bag = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
-						for (let i = bag.length - 1; i > 0; i -= 1) {
-							const j = Math.floor(Math.random() * (i + 1));
-							[bag[i], bag[j]] = [bag[j], bag[i]];
-						}
-					}
-					return bag.pop();
-				}
-				function collides(matrix, row, col) {
-					for (let r = 0; r < matrix.length; r += 1) {
-						for (let c = 0; c < matrix[r].length; c += 1) {
-							if (!matrix[r][c]) continue;
-							const y = row + r;
-							const x = col + c;
-							if (x < 0 || x >= COLS || y >= TOTAL_ROWS) return true;
-							if (y >= 0 && board[y][x]) return true;
-						}
-					}
-					return false;
-				}
-				function spawn() {
-					const type = nextType || take();
-					nextType = take();
-					const matrix = SHAPES[type].map((row) => row.slice());
-					const col = Math.floor((COLS - matrix[0].length) / 2);
-					const row = type === 'I' ? -1 : 0;
-					piece = { type, matrix, row, col, rotation: 0 };
-					dropAcc = 0;
-					lockTimer = 0;
-					lockResets = 0;
-					if (collides(matrix, row, col)) {
-						over = true;
-						overSince = performance.now();
-					}
-				}
-				function rotate(dir) {
-					if (!piece || piece.type === 'O') return false;
-					const m = piece.matrix;
-					const rotated = m[0].map((_, c) => m.map((row) => row[c]));
-					if (dir === 1) rotated.forEach((row) => row.reverse());
-					else rotated.reverse();
-					const kicks = piece.type === 'I' ? WALL_KICKS.I : WALL_KICKS.normal;
-					for (const [dx, dy] of kicks) {
-						if (!collides(rotated, piece.row + dy, piece.col + dx)) {
-							piece.matrix = rotated;
-							piece.row += dy;
-							piece.col += dx;
-							piece.rotation = (piece.rotation + dir + 4) % 4;
-							return true;
-						}
-					}
-					return false;
-				}
-				function move(dx) {
-					if (!piece) return false;
-					if (!collides(piece.matrix, piece.row, piece.col + dx)) {
-						piece.col += dx;
-						if (lockResets < MAX_LOCK_RESETS) {
-							lockTimer = 0;
-							lockResets += 1;
-						}
-						return true;
-					}
-					return false;
-				}
-				function softDrop() {
-					if (!piece) return;
-					if (!collides(piece.matrix, piece.row + 1, piece.col)) {
-						piece.row += 1;
-						score += POINTS.softDrop;
-						dropAcc = 0;
-						lockTimer = 0;
-					}
-				}
-				function hardDrop() {
-					if (!piece) return;
-					let dropped = 0;
-					while (!collides(piece.matrix, piece.row + 1, piece.col)) {
-						piece.row += 1;
-						dropped += 1;
-					}
-					score += dropped * POINTS.hardDrop;
-					lock();
-				}
-				function merge() {
-					const color = COLORS[piece.type];
-					for (let r = 0; r < piece.matrix.length; r += 1) {
-						for (let c = 0; c < piece.matrix[r].length; c += 1) {
-							if (!piece.matrix[r][c]) continue;
-							const y = piece.row + r;
-							const x = piece.col + c;
-							if (y >= 0 && y < TOTAL_ROWS && x >= 0 && x < COLS) board[y][x] = color;
-						}
-					}
-				}
-				function lock() {
-					merge();
-					piece = null;
-					const full = [];
-					for (let r = 0; r < TOTAL_ROWS; r += 1) {
-						if (board[r].every(Boolean)) full.push(r);
-					}
-					if (full.length) {
-						pending = { rows: full, until: performance.now() + 280 };
-					} else {
-						spawn();
-					}
-				}
-				function resolveClear() {
-					const rows = pending.rows.sort((a, b) => a - b);
-					pending = null;
-					const cleared = rows.length;
-					for (const r of rows) board.splice(r, 1);
-					while (board.length < TOTAL_ROWS) board.unshift(Array(COLS).fill(null));
-					const points = [0, POINTS.single, POINTS.double, POINTS.triple, POINTS.tetris][Math.min(4, cleared)] || POINTS.tetris;
-					score += points * level;
-					lines += cleared;
-					const newLevel = Math.floor(lines / LINES_PER_LEVEL) + 1;
-					if (newLevel > level) level = newLevel;
-					updateHud();
-					spawn();
-				}
-				function ghostY() {
-					if (!piece) return 0;
-					let y = piece.row;
-					while (!collides(piece.matrix, y + 1, piece.col)) y += 1;
-					return y;
-				}
-				function drawBlock(x, y, color, alpha = 1) {
-					const px = x * cell;
-					const py = y * cell;
-					context.globalAlpha = alpha;
-					context.fillStyle = color;
-					context.fillRect(px, py, cell, cell);
-					context.fillStyle = 'rgba(255,255,255,0.22)';
-					context.fillRect(px, py, cell, 2);
-					context.fillRect(px, py, 2, cell);
-					context.fillStyle = 'rgba(0,0,0,0.3)';
-					context.fillRect(px + cell - 2, py, 2, cell);
-					context.fillRect(px, py + cell - 2, cell, 2);
-					context.globalAlpha = 1;
-				}
-				function drawPiece(matrix, row, col, color, alpha = 1) {
-					for (let r = 0; r < matrix.length; r += 1) {
-						for (let c = 0; c < matrix[r].length; c += 1) {
-							if (matrix[r][c]) drawBlock(col + c, row + r, color, alpha);
-						}
-					}
-				}
-				function draw(now) {
-					context.clearRect(0, 0, W, H);
-					context.strokeStyle = 'rgba(120,170,230,0.1)';
-					context.lineWidth = 1;
-					context.beginPath();
-					for (let c = 1; c < COLS; c += 1) {
-						context.moveTo(c * cell + 0.5, 0);
-						context.lineTo(c * cell + 0.5, H);
-					}
-					for (let r = 1; r < ROWS; r += 1) {
-						context.moveTo(0, r * cell + 0.5);
-						context.lineTo(W, r * cell + 0.5);
-					}
-					context.stroke();
-
-					for (let r = HIDDEN_ROWS; r < TOTAL_ROWS; r += 1) {
-						for (let c = 0; c < COLS; c += 1) {
-							if (board[r][c]) drawBlock(c, r, board[r][c]);
-						}
-					}
-					if (piece && !over) {
-						const gy = ghostY();
-						if (gy !== piece.row) drawPiece(piece.matrix, gy, piece.col, COLORS[piece.type], 0.18);
-						drawPiece(piece.matrix, piece.row, piece.col, COLORS[piece.type]);
-					}
-					if (pending) {
-						const progress = 1 - Math.max(0, (pending.until - now) / 280);
-						for (const r of pending.rows) {
-							const drawRow = r - HIDDEN_ROWS;
-							if (drawRow < 0 || drawRow >= ROWS) continue;
-							context.fillStyle = `rgba(240,245,255,${0.75 * progress})`;
-							context.fillRect(0, drawRow * cell, W, cell);
-						}
-					}
-					if (over) {
-						const progress = Math.min(1, (now - overSince) / 600);
-						context.fillStyle = `rgba(6,9,18,${0.55 + 0.45 * progress})`;
-						context.fillRect(0, 0, W, H);
-						context.fillStyle = `rgba(240,245,255,${progress})`;
-						context.font = '700 15px "JetBrains Mono", monospace';
-						context.textAlign = 'center';
-						context.textBaseline = 'middle';
-						context.fillText('TOP OUT', W / 2, H / 2);
-					}
-				}
-				const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-				function reset() {
-					board = Array.from({ length: TOTAL_ROWS }, () => Array(COLS).fill(null));
-					bag = [];
-					score = 0;
-					lines = 0;
-					level = 1;
-					over = false;
-					pending = null;
-					nextType = null;
-					updateHud();
-					spawn();
-				}
-				function handleKey(e) {
-					if (!gameStarted || over) return;
-					const key = e.key.toLowerCase();
-					if (['arrowleft', 'arrowright', 'arrowdown', 'arrowup', 'z', 'x', ' '].includes(key)) e.preventDefault();
-					if (over) return;
-					const now = performance.now();
-					switch (key) {
-						case 'arrowleft':
-							if (move(-1) && now - lastMoveTime < 170) lockTimer = 0;
-							lastMoveTime = now;
-							break;
-						case 'arrowright':
-							if (move(1) && now - lastMoveTime < 170) lockTimer = 0;
-							lastMoveTime = now;
-							break;
-						case 'arrowdown':
-							softDropping = true;
-							softDrop();
-							break;
-						case 'arrowup':
-						case 'x':
-							if (rotate(1) && now - lastMoveTime < 170) lockTimer = 0;
-							lastMoveTime = now;
-							break;
-						case 'z':
-							if (rotate(-1) && now - lastMoveTime < 170) lockTimer = 0;
-							lastMoveTime = now;
-							break;
-						case ' ':
-							hardDrop();
-							break;
-					}
-				}
-				canvas.addEventListener('keydown', handleKey);
-				canvas.addEventListener('click', () => {
-					if (!gameStarted || over) {
-						gameStarted = true;
-						reset();
-					}
-					canvas.focus();
-				});
-				window.addEventListener('keydown', handleKey);
-
-				if (reduceMotion) {
-					const scene = [
-						['O', 'O', null, 'S', 'S', null, 'L', 'L'],
-						['O', 'O', 'T', 'S', 'S', null, 'L', 'L'],
-						[null, 'T', 'T', 'T', null, null, null, null],
-					];
-					for (let r = 0; r < scene.length && r < ROWS; r += 1) {
-						for (let c = 0; c < scene[r].length && c < COLS; c += 1) {
-							if (scene[r][c]) board[r + HIDDEN_ROWS][c] = COLORS[scene[r][c]];
-						}
-					}
-					gameStarted = true;
-					draw(performance.now());
-				} else {
-					spawn();
-					updateHud();
-					let last = performance.now();
-					function frame(now) {
-						const dt = Math.min(100, now - last);
-						last = now;
-						if (!gameStarted) {
-							draw(now);
-							requestAnimationFrame(frame);
-							return;
-						}
-						if (over) {
-							if (now - overSince > 2000) reset();
-						} else if (pending) {
-							if (now >= pending.until) resolveClear();
-						} else if (piece) {
-							if (softDropping) {
-								softDrop();
-								softDropping = false;
-							} else {
-								dropAcc += dt;
-								const g = gravity();
-								while (dropAcc >= g) {
-									dropAcc -= g;
-									if (!collides(piece.matrix, piece.row + 1, piece.col)) {
-										piece.row += 1;
-									} else {
-										lockTimer += g;
-										if (lockTimer >= LOCK_DELAY) lock();
-										break;
-									}
-								}
-								if (piece && collides(piece.matrix, piece.row + 1, piece.col)) {
-									lockTimer += dt;
-									if (lockTimer >= LOCK_DELAY) lock();
-								}
-							}
-						}
-						draw(now);
-						requestAnimationFrame(frame);
-					}
-					requestAnimationFrame(frame);
-				}
-			}
-		</script>
 
 		<style>
 			/* ---------- HERO ---------- */
@@ -614,7 +244,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			}
 			.hero-board {
 				position: relative;
-				height: 440px;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -626,53 +255,78 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				filter: blur(20px);
 				z-index: 0;
 			}
-			#hero-canvas {
+			.hero-video-frame {
 				position: relative;
 				z-index: 1;
-				border-radius: 14px;
-				border: 1px solid var(--border);
+				width: 100%;
+				max-width: 460px;
+				aspect-ratio: 10 / 11;
+				border-radius: 18px;
+				overflow: hidden;
+				border: 1px solid var(--border-bright);
 				background: rgba(8, 12, 22, 0.7);
-				box-shadow: var(--shadow);
-				max-width: 100%;
-				height: auto;
-				outline: none;
+				box-shadow: var(--shadow), 0 0 0 1px rgba(46, 230, 255, 0.08);
 			}
-			#hero-canvas:focus-visible {
-				box-shadow: var(--focus-ring);
-			}
-			.hero-hud {
+			.hero-video {
 				position: absolute;
+				inset: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				display: block;
+			}
+			.hero-video-scrim {
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+				background:
+					linear-gradient(to top, rgba(6, 9, 18, 0.85) 0%, rgba(6, 9, 18, 0) 42%),
+					linear-gradient(120deg, rgba(46, 230, 255, 0.12), rgba(79, 140, 255, 0.05) 60%, transparent);
+				z-index: 1;
+			}
+			.hero-video-overlay {
+				position: absolute;
+				inset: auto 0 0 0;
 				z-index: 2;
-				top: 0.75rem;
-				right: 0.75rem;
 				display: flex;
-				flex-direction: column;
+				flex-wrap: wrap;
 				gap: 0.5rem;
+				padding: 0.9rem;
 				pointer-events: none;
 			}
-			.hud-item {
-				display: flex;
-				flex-direction: column;
-				align-items: flex-end;
-				gap: 0.15rem;
-				padding: 0.35rem 0.6rem;
-				border-radius: 8px;
-				background: rgba(6, 9, 18, 0.78);
-				border: 1px solid var(--border);
-				backdrop-filter: blur(4px);
-			}
-			.hud-label {
-				font-size: 0.6rem;
-				font-weight: 700;
-				letter-spacing: 0.12em;
-				text-transform: uppercase;
-				color: var(--text-muted);
-			}
-			.hud-value {
+			.hero-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4rem;
+				padding: 0.35rem 0.7rem;
+				border-radius: 999px;
 				font-family: var(--font-mono);
-				font-size: 0.95rem;
+				font-size: 0.68rem;
 				font-weight: 700;
+				letter-spacing: 0.04em;
+				text-transform: uppercase;
 				color: var(--text);
+				background: rgba(6, 9, 18, 0.6);
+				border: 1px solid var(--border);
+				backdrop-filter: blur(6px);
+			}
+			.hero-badge-live {
+				color: #03121a;
+				background: linear-gradient(135deg, var(--accent), var(--accent-2));
+				border-color: transparent;
+			}
+			.hero-pulse {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				background: #03121a;
+				box-shadow: 0 0 0 0 rgba(3, 18, 26, 0.6);
+				animation: hero-pulse 1.8s ease-out infinite;
+			}
+			@keyframes hero-pulse {
+				0% { box-shadow: 0 0 0 0 rgba(3, 18, 26, 0.6); }
+				70% { box-shadow: 0 0 0 7px rgba(3, 18, 26, 0); }
+				100% { box-shadow: 0 0 0 0 rgba(3, 18, 26, 0); }
 			}
 			@media (max-width: 860px) {
 				.hero {
@@ -683,7 +337,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				}
 				.hero-content { max-width: 100%; }
 				.hero-cta { justify-content: center; }
-				.hero-board { height: 340px; order: -1; }
+				.hero-board { order: -1; }
 			}
 
 			/* ---------- SECTION HEADER ---------- */
