@@ -24,15 +24,23 @@ export const prerender = false;
 					<div class="banner-blocks" aria-hidden="true">
 						<i></i><i></i><i></i><i></i>
 					</div>
+					<label id="banner-control" class="media-control banner-control" hidden>
+						<span>Change banner</span>
+						<input id="banner-upload" type="file" accept="image/png,image/jpeg,image/webp" />
+					</label>
 				</div>
 				<div class="profile-card">
 					<div class="identity-row">
-						<div class="avatar-wrap">
-							<div id="avatar" class="avatar">
-								<img id="avatar-image" alt="" hidden />
-								<span id="avatar-initial">?</span>
-							</div>
-						</div>
+				<div class="avatar-wrap">
+					<div id="avatar" class="avatar">
+						<img id="avatar-image" alt="" hidden />
+						<span id="avatar-initial">?</span>
+					</div>
+					<label id="avatar-control" class="media-control avatar-control" hidden>
+						<span>Change</span>
+						<input id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp" />
+					</label>
+				</div>
 						<div class="identity">
 							<p class="eyebrow" style="--accent-color: var(--i)">
 								<span class="presence"></span> Player profile
@@ -53,8 +61,8 @@ export const prerender = false;
 							</div>
 							<p id="player-bio" class="player-bio">No profile note yet.</p>
 							<form id="bio-form" class="bio-form" hidden>
-								<label class="sr-only" for="profile-bio">Profile note</label>
-								<input id="profile-bio" maxlength="120" placeholder="Add a short profile note" />
+							<label class="sr-only" for="profile-bio-input">Profile note</label>
+							<input id="profile-bio-input" maxlength="120" placeholder="Add a short profile note" />
 								<button class="button compact" type="submit">Save</button>
 							</form>
 							<p id="bio-status" class="form-status" role="status"></p>
@@ -384,12 +392,24 @@ export const prerender = false;
 	const status = document.querySelector('#profile-status');
 	const profileEl = document.querySelector('#profile');
 	const bioForm = document.querySelector('#bio-form');
-	const bioInput = document.querySelector('#profile-bio');
+	const bioInput = document.querySelector('#profile-bio-input');
 	const bioStatus = document.querySelector('#bio-status');
 	const matchList = document.querySelector('#match-list');
 	const profileActions = document.querySelector('#profile-actions');
 	const accountCardTitle = document.querySelector('#account-card-title');
 	const userId = window.location.pathname.replace('/profile/', '').replace('/', '') || '';
+
+	let editMode = false;
+	function setEditMode(on) {
+		editMode = on;
+		bioForm.hidden = !on;
+		const avatarControl = document.getElementById('avatar-control');
+		const bannerControl = document.getElementById('banner-control');
+		if (avatarControl) avatarControl.hidden = !on;
+		if (bannerControl) bannerControl.hidden = !on;
+		const editBtn = document.getElementById('edit-button');
+		if (editBtn) editBtn.textContent = on ? 'Done' : 'Edit profile';
+	}
 
 	const text = (selector, value) => { document.querySelector(selector).textContent = value; };
 	const formatDate = (value) => value ? new Intl.DateTimeFormat(undefined, { month: 'short', year: 'numeric' }).format(new Date(value)) : '';
@@ -522,8 +542,10 @@ export const prerender = false;
 			text('#player-bio', body.bio || 'No profile note yet.');
 			if (isOwn) {
 				bioInput.value = body.bio || '';
-				bioForm.hidden = false;
-				profileActions.innerHTML = '<button id="share-button" class="button secondary" type="button">Share</button><button id="logout-button" class="button danger" type="button">Log out</button>';
+				profileActions.innerHTML = '<button id="edit-button" class="button secondary" type="button">Edit profile</button><button id="share-button" class="button secondary" type="button">Share</button><button id="logout-button" class="button danger" type="button">Log out</button>';
+				setEditMode(false);
+				const editBtn = document.getElementById('edit-button');
+				if (editBtn) editBtn.addEventListener('click', () => setEditMode(!editMode));
 				accountCardTitle.innerHTML = '<span class="eyebrow" style="--accent-color: var(--j)">Private</span><span>Account details</span>';
 				const emailRow = document.getElementById('email-row');
 				if (emailRow) emailRow.hidden = false;
@@ -534,6 +556,8 @@ export const prerender = false;
 				const logoutBtn = document.getElementById('logout-button');
 				if (logoutBtn) logoutBtn.addEventListener('click', async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.assign('/'); });
 			} else {
+				document.getElementById('avatar-control').hidden = true;
+				document.getElementById('banner-control').hidden = true;
 				bioForm.hidden = true;
 				profileActions.innerHTML = '';
 				accountCardTitle.innerHTML = '<span class="eyebrow" style="--accent-color: var(--j)">Public</span><span>Player info</span>';
