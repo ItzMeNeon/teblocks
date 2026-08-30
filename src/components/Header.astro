@@ -12,13 +12,10 @@ import { SITE_TITLE } from '../consts';
 		</a>
 
 		<div class="nav-links" id="nav-links">
-			<a href="/#play">Play</a>
-			<a href="/#modes">Modes</a>
 			<a href="/leaderboards/">Leaderboards</a>
 			<a href="/users">Players</a>
 			<span class="nav-divider" aria-hidden="true"></span>
-			<a href="/account/" data-account-link class="nav-cta">Sign up</a>
-			<a href="/profile/" data-profile-link class="nav-pill">Profile</a>
+			<a href="/login/" id="nav-account" class="nav-cta" data-account-toggle>Account</a>
 		</div>
 
 		<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
@@ -186,18 +183,16 @@ import { SITE_TITLE } from '../consts';
 </style>
 
 <script>
-	const accountLinks = document.querySelectorAll('[data-account-link]');
-	const profileLinks = document.querySelectorAll('[data-profile-link]');
+	const accountToggle = document.getElementById('nav-account');
 
 	fetch('/api/auth/me', { credentials: 'include' })
 		.then((response) => {
-			if (response.ok) {
-				accountLinks.forEach((link) => {
-					link.textContent = 'Account';
-					link.classList.remove('nav-cta');
-					link.removeAttribute('data-account-link');
-				});
-				profileLinks.forEach((link) => link.removeAttribute('data-profile-link'));
+			if (response.ok && accountToggle) {
+				accountToggle.textContent = 'Profile';
+				accountToggle.setAttribute('href', '/profile/');
+				accountToggle.classList.remove('nav-cta');
+				accountToggle.classList.add('nav-pill');
+				accountToggle.removeAttribute('data-account-toggle');
 			}
 		})
 		.catch(() => {});

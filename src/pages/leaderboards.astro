@@ -11,16 +11,12 @@ import { SITE_TITLE } from '../consts';
 		<BaseHead title={`Leaderboards | ${SITE_TITLE}`} description="Top players and rankings across all game modes." />
 		<style>
 			.leaderboard-panel {
-				max-width: 880px;
+				max-width: 960px;
 				margin: 3em auto 0;
-				padding: 2em;
-				border: 1px solid var(--line);
-				border-radius: var(--radius);
-				background: var(--panel);
 			}
 			.leaderboard-header {
 				display: flex;
-				align-items: center;
+				align-items: flex-end;
 				justify-content: space-between;
 				gap: 1em;
 				margin-bottom: 1.5em;
@@ -28,56 +24,45 @@ import { SITE_TITLE } from '../consts';
 			}
 			.leaderboard-header h1 {
 				margin: 0;
-				font-size: 1.6rem;
+				font-size: clamp(1.8rem, 4vw, 2.6rem);
 			}
-			.leaderboard-header-actions {
-				display: flex;
-				align-items: center;
-				gap: 0.6em;
-			}
-			.search-link {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.4em;
-				padding: 0.5em 0.9em;
-				border: 1px solid var(--border);
-				border-radius: 6px;
-				background: transparent;
-				color: var(--text-dim);
-				font: 600 .82rem var(--font-ui);
-				text-decoration: none;
-				transition: all 0.15s ease;
-			}
-			.search-link:hover {
-				color: var(--text);
-				border-color: var(--border-bright);
-				background: var(--panel);
+			.leaderboard-header p {
+				margin: 0.4rem 0 0;
+				color: var(--text-muted);
 			}
 			.mode-tabs {
 				display: flex;
-				gap: 0.4em;
-				padding: 0.3em;
-				border-radius: 8px;
-				background: var(--board);
-				border: 1px solid var(--line);
+				gap: 0.35rem;
+				padding: 0.3rem;
+				border-radius: 999px;
+				background: rgba(255, 255, 255, 0.04);
+				border: 1px solid var(--border);
+				flex-wrap: wrap;
 			}
 			.mode-tab {
-				padding: 0.45em 0.9em;
-				border-radius: 6px;
+				padding: 0.5em 1em;
+				border-radius: 999px;
 				border: 0;
 				background: transparent;
 				color: var(--text-dim);
-				font: 600 .82rem var(--font-ui);
+				font: 700 0.82rem var(--font-ui);
 				cursor: pointer;
 				transition: all 0.15s ease;
 			}
 			.mode-tab:hover {
 				color: var(--text);
-				background: var(--panel);
 			}
 			.mode-tab[aria-selected="true"] {
-				background: var(--accent);
-				color: var(--bg);
+				background: linear-gradient(135deg, var(--accent), var(--accent-2));
+				color: #03121a;
+				box-shadow: 0 6px 18px var(--accent-glow);
+			}
+			.table-card {
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				background: var(--panel);
+				backdrop-filter: blur(8px);
+				overflow: hidden;
 			}
 			.leaderboard-table {
 				width: 100%;
@@ -86,16 +71,17 @@ import { SITE_TITLE } from '../consts';
 			}
 			.leaderboard-table thead th {
 				text-align: left;
-				padding: 0.75em 1em;
-				border-bottom: 1px solid var(--line);
+				padding: 0.85em 1.1em;
+				border-bottom: 1px solid var(--border);
 				color: var(--text-muted);
-				font-size: 0.72rem;
+				font-size: 0.7rem;
 				font-weight: 700;
 				letter-spacing: 0.08em;
 				text-transform: uppercase;
+				background: rgba(255, 255, 255, 0.02);
 			}
 			.leaderboard-table tbody tr {
-				border-bottom: 1px solid var(--line);
+				border-bottom: 1px solid var(--border);
 				transition: background 0.15s ease;
 			}
 			.leaderboard-table tbody tr:hover {
@@ -105,35 +91,36 @@ import { SITE_TITLE } from '../consts';
 				border-bottom: 0;
 			}
 			.leaderboard-table td {
-				padding: 0.9em 1em;
+				padding: 0.8em 1.1em;
 				vertical-align: middle;
 			}
 			.rank-cell {
 				font-family: var(--font-mono);
-				font-weight: 700;
-				font-size: 0.9rem;
+				font-weight: 800;
+				font-size: 0.95rem;
 				color: var(--text-muted);
 				width: 3.5rem;
 			}
-			.rank-cell.rank-1 { color: #ffd740; }
-			.rank-cell.rank-2 { color: #c0c0c0; }
-			.rank-cell.rank-3 { color: #cd7f32; }
+			.rank-cell.rank-1 { color: #ffd166; }
+			.rank-cell.rank-2 { color: #d6e2ff; }
+			.rank-cell.rank-3 { color: #ff9d6e; }
 			.player-cell {
 				display: flex;
 				align-items: center;
-				gap: 0.75em;
+				gap: 0.8em;
 			}
 			.player-avatar {
-				width: 32px;
-				height: 32px;
-				border-radius: 50%;
+				width: 38px;
+				height: 38px;
+				border-radius: 11px;
 				background: linear-gradient(135deg, var(--i), var(--j));
 				display: grid;
 				place-items: center;
-				color: var(--board);
-				font: 700 .78rem var(--font-ui);
+				color: #04121a;
+				font: 800 0.85rem var(--font-ui);
 				flex-shrink: 0;
 				overflow: hidden;
+				border: 1px solid rgba(255, 255, 255, 0.08);
 			}
 			.player-avatar img {
 				width: 100%;
@@ -141,63 +128,50 @@ import { SITE_TITLE } from '../consts';
 				object-fit: cover;
 			}
 			.player-name {
-				font-weight: 600;
+				font-weight: 700;
 				color: var(--text);
 			}
+			.player-name:hover { color: var(--accent); }
 			.rank-badge {
 				display: inline-block;
-				padding: 0.2em 0.55em;
-				border-radius: 4px;
-				background: var(--bg-elevated);
+				padding: 0.25em 0.6em;
+				border-radius: 6px;
+				background: rgba(255, 255, 255, 0.05);
 				border: 1px solid var(--border);
-				font-size: 0.72rem;
-				font-weight: 600;
+				font-size: 0.74rem;
+				font-weight: 700;
 				color: var(--text-dim);
 			}
 			.stat-cell {
 				font-family: var(--font-mono);
-				font-size: 0.88rem;
-				color: var(--text-dim);
+				font-size: 0.9rem;
+				color: var(--text);
+				font-weight: 700;
 			}
-			.stat-cell.positive { color: var(--s); }
-			.win-rate {
-				font-size: 0.82rem;
+			.stat-cell.dim { color: var(--text-dim); font-weight: 500; }
+			.win-rate { font-size: 0.82rem; color: var(--text-muted); }
+			.state {
+				text-align: center;
+				padding: 3em 1em;
 				color: var(--text-muted);
 			}
-			.loading-state {
-				text-align: center;
-				padding: 3em;
-				color: var(--text-muted);
-			}
-			.empty-state {
-				text-align: center;
-				padding: 3em;
-				color: var(--text-muted);
-			}
-			.error-state {
-				text-align: center;
-				padding: 2em;
-				color: var(--danger);
-			}
+			.state.error { color: var(--danger); }
 			.retry-btn {
 				margin-top: 1em;
 				padding: 0.6em 1.2em;
 				border: 1px solid var(--border);
-				border-radius: 6px;
+				border-radius: 8px;
 				background: transparent;
 				color: var(--text);
 				font: inherit;
 				font-weight: 600;
 				cursor: pointer;
 			}
-			.retry-btn:hover {
-				background: var(--panel-hover);
-				border-color: var(--border-bright);
-			}
+			.retry-btn:hover { background: var(--panel-hover); border-color: var(--border-bright); }
 			@media (max-width: 640px) {
-				.leaderboard-panel { margin-top: 2em; padding: 1.25em; }
+				.leaderboard-panel { margin-top: 2em; }
 				.leaderboard-table thead th,
-				.leaderboard-table td { padding: 0.7em 0.6em; }
+				.leaderboard-table td { padding: 0.7em 0.7em; }
 				.leaderboard-header { flex-direction: column; align-items: flex-start; }
 			}
 		</style>
@@ -206,114 +180,132 @@ import { SITE_TITLE } from '../consts';
 		<Header />
 		<main>
 			<section class="leaderboard-panel" aria-labelledby="leaderboard-title">
-			<div class="leaderboard-header">
-				<h1 id="leaderboard-title">Leaderboards</h1>
-				<div class="leaderboard-header-actions">
-					<a class="search-link" href="/users">Find players</a>
-					<div class="mode-tabs" role="tablist" aria-label="Game mode">
-						<button class="mode-tab" role="tab" aria-selected="false" data-mode="ranked_1v1">Ranked 1v1</button>
-						<button class="mode-tab" role="tab" aria-selected="false" data-mode="quick_play">Quick Play</button>
-						<button class="mode-tab" role="tab" aria-selected="false" data-mode="battle_royale">Battle Royale</button>
+				<div class="leaderboard-header">
+					<div>
+						<h1 id="leaderboard-title">Leaderboards</h1>
+						<p>Top players across every mode.</p>
+					</div>
+					<div class="mode-tabs" role="tablist" aria-label="Leaderboard category">
+						<button class="mode-tab" role="tab" aria-selected="true" data-category="ranked">Ranked Elo</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-category="lines40">40 Lines</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-category="sprint">Sprint</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-category="lonely">L Only</button>
 					</div>
 				</div>
-			</div>
-				<div id="leaderboard-content">
-					<div class="loading-state" role="status">Loading leaderboard...</div>
+				<div class="table-card">
+					<div id="leaderboard-content">
+						<div class="state" role="status">Loading leaderboard...</div>
+					</div>
 				</div>
 			</section>
 		</main>
 		<Footer />
+
 		<script>
 			const content = document.getElementById('leaderboard-content');
 			const tabs = document.querySelectorAll('.mode-tab');
-			let currentMode = 'ranked_1v1';
 
-			function renderRow(entry, index) {
+			const categories = {
+				ranked: { kind: 'ranked', url: '/api/leaderboards?mode=ranked_1v1' },
+				lines40: { kind: 'score', url: '/api/score/sprint_40l' },
+				sprint: { kind: 'score', url: '/api/score/sprint_100l' },
+				lonely: { kind: 'score', url: '/api/score/sprintLock' },
+			};
+
+			function avatarMarkup(entry) {
+				const letter = (entry.username || '?').slice(0, 1).toUpperCase();
+				const img = entry.avatar_url
+					? `<img src="${entry.avatar_url}" alt="">`
+					: letter;
+				return `<div class="player-avatar">${img}</div>`;
+			}
+
+			function playerName(entry) {
+				const id = entry.id || entry.user_id;
+				const name = entry.username || 'Unknown';
+				return id
+					? `<a class="player-name" href="/profile/${encodeURIComponent(id)}">${name}</a>`
+					: `<span class="player-name">${name}</span>`;
+			}
+
+			function renderRankedRow(entry, index) {
 				const rank = index + 1;
 				const rankClass = rank <= 3 ? `rank-${rank}` : '';
-				const avatarLetter = (entry.username || '?').slice(0, 1).toUpperCase();
-				const avatarUrl = entry.avatar_url;
-				const winRate = entry.win_rate != null ? `${entry.win_rate.toFixed(1)}%` : '--';
-				const rankName = entry.rank_name || entry.rank || 'Unranked';
+				const rankName = [entry.rank_name, entry.rank_division].filter(Boolean).join(' ') || 'Unranked';
+				const winRate = entry.win_rate != null ? `${Number(entry.win_rate).toFixed(1)}%` : '--';
 				return `
 					<tr>
 						<td class="rank-cell ${rankClass}">#${rank}</td>
-						<td>
-							<div class="player-cell">
-								<div class="player-avatar">
-									${avatarUrl ? `<img src="${avatarUrl}" alt="">` : avatarLetter}
-								</div>
-								<span class="player-name">${entry.username || 'Unknown'}</span>
-							</div>
-						</td>
+						<td><div class="player-cell">${avatarMarkup(entry)}${playerName(entry)}</div></td>
 						<td><span class="rank-badge">${rankName}</span></td>
 						<td class="stat-cell">${entry.rating ?? '--'}</td>
-						<td class="stat-cell">${entry.matches_played ?? 0}</td>
-						<td class="stat-cell win-rate">${winRate}</td>
-					</tr>
-				`;
+						<td class="stat-cell dim">${entry.matches_played ?? 0}</td>
+						<td class="win-rate">${winRate}</td>
+					</tr>`;
 			}
 
-			async function loadLeaderboard(mode, attempts = 2) {
-				content.innerHTML = '<div class="loading-state" role="status">Loading leaderboard...</div>';
+			function renderScoreRow(entry, index) {
+				const rank = index + 1;
+				const rankClass = rank <= 3 ? `rank-${rank}` : '';
+				const score = entry.score != null ? Number(entry.score).toLocaleString() : '--';
+				return `
+					<tr>
+						<td class="rank-cell ${rankClass}">#${rank}</td>
+						<td><div class="player-cell">${avatarMarkup(entry)}${playerName(entry)}</div></td>
+						<td class="stat-cell">${score}</td>
+					</tr>`;
+			}
+
+			function renderTable(kind, rows) {
+				const head =
+					kind === 'ranked'
+						? `<th>Rank</th><th>Player</th><th>Rank</th><th>Rating</th><th>Matches</th><th>Win rate</th>`
+						: `<th>Rank</th><th>Player</th><th>Score</th>`;
+				const body = rows
+					.map((entry, i) => (kind === 'ranked' ? renderRankedRow(entry, i) : renderScoreRow(entry, i)))
+					.join('');
+				return `
+					<table class="leaderboard-table">
+						<thead><tr>${head}</tr></thead>
+						<tbody>${body}</tbody>
+					</table>`;
+			}
+
+			async function loadLeaderboard(category, attempts = 2) {
+				const cfg = categories[category];
+				if (!cfg) return;
+				content.innerHTML = '<div class="state" role="status">Loading leaderboard...</div>';
 				for (let attempt = 0; attempt < attempts; attempt += 1) {
 					try {
 						const controller = new AbortController();
 						const timeout = window.setTimeout(() => controller.abort(), 8000);
-						const response = await fetch(`/api/leaderboards?mode=${encodeURIComponent(mode)}&limit=20`, { signal: controller.signal, credentials: 'include' });
+						const response = await fetch(cfg.url, { signal: controller.signal, credentials: 'include' });
 						window.clearTimeout(timeout);
 						if (response.status === 404 || response.status === 405) {
-							content.innerHTML = `
-								<div class="empty-state">
-									<p>Leaderboards are not available yet.</p>
-									<p style="font-size:0.85rem;margin-top:0.5rem">Complete ranked matches to populate the rankings.</p>
-								</div>
-							`;
+							content.innerHTML = '<div class="state">Leaderboards aren’t available for this mode yet.</div>';
 							return;
 						}
 						if (!response.ok) {
 							const body = await response.json().catch(() => ({}));
-							content.innerHTML = `<div class="error-state"><p>${body.error || 'Failed to load leaderboard.'}</p></div>`;
+							content.innerHTML = `<div class="state error">${body.error || 'Failed to load leaderboard.'}</div>`;
 							return;
 						}
 						const data = await response.json();
-						const entries = data.entries || data.leaderboard || data;
-						if (!entries || !entries.length) {
-							content.innerHTML = `
-								<div class="empty-state">
-									<p>No rankings yet.</p>
-									<p style="font-size:0.85rem;margin-top:0.5rem">Be the first to compete in this mode.</p>
-								</div>
-							`;
+						const rows = cfg.kind === 'ranked' ? (data.entries || []) : (data.data || []);
+						if (!rows.length) {
+							content.innerHTML = '<div class="state">No rankings yet — be the first to compete.</div>';
 							return;
 						}
-						content.innerHTML = `
-							<div style="overflow-x:auto">
-								<table class="leaderboard-table">
-									<thead>
-										<tr>
-											<th>Rank</th>
-											<th>Player</th>
-											<th>Rank</th>
-											<th>Rating</th>
-											<th>Matches</th>
-											<th>Win rate</th>
-										</tr>
-									</thead>
-									<tbody>${entries.map((entry, i) => renderRow(entry, i)).join('')}</tbody>
-								</table>
-							</div>
-						`;
+						content.innerHTML = renderTable(cfg.kind, rows);
 						return;
 					} catch {
 						if (attempt === attempts - 1) {
 							content.innerHTML = `
-								<div class="error-state">
+								<div class="state error">
 									<p>Leaderboard is temporarily unavailable.</p>
 									<button class="retry-btn" type="button">Retry</button>
-								</div>
-							`;
-							content.querySelector('.retry-btn')?.addEventListener('click', () => loadLeaderboard(mode));
+								</div>`;
+							content.querySelector('.retry-btn')?.addEventListener('click', () => loadLeaderboard(category));
 						} else {
 							await new Promise((resolve) => window.setTimeout(resolve, 400 * (attempt + 1)));
 						}
@@ -321,19 +313,18 @@ import { SITE_TITLE } from '../consts';
 				}
 			}
 
+			let current = 'ranked';
 			tabs.forEach((tab) => {
 				tab.addEventListener('click', () => {
-					const mode = tab.dataset.mode;
-					if (!mode || mode === currentMode) return;
-					currentMode = mode;
+					const category = tab.dataset.category;
+					if (!category || category === current) return;
+					current = category;
 					tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
-					loadLeaderboard(mode);
+					loadLeaderboard(category);
 				});
 			});
 
-			const initialTab = document.querySelector(`.mode-tab[data-mode="${currentMode}"]`);
-			if (initialTab) initialTab.setAttribute('aria-selected', 'true');
-			loadLeaderboard(currentMode);
+			loadLeaderboard(current);
 		</script>
 	</body>
 </html>
