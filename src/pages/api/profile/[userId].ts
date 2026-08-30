@@ -1,9 +1,11 @@
 import type { APIRoute } from 'astro';
 import {
 	apiFetch,
+	authenticatedApiFetch,
 	json,
 	forwardedResponse,
 	API_CONFIGURATION_ERROR,
+	SESSION_COOKIE,
 } from '../../../lib/auth';
 
 export const prerender = false;
@@ -19,13 +21,13 @@ export const GET: APIRoute = async (context) => {
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), 8000);
 
-		const response = await apiFetch(
-			context,
-			`/users/${encodeURIComponent(userId)}`,
-			{
-				signal: controller.signal,
-			}
-		);
+		// Forward the session only when present so the backend can flag the
+		// viewer as the owner (is_own) and reveal private fields. Logged-out
+		// visitors still hit the public endpoint and get a read-only profile.
+		const token = context.cookies.get(SESSION_COOKIE)?.value;
+		const response = token
+			? await authenticatedApiFetch(context, `/users/${encodeURIComponent(userId)}`, { signal: controller.signal })
+			: await apiFetch(context, `/users/${encodeURIComponent(userId)}`, { signal: controller.signal });
 
 		clearTimeout(timeout);
 
