@@ -453,6 +453,16 @@ export const prerender = false;
 		const editBtn = document.getElementById('edit-button');
 		if (editBtn) editBtn.textContent = on ? 'Done' : 'Edit profile';
 	}
+	function hideEditableControls() {
+		const avatarControl = document.getElementById('avatar-control');
+		const bannerControl = document.getElementById('banner-control');
+		if (avatarControl) avatarControl.hidden = true;
+		if (bannerControl) bannerControl.hidden = true;
+		if (bioForm) bioForm.hidden = true;
+		if (profileActions) profileActions.innerHTML = '';
+		const emailRow = document.getElementById('email-row');
+		if (emailRow) emailRow.hidden = true;
+	}
 
 	const text = (selector, value) => { document.querySelector(selector).textContent = value; };
 	const formatDate = (value) => value ? new Intl.DateTimeFormat(undefined, { month: 'short', year: 'numeric' }).format(new Date(value)) : '';
@@ -598,8 +608,15 @@ export const prerender = false;
 	async function loadProfile() {
 		const isOwnProfile = !userId;
 		const endpoint = isOwnProfile ? '/api/profile/me' : `/api/profile/${encodeURIComponent(userId)}`;
+		// Hide every editable control up front. They are only revealed once we have
+		// positive proof this profile belongs to the signed-in viewer, so a stale
+		// build, a failed request, or a misleading backend flag can never expose them.
+		hideEditableControls();
 		try {
-			const response = await request(endpoint);
+			const [response, meResponse] = await Promise.all([
+				request(endpoint),
+				request('/api/auth/me'),
+			]);
 			if (response.status === 401) { window.location.replace('/login/'); return; }
 			const body = await response.json().catch(() => ({}));
 			if (!response.ok) {
@@ -610,7 +627,18 @@ export const prerender = false;
 				}
 				return;
 			}
-			const isOwn = isOwnProfile || body.is_own;
+			// Determine ownership from two independent sources: the backend flag and a
+			// client-side comparison of the signed-in user id against the profile id.
+			let viewerId = null;
+			if (meResponse.ok) {
+				const me = await meResponse.json().catch(() => ({}));
+				viewerId = me.user_id || null;
+			}
+			const isOwn = Boolean(
+				isOwnProfile ||
+				body.is_own ||
+				(viewerId && body.user_id && viewerId === body.user_id)
+			);
 			setImage(document.querySelector('#banner-image'), document.querySelector('.banner-blocks'), body.banner_url, 'Profile banner');
 			setImage(document.querySelector('#avatar-image'), document.querySelector('#avatar-initial'), body.avatar_url, `${body.username || 'Player'}'s avatar`);
 			text('#profile-name', body.username);
