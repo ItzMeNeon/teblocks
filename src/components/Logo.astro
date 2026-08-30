@@ -1,0 +1,58 @@
+---
+interface Props {
+	size?: number;
+	class?: string;
+}
+const { size = 30, class: className = '' } = Astro.props;
+---
+
+<svg
+	class:list={['logo-mark', className]}
+	width={size}
+	height={size}
+	viewBox="0 0 32 32"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+	aria-hidden="true"
+>
+	<defs>
+		<linearGradient id="tb-grad" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#2ee6ff" />
+			<stop offset="1" stop-color="#4f8cff" />
+		</linearGradient>
+	</defs>
+	<g class="logo-wave">
+		<rect x="6" y="5" width="20" height="6" rx="2" fill="url(#tb-grad)" />
+		<rect x="13" y="11" width="6" height="6" rx="2" fill="url(#tb-grad)" opacity="0.92" />
+		<rect x="13" y="17" width="6" height="6" rx="2" fill="url(#tb-grad)" opacity="0.76" />
+		<rect x="6" y="23" width="6" height="6" rx="2" fill="url(#tb-grad)" opacity="0.6" />
+		<rect x="20" y="23" width="6" height="6" rx="2" fill="url(#tb-grad)" opacity="0.6" />
+	</g>
+</svg>
+
+<style>
+	.logo-mark {
+		display: block;
+		overflow: visible;
+		filter: drop-shadow(0 4px 12px rgba(46, 230, 255, 0.35));
+	}
+	.logo-wave {
+		transform-box: fill-box;
+		transform-origin: 50% 100%;
+		animation: logo-wave 3.2s ease-in-out infinite;
+	}
+	@keyframes logo-wave {
+		0%,
+		100% {
+			transform: rotate(-5deg) translateY(0);
+		}
+		50% {
+			transform: rotate(5deg) translateY(-1px);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.logo-wave {
+			animation: none;
+		}
+	}
+</style>
