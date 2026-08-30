@@ -116,6 +116,47 @@ export const prerender = false;
 							</div>
 						</div>
 					</section>
+
+					<section class="stats-section" aria-labelledby="casual-title">
+						<div class="section-heading">
+							<p class="eyebrow" style="--accent-color: var(--z)">Casual</p>
+							<h2 id="casual-title">Casual play</h2>
+						</div>
+						<div class="stats-grid">
+							<div class="stat">
+								<span>Total plays</span>
+								<strong id="casual-total">0</strong>
+								<small id="casual-total-detail">Casual games</small>
+							</div>
+							<div class="stat">
+								<span>Best 40L</span>
+								<strong id="casual-40l">--</strong>
+								<small>Fastest clear</small>
+							</div>
+							<div class="stat">
+								<span>Best L survival</span>
+								<strong id="casual-l">--</strong>
+								<small>Longest run</small>
+							</div>
+							<div class="stat">
+								<span>Best sprint</span>
+								<strong id="casual-sprint">--</strong>
+								<small>Top ultra score</small>
+							</div>
+						</div>
+					</section>
+
+					<section class="stats-section" aria-labelledby="rank-graph-title">
+						<div class="section-heading">
+							<p class="eyebrow" style="--accent-color: var(--j)">Rating</p>
+							<h2 id="rank-graph-title">Rank history · 30 days</h2>
+						</div>
+						<div class="rank-graph-card panel">
+							<svg id="rank-graph" viewBox="0 0 600 200" preserveAspectRatio="none" role="img" aria-label="Rating over the last 30 days"></svg>
+							<p id="rank-graph-empty" class="activity-empty">Play ranked matches to build your rating history.</p>
+						</div>
+					</section>
+
 					<div class="lower-grid">
 						<section class="activity-card" aria-labelledby="activity-title">
 							<div class="section-heading">
@@ -347,6 +388,8 @@ export const prerender = false;
 	.result.loss, .result.abandoned { background: rgba(245,99,122,.14); color: var(--z); }
 	.result.draw { background: rgba(245,213,71,.12); color: var(--o); }
 	.match strong, .match small { display: block; }
+	.rank-graph-card { padding: 1.2em; }
+	#rank-graph { width: 100%; height: 200px; display: block; }
 	.match small { color: var(--dim); font-size: .75rem; }
 	.rating-change { margin-left: auto; font: 700 .9rem "JetBrains Mono", monospace; }
 	.rating-change.positive { color: var(--s); }
@@ -413,6 +456,13 @@ export const prerender = false;
 
 	const text = (selector, value) => { document.querySelector(selector).textContent = value; };
 	const formatDate = (value) => value ? new Intl.DateTimeFormat(undefined, { month: 'short', year: 'numeric' }).format(new Date(value)) : '';
+	const formatDuration = (value) => {
+		if (value === null || value === undefined) return '--';
+		const total = Math.floor(Number(value));
+		const s = total % 60;
+		const m = Math.floor(total / 60);
+		return `${m}:${String(s).padStart(2, '0')}`;
+	};
 	const setImage = (image, fallback, url, alt) => {
 		image.hidden = !url;
 		if (fallback) fallback.hidden = Boolean(url);
@@ -481,6 +531,37 @@ export const prerender = false;
 			renderMatches((await response.json()).matches);
 		} catch {
 			renderMatches([]);
+		}
+	}
+	function renderRankGraph(points) {
+		const svg = document.getElementById('rank-graph');
+		const empty = document.getElementById('rank-graph-empty');
+		if (!svg || !empty) return;
+		if (!points?.length) { svg.hidden = true; empty.hidden = false; return; }
+		empty.hidden = true;
+		svg.hidden = false;
+		const W = 600, H = 200, pad = 12;
+		const ratings = points.map((p) => Number(p.rating));
+		let min = Math.min(...ratings);
+		let max = Math.max(...ratings);
+		if (min === max) { min -= 50; max += 50; }
+		const times = points.map((p) => new Date(p.recorded_at).getTime());
+		let tMin = Math.min(...times);
+		let tMax = Math.max(...times);
+		if (tMin === tMax) { tMin -= 1; tMax += 1; }
+		const x = (t) => pad + ((t - tMin) / (tMax - tMin)) * (W - 2 * pad);
+		const y = (r) => H - pad - ((r - min) / (max - min)) * (H - 2 * pad);
+		const coords = points.map((p) => `${x(new Date(p.recorded_at).getTime()).toFixed(1)},${y(Number(p.rating)).toFixed(1)}`).join(' ');
+		svg.innerHTML = `<polyline points="${coords}" fill="none" stroke="var(--i)" stroke-width="2" stroke-linejoin="round" />`;
+	}
+	async function loadRatingHistory(targetUserId) {
+		try {
+			const endpoint = targetUserId ? `/api/profile/${encodeURIComponent(targetUserId)}/rating-history?days=30` : '/api/profile/rating-history?days=30';
+			const response = await request(endpoint);
+			if (!response.ok) { renderRankGraph([]); return; }
+			renderRankGraph((await response.json()).points);
+		} catch {
+			renderRankGraph([]);
 		}
 	}
 	async function uploadMedia(kind, input) {
@@ -582,9 +663,17 @@ export const prerender = false;
 			text('#win-detail', stats.win_rate == null ? 'Pending matches' : 'All completed games');
 			text('#stat-streak', stats.best_win_streak || 0);
 			text('#streak-detail', stats.current_win_streak ? `${stats.current_win_streak} current` : 'Build a run');
+
+			const casual = body.casual || {};
+			text('#casual-total', casual.total_plays || 0);
+			text('#casual-40l', formatDuration(casual.best_40l_time));
+			text('#casual-l', formatDuration(casual.best_l_survival));
+			text('#casual-sprint', casual.best_sprint_score != null ? Number(casual.best_sprint_score).toLocaleString() : '--');
+
 			status.hidden = true;
 			profileEl.hidden = false;
 			loadMatches(isOwn ? null : body.user_id);
+			loadRatingHistory(isOwn ? null : body.user_id);
 		} catch {
 			showRetry('Unable to load this profile.');
 		}
