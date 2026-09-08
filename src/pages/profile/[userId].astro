@@ -637,7 +637,7 @@ export const prerender = false;
 	}
 	async function loadMatches(targetUserId) {
 		try {
-			const endpoint = targetUserId ? `https://backend.teblocks.my.id/api/profile/${encodeURIComponent(targetUserId)}/matches` : 'https://backend.teblocks.my.id/api/profile/matches?limit=8';
+			const endpoint = targetUserId ? `https://backend.teblocks.my.id/users/${encodeURIComponent(targetUserId)}/matches` : 'https://backend.teblocks.my.id/profile/me/matches?limit=8';
 			const response = await request(endpoint);
 			if (!response.ok) { renderMatches([]); return; }
 			renderMatches((await response.json()).matches);
@@ -788,7 +788,7 @@ export const prerender = false;
 	}
 	async function loadRatingHistory(targetUserId) {
 		try {
-			const endpoint = targetUserId ? `https://backend.teblocks.my.id/api/profile/${encodeURIComponent(targetUserId)}/rating-history?days=30` : 'https://backend.teblocks.my.id/api/profile/rating-history?days=30';
+			const endpoint = targetUserId ? `https://backend.teblocks.my.id/users/${encodeURIComponent(targetUserId)}/rating-history?days=30` : 'https://backend.teblocks.my.id/profile/me/rating-history?days=30';
 			const response = await request(endpoint);
 			if (!response.ok) { renderRankGraph([]); return; }
 			renderRankGraph((await response.json()).points);
@@ -808,7 +808,7 @@ export const prerender = false;
 		form.append('file', file);
 		bioStatus.textContent = `Uploading ${kind}...`;
 		try {
-			const response = await request(`https://backend.teblocks.my.id/api/profile/media/${kind}`, { method: 'POST', body: form }, 1);
+			const response = await request(`https://backend.teblocks.my.id/profile/me/${kind}`, { method: 'POST', body: form }, 1);
 			const body = await response.json().catch(() => ({}));
 			if (!response.ok) {
 				bioStatus.textContent = body.error || `Unable to upload ${kind}.`;
@@ -829,7 +829,7 @@ export const prerender = false;
 	}
 	async function loadProfile() {
 		const isOwnProfile = !userId;
-		const endpoint = isOwnProfile ? 'https://backend.teblocks.my.id/api/profile/me' : `https://backend.teblocks.my.id/api/profile/${encodeURIComponent(userId)}`;
+		const endpoint = isOwnProfile ? 'https://backend.teblocks.my.id/profile/me' : `https://backend.teblocks.my.id/users/${encodeURIComponent(userId)}`;
 		// Hide every editable control up front. They are only revealed once we have
 		// positive proof this profile belongs to the signed-in viewer, so a stale
 		// build, a failed request, or a misleading backend flag can never expose them.
@@ -929,7 +929,7 @@ export const prerender = false;
 		button.disabled = true;
 		bioStatus.textContent = 'Saving...';
 		try {
-			const response = await request('https://backend.teblocks.my.id/api/profile/me', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bio: bioInput.value.trim() || null }) }, 1);
+			const response = await request('https://backend.teblocks.my.id/profile/me', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bio: bioInput.value.trim() || null }) }, 1);
 			const body = await response.json().catch(() => ({}));
 			if (!response.ok) {
 				bioStatus.textContent = body.error || 'Unable to save your profile note.';
