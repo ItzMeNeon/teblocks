@@ -70,7 +70,7 @@ export const prerender = false;
 						<section class="rank-card" aria-labelledby="rank-title">
 							<div class="section-heading">
 								<p class="eyebrow" style="--accent-color: var(--o)">Competitive</p>
-								<h2 id="rank-title">Rank progress</h2>
+								<h2 id="rank-title">Rank</h2>
 							</div>
 							<div class="rank-display">
 								<span id="rank-glyph" class="rank-glyph">?</span>
@@ -78,13 +78,6 @@ export const prerender = false;
 									<strong id="rank-name">Unranked</strong>
 									<p id="rank-copy">Play your first ranked match to place.</p>
 								</div>
-							</div>
-							<div class="progress-label">
-								<span>Placement status</span>
-								<span id="placement-count">0 / 5</span>
-							</div>
-							<div class="progress-track">
-								<span id="placement-progress"></span>
 							</div>
 						</section>
 					</div>
@@ -153,6 +146,7 @@ export const prerender = false;
 						</div>
 						<div class="rank-graph-card panel">
 							<svg id="rank-graph" viewBox="0 0 600 200" preserveAspectRatio="none" role="img" aria-label="Rating over the last 30 days"></svg>
+							<div id="rank-graph-tooltip" class="graph-tooltip" hidden></div>
 							<p id="rank-graph-empty" class="activity-empty">Play ranked matches to build your rating history.</p>
 						</div>
 					</section>
@@ -173,10 +167,6 @@ export const prerender = false;
 								<strong id="account-card-title">Account details</strong>
 							</div>
 							<dl>
-								<div id="email-row">
-									<dt>Email</dt>
-									<dd id="profile-email"></dd>
-								</div>
 								<div>
 									<dt>Player ID</dt>
 									<dd>
@@ -321,24 +311,31 @@ export const prerender = false;
 	.rank-glyph {
 		display: grid;
 		place-items: center;
-		width: 48px;
-		height: 48px;
-		border: 1px solid rgba(245,213,71,.35);
+		width: 52px;
+		height: 52px;
 		border-radius: 50%;
-		color: var(--o);
-		background: rgba(245,213,71,.07);
-		font: 800 1.5rem "Atkinson", sans-serif;
+		font: 800 1.6rem "Atkinson", sans-serif;
+		transition: color .2s ease, border-color .2s ease, background .2s ease;
 	}
-	.rank-display strong { font-size: 1.1rem; }
+	.rank-glyph.tier-bronze     { color: #ff9f73; border-color: rgba(205,127,50,.35);  background: rgba(205,127,50,.10); }
+	.rank-glyph.tier-silver     { color: #e0e0e0; border-color: rgba(192,192,192,.35); background: rgba(192,192,192,.10); }
+	.rank-glyph.tier-gold       { color: #ffd700; border-color: rgba(255,215,0,.35);   background: rgba(255,215,0,.10); }
+	.rank-glyph.tier-platinum   { color: #4ec9b0; border-color: rgba(78,201,176,.35);  background: rgba(78,201,176,.10); }
+	.rank-glyph.tier-diamond    { color: #b388ff; border-color: rgba(179,136,255,.35); background: rgba(179,136,255,.10); }
+	.rank-glyph.tier-master     { color: #ff6b8b; border-color: rgba(255,107,139,.35); background: rgba(255,107,139,.10); }
+	.rank-glyph.tier-grandmaster{ color: #ff9d6e; border-color: rgba(255,157,110,.35); background: rgba(255,157,110,.10); }
+	.rank-name {
+		font-size: 1.15rem;
+		transition: color .2s ease;
+	}
+	.rank-name.tier-bronze     { color: #ff9f73; }
+	.rank-name.tier-silver     { color: #e0e0e0; }
+	.rank-name.tier-gold       { color: #ffd700; }
+	.rank-name.tier-platinum   { color: #4ec9b0; }
+	.rank-name.tier-diamond    { color: #b388ff; }
+	.rank-name.tier-master     { color: #ff6b8b; }
+	.rank-name.tier-grandmaster{ color: #ff9d6e; }
 	.rank-display p { margin: 0; font-size: .8rem; }
-	.progress-label { display: flex; justify-content: space-between; color: var(--dim); font-size: .75rem; }
-	.progress-track {
-		height: 5px;
-		overflow: hidden;
-		border-radius: 99px;
-		background: var(--board);
-	}
-	.progress-track span { display: block; height: 100%; background: var(--o); transition: width .3s ease; }
 	.stats-section, .activity-card, .account-card { padding: 1.6em; border-radius: var(--radius); }
 	.stats-section { margin-top: 1em; }
 	.stats-grid {
@@ -357,7 +354,22 @@ export const prerender = false;
 	.stat span { color: var(--dim); font: .72rem ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
 	.stat strong { display: block; margin: .18em 0; font: 700 1.8rem "Atkinson", sans-serif; }
 	.stat small { color: var(--dim-2); font-size: .75rem; }
-	.rank-graph-card { padding: 1.2em; }
+	.rank-graph-card { position: relative; padding: 1.2em; }
+	.graph-tooltip {
+		position: absolute;
+		transform: translate(-50%, -125%);
+		pointer-events: none;
+		background: rgba(10,12,16,.92);
+		border: 1px solid var(--border-bright);
+		border-radius: 6px;
+		padding: .45em .65em;
+		font-size: .72rem;
+		white-space: nowrap;
+		z-index: 3;
+	}
+	.graph-tooltip strong { display: block; color: var(--text); font-size: .82rem; }
+	.graph-tooltip span { color: var(--dim); }
+	.graph-tooltip[hidden] { display: none; }
 	#rank-graph { width: 100%; height: 200px; display: block; }
 	.account-card { min-width: 0; }
 	.account-card-header {
@@ -481,14 +493,23 @@ export const prerender = false;
 	const RANK_STEP = 100;
 	const DIVISIONS_PER_TIER = 3;
 	const RANK_TIERS = [
-		{ name: 'Bronze', glyph: 'B' },
-		{ name: 'Silver', glyph: 'S' },
-		{ name: 'Gold', glyph: 'G' },
-		{ name: 'Platinum', glyph: 'P' },
-		{ name: 'Diamond', glyph: 'D' },
-		{ name: 'Master', glyph: 'M' },
-		{ name: 'Grandmaster', glyph: 'GM' },
+		{ name: 'Bronze',     glyph: 'B',  tier: 'bronze' },
+		{ name: 'Silver',     glyph: 'S',  tier: 'silver' },
+		{ name: 'Gold',       glyph: 'G',  tier: 'gold' },
+		{ name: 'Platinum',   glyph: 'P',  tier: 'platinum' },
+		{ name: 'Diamond',    glyph: 'D',  tier: 'diamond' },
+		{ name: 'Master',     glyph: 'M',  tier: 'master' },
+		{ name: 'Grandmaster',glyph: 'GM', tier: 'grandmaster' },
 	];
+	const RANK_COLORS = {
+		bronze:     { border: 'rgba(205,127,50,.35)',  bg: 'rgba(205,127,50,.10)' },
+		silver:     { border: 'rgba(192,192,192,.35)', bg: 'rgba(192,192,192,.10)' },
+		gold:       { border: 'rgba(255,215,0,.35)',   bg: 'rgba(255,215,0,.10)' },
+		platinum:   { border: 'rgba(78,201,176,.35)',  bg: 'rgba(78,201,176,.10)' },
+		diamond:    { border: 'rgba(179,136,255,.35)', bg: 'rgba(179,136,255,.10)' },
+		master:     { border: 'rgba(255,107,139,.35)', bg: 'rgba(255,107,139,.10)' },
+		grandmaster:{ border: 'rgba(255,157,110,.35)', bg: 'rgba(255,157,110,.10)' },
+	};
 	function getRankForRating(rating) {
 		if (rating == null || rating < RANK_START) return null;
 		const stepsAboveStart = Math.floor((rating - RANK_START) / RANK_STEP);
@@ -496,7 +517,24 @@ export const prerender = false;
 		const tier = RANK_TIERS[tierIndex];
 		const isTopTier = tierIndex === RANK_TIERS.length - 1;
 		const division = isTopTier ? null : (stepsAboveStart % DIVISIONS_PER_TIER) + 1;
-		return { name: tier.name, glyph: tier.glyph, division };
+		return { name: tier.name, glyph: tier.glyph, tier: tier.tier, division };
+	}
+	function applyRankTier(tier) {
+		const glyph = document.getElementById('rank-glyph');
+		const name = document.getElementById('rank-name');
+		[glyph, name].forEach((el) => {
+			if (!el) return;
+			el.classList.remove('tier-bronze','tier-silver','tier-gold','tier-platinum','tier-diamond','tier-master','tier-grandmaster');
+			if (tier) el.classList.add('tier-' + tier);
+		});
+		if (tier && glyph && RANK_COLORS[tier]) {
+			const c = RANK_COLORS[tier];
+			glyph.style.borderColor = c.border;
+			glyph.style.background = c.bg;
+		} else if (glyph) {
+			glyph.style.borderColor = '';
+			glyph.style.background = '';
+		}
 	}
 
 	function setEditMode(on) {
@@ -516,8 +554,6 @@ export const prerender = false;
 		if (bannerControl) bannerControl.hidden = true;
 		if (bioForm) bioForm.hidden = true;
 		if (profileActions) profileActions.innerHTML = '';
-		const emailRow = document.getElementById('email-row');
-		if (emailRow) emailRow.hidden = true;
 	}
 
 	const text = (selector, value) => { document.querySelector(selector).textContent = value; };
@@ -604,26 +640,146 @@ export const prerender = false;
 			renderMatches([]);
 		}
 	}
+	// Chart geometry is fixed to the SVG viewBox (600x200); padding leaves room
+	// for the y-axis rating labels on the left.
+	const GRAPH_W = 600, GRAPH_H = 200;
+	const GRAPH_PAD = { top: 16, right: 16, bottom: 16, left: 42 };
+	let graphPoints = [];
+
+	// Converts a series of [x, y] points into a smooth SVG path using
+	// Catmull-Rom-to-Bezier interpolation, instead of straight polyline segments.
+	function smoothPath(points) {
+		if (points.length < 2) {
+			const [p] = points;
+			return p ? `M ${p[0].toFixed(2)},${p[1].toFixed(2)}` : '';
+		}
+		let d = `M ${points[0][0].toFixed(2)},${points[0][1].toFixed(2)} `;
+		for (let i = 0; i < points.length - 1; i += 1) {
+			const p0 = points[i === 0 ? 0 : i - 1];
+			const p1 = points[i];
+			const p2 = points[i + 1];
+			const p3 = points[i + 2 < points.length ? i + 2 : i + 1];
+			const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+			const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+			const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+			const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+			d += `C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2[0].toFixed(2)},${p2[1].toFixed(2)} `;
+		}
+		return d.trim();
+	}
+
 	function renderRankGraph(points) {
 		const svg = document.getElementById('rank-graph');
 		const empty = document.getElementById('rank-graph-empty');
+		const tooltip = document.getElementById('rank-graph-tooltip');
 		if (!svg || !empty) return;
-		if (!points?.length) { svg.hidden = true; empty.hidden = false; return; }
+		if (!points?.length) {
+			svg.hidden = true;
+			empty.hidden = false;
+			if (tooltip) tooltip.hidden = true;
+			graphPoints = [];
+			return;
+		}
 		empty.hidden = true;
 		svg.hidden = false;
-		const W = 600, H = 200, pad = 12;
-		const ratings = points.map((p) => Number(p.rating));
+
+		const sorted = [...points].sort((a, b) => new Date(a.recorded_at) - new Date(b.recorded_at));
+		const ratings = sorted.map((p) => Number(p.rating));
 		let min = Math.min(...ratings);
 		let max = Math.max(...ratings);
 		if (min === max) { min -= 50; max += 50; }
-		const times = points.map((p) => new Date(p.recorded_at).getTime());
+		const breathing = (max - min) * 0.1;
+		min -= breathing;
+		max += breathing;
+
+		const times = sorted.map((p) => new Date(p.recorded_at).getTime());
 		let tMin = Math.min(...times);
 		let tMax = Math.max(...times);
 		if (tMin === tMax) { tMin -= 1; tMax += 1; }
-		const x = (t) => pad + ((t - tMin) / (tMax - tMin)) * (W - 2 * pad);
-		const y = (r) => H - pad - ((r - min) / (max - min)) * (H - 2 * pad);
-		const coords = points.map((p) => `${x(new Date(p.recorded_at).getTime()).toFixed(1)},${y(Number(p.rating)).toFixed(1)}`).join(' ');
-		svg.innerHTML = `<polyline points="${coords}" fill="none" stroke="var(--i)" stroke-width="2" stroke-linejoin="round" />`;
+
+		const { top, right, bottom, left } = GRAPH_PAD;
+		const innerW = GRAPH_W - left - right;
+		const innerH = GRAPH_H - top - bottom;
+		const x = (t) => left + ((t - tMin) / (tMax - tMin)) * innerW;
+		const y = (r) => top + innerH - ((r - min) / (max - min)) * innerH;
+
+		const coords = sorted.map((p) => [x(new Date(p.recorded_at).getTime()), y(Number(p.rating))]);
+		graphPoints = sorted.map((p, i) => ({
+			x: coords[i][0], y: coords[i][1], rating: Number(p.rating), date: new Date(p.recorded_at),
+		}));
+
+		const linePath = smoothPath(coords);
+		const baseline = (top + innerH).toFixed(2);
+		const areaPath = `${linePath} L ${coords[coords.length - 1][0].toFixed(2)},${baseline} L ${coords[0][0].toFixed(2)},${baseline} Z`;
+
+		const gridRows = 4;
+		let gridSvg = '';
+		for (let i = 0; i <= gridRows; i += 1) {
+			const gy = top + (innerH / gridRows) * i;
+			const value = Math.round(max - ((max - min) / gridRows) * i);
+			gridSvg += `<line x1="${left}" y1="${gy.toFixed(1)}" x2="${(left + innerW).toFixed(1)}" y2="${gy.toFixed(1)}" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 4" />`;
+			gridSvg += `<text x="${(left - 8).toFixed(1)}" y="${(gy + 3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--dim-2)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">${value}</text>`;
+		}
+
+		svg.innerHTML = `
+			<defs>
+				<linearGradient id="rank-graph-fill" x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0%" stop-color="var(--i)" stop-opacity="0.35" />
+					<stop offset="100%" stop-color="var(--i)" stop-opacity="0" />
+				</linearGradient>
+			</defs>
+			${gridSvg}
+			<path d="${areaPath}" fill="url(#rank-graph-fill)" stroke="none" />
+			<path d="${linePath}" fill="none" stroke="var(--i)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+			<line id="rank-graph-hover-line" x1="0" y1="${top}" x2="0" y2="${top + innerH}" stroke="var(--line)" stroke-width="1" opacity="0" />
+			<circle id="rank-graph-dot" cx="0" cy="0" r="4" fill="var(--i)" stroke="var(--board)" stroke-width="2" opacity="0" />
+		`;
+	}
+
+	function setupRankGraphHover() {
+		const svg = document.getElementById('rank-graph');
+		const tooltip = document.getElementById('rank-graph-tooltip');
+		if (!svg || !tooltip) return;
+		const dateFmt = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
+
+		function handleMove(event) {
+			if (!graphPoints.length) return;
+			const rect = svg.getBoundingClientRect();
+			const scaleX = GRAPH_W / rect.width;
+			const scaleY = GRAPH_H / rect.height;
+			const localX = (event.clientX - rect.left) * scaleX;
+			let nearest = graphPoints[0];
+			let nearestDist = Infinity;
+			for (const point of graphPoints) {
+				const dist = Math.abs(point.x - localX);
+				if (dist < nearestDist) { nearestDist = dist; nearest = point; }
+			}
+			const dot = svg.querySelector('#rank-graph-dot');
+			const hoverLine = svg.querySelector('#rank-graph-hover-line');
+			if (dot) {
+				dot.setAttribute('cx', nearest.x.toFixed(2));
+				dot.setAttribute('cy', nearest.y.toFixed(2));
+				dot.setAttribute('opacity', '1');
+			}
+			if (hoverLine) {
+				hoverLine.setAttribute('x1', nearest.x.toFixed(2));
+				hoverLine.setAttribute('x2', nearest.x.toFixed(2));
+				hoverLine.setAttribute('opacity', '1');
+			}
+			tooltip.style.left = `${nearest.x / scaleX}px`;
+			tooltip.style.top = `${nearest.y / scaleY}px`;
+			tooltip.innerHTML = `<strong>${nearest.rating} rating</strong><span>${dateFmt.format(nearest.date)}</span>`;
+			tooltip.hidden = false;
+		}
+		function handleLeave() {
+			tooltip.hidden = true;
+			const dot = svg.querySelector('#rank-graph-dot');
+			const hoverLine = svg.querySelector('#rank-graph-hover-line');
+			if (dot) dot.setAttribute('opacity', '0');
+			if (hoverLine) hoverLine.setAttribute('opacity', '0');
+		}
+		svg.addEventListener('pointermove', handleMove);
+		svg.addEventListener('pointerleave', handleLeave);
 	}
 	async function loadRatingHistory(targetUserId) {
 		try {
@@ -717,8 +873,6 @@ export const prerender = false;
 				const editBtn = document.getElementById('edit-button');
 				if (editBtn) editBtn.addEventListener('click', () => setEditMode(!editMode));
 				setAccountCardLabel('Private', 'Account details');
-				const emailRow = document.getElementById('email-row');
-				if (emailRow) emailRow.hidden = false;
 				const shareBtn = document.getElementById('share-button');
 				if (shareBtn) shareBtn.addEventListener('click', (event) => copyText(window.location.href, event.currentTarget, 'Link copied'));
 				const copyBtn = document.getElementById('copy-id');
@@ -731,8 +885,6 @@ export const prerender = false;
 				bioForm.hidden = true;
 				profileActions.innerHTML = '';
 				setAccountCardLabel('Public', 'Player info');
-				const emailRow = document.getElementById('email-row');
-				if (emailRow) emailRow.hidden = true;
 			}
 			const ranked = body.ranked || {};
 			const stats = body.stats || {};
@@ -742,10 +894,7 @@ export const prerender = false;
 			text('#rank-name', rankLabel);
 			text('#rank-glyph', tier ? tier.glyph : '?');
 			text('#rank-copy', placed ? `${ranked.rating} rating` : 'Play ranked matches to place.');
-			const played = ranked.placement_matches_played || 0;
-			const required = ranked.placement_matches_required || 5;
-			text('#placement-count', `${Math.min(played, required)} / ${required}`);
-			document.querySelector('#placement-progress').style.width = `${Math.min(100, played / required * 100)}%`;
+			applyRankTier(tier ? tier.tier : null);
 			text('#stat-rating', ranked.rating ?? '--');
 			text('#rating-detail', tier ? rankLabel : 'No rating yet');
 			text('#stat-matches', stats.matches_played || 0);
@@ -791,5 +940,6 @@ export const prerender = false;
 	});
 	document.querySelector('#avatar-upload')?.addEventListener('change', (event) => uploadMedia('avatar', event.currentTarget));
 	document.querySelector('#banner-upload')?.addEventListener('change', (event) => uploadMedia('banner', event.currentTarget));
+	setupRankGraphHover();
 	loadProfile();
 </script>
