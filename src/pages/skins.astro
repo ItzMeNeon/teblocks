@@ -1,0 +1,116 @@
+---
+import BaseHead from '../components/BaseHead';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Skins | ${SITE_TITLE}`} description="Browse and download community skins for TeBlocks." />
+		<style>
+			.skins-panel { max-width: 1100px; margin: 3em auto 0; }
+			.skins-panel h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); }
+			.skins-panel > p { margin: .4rem 0 1.6rem; color: var(--text-muted); }
+			.skins-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+				gap: 1.1em;
+			}
+			.skin-card {
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				background: var(--panel);
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				transition: border-color .15s ease, background .15s ease;
+			}
+			.skin-card:hover {
+				border-color: var(--border-bright);
+				background: var(--panel-hover);
+			}
+			.skin-preview {
+				width: 100%;
+				aspect-ratio: 1 / 1;
+				background: linear-gradient(135deg, var(--accent), var(--accent-2));
+				display: grid;
+				place-items: center;
+				color: #001a12;
+				font: 800 1.6rem var(--font-display);
+				border-bottom: 1px solid var(--border);
+			}
+			.skin-preview img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				display: block;
+			}
+			.skin-meta {
+				padding: 1em;
+				display: flex;
+				flex-direction: column;
+				gap: .4em;
+				flex: 1;
+			}
+			.skin-name {
+				font-weight: 700;
+				color: var(--text);
+				line-height: 1.3;
+			}
+			.skin-author {
+				font-size: .82rem;
+				color: var(--text-muted);
+			}
+			.download-btn {
+				margin-top: auto;
+				padding: .55em 1em;
+				border: 1px solid var(--border-bright);
+				border-radius: 8px;
+				background: linear-gradient(135deg, var(--accent), var(--accent-2));
+				color: #001a12;
+				font-weight: 700;
+				font-size: .86rem;
+				text-align: center;
+				text-decoration: none;
+				transition: filter .15s ease;
+			}
+			.download-btn:hover { filter: brightness(1.1); }
+			.state { padding: 2em 0; color: var(--text-muted); text-align: center; }
+			.state.error { color: var(--danger); }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="skins-panel" aria-labelledby="skins-title">
+				<h1 id="skins-title">Skins</h1>
+				<p>Community skins for the TeBlocks client. Drop your own PNG skins into the <code>skins</code> folder in-game, or download from here.</p>
+				<div id="skins-content" class="state" role="status">Loading skins...</div>
+			</section>
+		</main>
+		<Footer />
+		<script>
+			const content = document.getElementById('skins-content');
+			const sampleSkins = [
+				{ name: 'TeBlocks Default', author: 'TeBlocks', file: 'default.png' },
+				{ name: 'Classic', author: 'Community', file: 'classic.png' },
+				{ name: 'Neon', author: 'Community', file: 'neon.png' },
+			];
+			function renderCard(skin) {
+				return `
+					<article class="skin-card">
+						<div class="skin-preview" aria-hidden="true">${skin.name}</div>
+						<div class="skin-meta">
+							<span class="skin-name">${skin.name}</span>
+							<span class="skin-author">by ${skin.author}</span>
+							<a class="download-btn" href="/skins/${skin.file}" download>Download</a>
+						</div>
+					</article>
+				`;
+			}
+			content.innerHTML = `<div class="skins-grid">${sampleSkins.map(renderCard).join('')}</div>`;
+		</script>
+	</body>
+</html>

@@ -1,0 +1,106 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Status | ${SITE_TITLE}`} description="Backend service status and uptime." />
+		<style>
+			.status-panel {
+				max-width: 720px;
+				margin: 3em auto 0;
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				background: var(--panel);
+				padding: 2em;
+			}
+			.status-row {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: .9em 0;
+				border-bottom: 1px solid var(--border);
+				gap: 1em;
+			}
+			.status-row:last-child { border-bottom: 0; }
+			.status-label { color: var(--text-dim); font-size: .9rem; }
+			.status-value { font-family: var(--font-mono); font-weight: 700; color: var(--text); }
+			.status-dot {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background: var(--success);
+				box-shadow: 0 0 0 4px var(--success-glow);
+			}
+			.status-dot.offline {
+				background: var(--danger);
+				box-shadow: 0 0 0 4px var(--danger-glow);
+			}
+			.state { color: var(--text-muted); }
+			.state.error { color: var(--danger); }
+			.refresh-btn {
+				margin-top: 1.2em;
+				padding: .6em 1.2em;
+				border: 1px solid var(--border);
+				border-radius: 8px;
+				background: transparent;
+				color: var(--text);
+				font: inherit;
+				font-weight: 600;
+				cursor: pointer;
+			}
+			.refresh-btn:hover { background: var(--panel-hover); border-color: var(--border-bright); }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="status-panel" aria-labelledby="status-title">
+				<h1 id="status-title">Backend status</h1>
+				<p class="state" id="status-content" role="status">Loading...</p>
+			</section>
+		</main>
+		<Footer />
+		<script>
+			const el = document.getElementById('status-content');
+			async function load() {
+				try {
+					const res = await fetch('/api/status/backend', { cache: 'no-store' });
+					const data = await res.json().catch(() => ({}));
+					if (!res.ok) {
+						el.innerHTML = `<span class="state error">${data.error || data.message || 'Status endpoint unavailable.'}</span>`;
+						return;
+					}
+					const status = data.status === 'ok';
+					el.innerHTML = `
+						<div class="status-row">
+							<span class="status-label">Service</span>
+							<span class="status-value">Backend</span>
+						</div>
+						<div class="status-row">
+							<span class="status-label">Status</span>
+							<span class="status-value"><span class="status-dot ${status ? '' : 'offline'}"></span> ${status ? 'Online' : 'Offline'}</span>
+						</div>
+						<div class="status-row">
+							<span class="status-label">Players online</span>
+							<span class="status-value">${data.players ?? '--'}</span>
+						</div>
+						<div class="status-row">
+							<span class="status-label">Tunnel</span>
+							<span class="status-value">teblocks.my.id</span>
+						</div>
+						<button class="refresh-btn" type="button">Refresh</button>
+					`;
+					el.querySelector('.refresh-btn')?.addEventListener('click', load);
+				} catch {
+					el.innerHTML = `<span class="state error">Unable to reach backend.</span>`;
+				}
+			}
+			load();
+		</script>
+	</body>
+</html>
