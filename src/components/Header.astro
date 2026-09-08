@@ -185,11 +185,8 @@ import { SITE_TITLE } from '../consts';
 
 <script>
 	const accountToggle = document.getElementById('nav-account');
-	const token = localStorage.getItem('teblocks_token');
-	const headers = { 'Content-Type': 'application/json' };
-	if (token) headers['Authorization'] = `Bearer ${token}`;
 
-	fetch('https://backend.teblocks.my.id/api/auth/me', { headers, credentials: 'include' })
+	fetch('/api/auth/me', { credentials: 'include' })
 		.then((response) => {
 			if (response.ok && accountToggle) {
 				accountToggle.textContent = 'Profile';
