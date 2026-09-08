@@ -1,41 +1,41 @@
 /*
-  TeBlocks — osu!-inspired blue/cyan theme.
-  Dark, glassy panels, soft glow, rounded, energetic but clean.
+  TeBlocks — teal / green on black.
+  Dark base with teal + neon green accents.
 */
 :root {
-  /* Core neutrals (deep blue-black) */
-  --bg: #060912;
-  --bg-elevated: #0c1322;
-  --panel: rgba(16, 24, 41, 0.66);
-  --panel-solid: #101a2c;
-  --panel-hover: rgba(24, 35, 58, 0.8);
-  --border: rgba(120, 170, 230, 0.16);
-  --border-bright: rgba(120, 170, 230, 0.34);
+  /* Core neutrals (black-based) */
+  --bg: #000000;
+  --bg-elevated: #060b0f;
+  --panel: rgba(62, 166, 195, 0.06);
+  --panel-solid: #0a1014;
+  --panel-hover: rgba(62, 166, 195, 0.12);
+  --border: rgba(62, 166, 195, 0.16);
+  --border-bright: rgba(62, 166, 195, 0.35);
 
   /* Text */
-  --text: #eaf2ff;
-  --text-dim: #9fb2cc;
-  --text-muted: #5a7a9c;
+  --text: #f0fdfa;
+  --text-dim: #a1c7d4;
+  --text-muted: #5a8a99;
 
-  /* Accent — cyan → blue gradient family */
-  --accent: #2ee6ff;
-  --accent-2: #4f8cff;
-  --accent-dim: #1aa6c4;
-  --accent-glow: rgba(46, 230, 255, 0.16);
-  --accent-glow-strong: rgba(46, 230, 255, 0.34);
+  /* Accent — teal + green */
+  --accent: #3ea6c3;
+  --accent-2: #5bfa80;
+  --accent-dim: #2d8aa6;
+  --accent-glow: rgba(62, 166, 195, 0.16);
+  --accent-glow-strong: rgba(62, 166, 195, 0.35);
 
   /* Tetromino accents (used as category colors) */
-  --i: #2ee6ff;
+  --i: #3ea6c3;
   --o: #ffd166;
   --t: #b388ff;
-  --s: #5cf2a8;
+  --s: #5bfa80;
   --z: #ff6b8b;
   --j: #5b9dff;
   --l: #ffb15e;
 
   /* Semantic */
-  --success: #5cf2a8;
-  --success-glow: rgba(92, 242, 168, 0.16);
+  --success: #5bfa80;
+  --success-glow: rgba(91, 250, 128, 0.16);
   --warning: #ffd166;
   --danger: #ff6b8b;
   --danger-glow: rgba(255, 107, 139, 0.16);
@@ -48,10 +48,10 @@
   --radius-sm: 6px;
   --radius: 12px;
   --radius-lg: 18px;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.55);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.65);
   --shadow-glow: 0 0 0 1px var(--border), 0 0 24px var(--accent-glow);
-  --focus-ring: 0 0 0 2px rgba(46, 230, 255, 0.4);
+  --focus-ring: 0 0 0 2px rgba(62, 166, 195, 0.4);
 
   /* Transitions */
   --transition-fast: 140ms ease-out;
@@ -83,16 +83,16 @@ body {
   font-size: 16px;
   line-height: 1.65;
   background:
-    radial-gradient(1200px 700px at 80% -10%, rgba(79, 140, 255, 0.12), transparent 60%),
-    radial-gradient(900px 600px at 0% 0%, rgba(46, 230, 255, 0.1), transparent 55%),
+    radial-gradient(1200px 700px at 80% -10%, rgba(62, 166, 195, 0.14), transparent 60%),
+    radial-gradient(900px 600px at 0% 0%, rgba(91, 250, 128, 0.08), transparent 55%),
     var(--bg);
   background-attachment: fixed;
 }
 
 /* Selection */
 ::selection {
-  background: var(--accent-glow-strong);
-  color: #021018;
+  background: rgba(62, 166, 195, 0.28);
+  color: #000000;
 }
 
 /* Focus visible */
