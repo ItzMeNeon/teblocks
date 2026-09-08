@@ -183,7 +183,7 @@ import { SITE_TITLE } from '../consts';
 				<div class="leaderboard-header">
 					<div>
 						<h1 id="leaderboard-title">Leaderboards</h1>
-						<p>Top players across every mode.</p>
+						<p>Top players across ranked and minigame modes.</p>
 					</div>
 					<div class="mode-tabs" role="tablist" aria-label="Leaderboard category">
 						<button class="mode-tab" role="tab" aria-selected="true" data-category="ranked">Ranked Elo</button>
@@ -257,10 +257,10 @@ import { SITE_TITLE } from '../consts';
 			}
 
 			function renderTable(kind, rows) {
-				const head =
-					kind === 'ranked'
-						? `<th>Rank</th><th>Player</th><th>Rank</th><th>Rating</th><th>Matches</th><th>Win rate</th>`
-						: `<th>Rank</th><th>Player</th><th>Score</th>`;
+			const head =
+				kind === 'ranked'
+					? `<th>Rank</th><th>Player</th><th>Tier</th><th>Rating</th><th>Matches</th><th>Win rate</th>`
+					: `<th>Rank</th><th>Player</th><th>Score</th>`;
 				const body = rows
 					.map((entry, i) => (kind === 'ranked' ? renderRankedRow(entry, i) : renderScoreRow(entry, i)))
 					.join('');
@@ -287,7 +287,7 @@ import { SITE_TITLE } from '../consts';
 						}
 						if (!response.ok) {
 							const body = await response.json().catch(() => ({}));
-							content.innerHTML = `<div class="state error">${body.error || 'Failed to load leaderboard.'}</div>`;
+							content.innerHTML = `<div class="state error">${body.error || body.message || 'Failed to load leaderboard.'}</div>`;
 							return;
 						}
 						const data = await response.json();
