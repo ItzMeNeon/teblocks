@@ -227,6 +227,7 @@ export const prerender = false;
 		padding-left: 10%;
 		pointer-events: none;
 	}
+	.banner-blocks[hidden] { display: none; }
 	.banner-blocks i {
 		width: 64px;
 		height: 64px;
@@ -298,34 +299,6 @@ export const prerender = false;
 		font-weight: 700;
 	}
 	.verification-badge.verified { background: rgba(111,224,122,.13); color: var(--s); }
-	.profile-actions { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; }
-	.button {
-		padding: .65em 1.1em;
-		border-radius: 7px;
-		font: 600 .86rem var(--font-ui);
-		cursor: pointer;
-		transition: filter var(--transition-fast), background var(--transition-fast);
-	}
-	.button-native {
-		appearance: button;
-		border: 1px solid var(--border-bright);
-		background: var(--panel);
-		color: var(--text);
-	}
-	.button-native:hover {
-		background: var(--panel-hover);
-		filter: brightness(1.05);
-	}
-	.button-native.danger {
-		border-color: rgba(245, 99, 122, .35);
-		color: var(--danger);
-	}
-	.button-native.danger:hover {
-		background: rgba(245, 99, 122, .08);
-	}
-	.button.secondary { border-color: var(--line); background: transparent; color: var(--text); }
-	.button.danger { border-color: rgba(245,99,122,.35); background: transparent; color: var(--z); }
-	.button.compact { padding: .55em .8em; }
 	.profile-grid, .lower-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-top: 1em; }
 	.about-card, .rank-card { min-height: 185px; padding: 1.6em; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
 	.section-heading .eyebrow { margin-bottom: .35em; }
@@ -384,6 +357,81 @@ export const prerender = false;
 	.stat span { color: var(--dim); font: .72rem ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
 	.stat strong { display: block; margin: .18em 0; font: 700 1.8rem "Atkinson", sans-serif; }
 	.stat small { color: var(--dim-2); font-size: .75rem; }
+	.rank-graph-card { padding: 1.2em; }
+	#rank-graph { width: 100%; height: 200px; display: block; }
+	.account-card { min-width: 0; }
+	.account-card-header {
+		display: flex;
+		flex-direction: column;
+		gap: .25em;
+		margin-bottom: 1em;
+	}
+	.account-card-header .eyebrow { display: block; }
+	.account-card-header strong { font: 600 1.15rem "Rubik", sans-serif; }
+	.account-card dl { margin: 1em 0 0; }
+	.account-card dl div { padding: .7em 0; border-top: 1px solid var(--line); }
+	dt { color: var(--dim-2); font: .7rem "JetBrains Mono", monospace; text-transform: uppercase; }
+	dd { margin: .15em 0 0; overflow-wrap: anywhere; color: var(--text); font-size: .85rem; }
+	@media (max-width: 720px) {
+		.profile { margin-top: 2em; }
+		.profile-banner { height: 135px; }
+		.identity-row { flex-wrap: wrap; padding: 0 1.15em 1.2em; }
+		.avatar { width: 88px; height: 88px; font-size: 2.5rem; }
+		.profile-actions { width: 100%; }
+		.profile-grid, .lower-grid { grid-template-columns: 1fr; }
+		.stats-section, .activity-card, .account-card, .about-card, .rank-card { padding: 1.25em; }
+		.stats-grid { grid-template-columns: repeat(2, 1fr); }
+	}
+</style>
+
+<!--
+	The rules below style markup created client-side (via innerHTML / createElement)
+	in the <script> at the bottom of this file: profile-actions buttons, the retry
+	button, match-list rows, and the copy-id button. Astro's scoped styles only
+	attach their data-astro-cid attribute to markup present in this component's
+	template at build time, so a normal scoped <style> block silently fails to match
+	anything inserted later by JS (this was causing the profile action buttons to
+	render as unstyled native buttons). is:global is required here.
+-->
+<style is:global>
+	.profile-actions { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; }
+	.button {
+		padding: .65em 1.1em;
+		border-radius: 7px;
+		font: 600 .86rem var(--font-ui);
+		cursor: pointer;
+		transition: filter var(--transition-fast), background var(--transition-fast);
+	}
+	.button-native {
+		appearance: button;
+		border: 1px solid var(--border-bright);
+		background: var(--panel);
+		color: var(--text);
+	}
+	.button-native:hover {
+		background: var(--panel-hover);
+		filter: brightness(1.05);
+	}
+	.button-native.danger {
+		border-color: rgba(245, 99, 122, .35);
+		color: var(--danger);
+	}
+	.button-native.danger:hover {
+		background: rgba(245, 99, 122, .08);
+	}
+	.button.secondary { border-color: var(--line); background: transparent; color: var(--text); }
+	.button.danger { border-color: rgba(245,99,122,.35); background: transparent; color: var(--z); }
+	.button.compact { padding: .55em .8em; }
+	.copy-id {
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--text);
+		cursor: pointer;
+		font: inherit;
+		text-align: left;
+	}
+	.copy-id b { color: var(--i); font-size: .77rem; }
 	.match-list { margin-top: 1em; }
 	.match {
 		display: flex;
@@ -403,46 +451,13 @@ export const prerender = false;
 	.result.loss, .result.abandoned { background: rgba(245,99,122,.14); color: var(--z); }
 	.result.draw { background: rgba(245,213,71,.12); color: var(--o); }
 	.match strong, .match small { display: block; }
-	.rank-graph-card { padding: 1.2em; }
-	#rank-graph { width: 100%; height: 200px; display: block; }
 	.match small { color: var(--dim); font-size: .75rem; }
 	.rating-change { margin-left: auto; font: 700 .9rem "JetBrains Mono", monospace; }
 	.rating-change.positive { color: var(--s); }
 	.rating-change.negative { color: var(--z); }
 	.activity-empty { margin: 1.3em 0 .2em; font-size: .86rem; }
-	.account-card { min-width: 0; }
-	.account-card-header {
-		display: flex;
-		flex-direction: column;
-		gap: .25em;
-		margin-bottom: 1em;
-	}
-	.account-card-header .eyebrow { display: block; }
-	.account-card-header strong { font: 600 1.15rem "Rubik", sans-serif; }
-	.account-card dl { margin: 1em 0 0; }
-	.account-card dl div { padding: .7em 0; border-top: 1px solid var(--line); }
-	dt { color: var(--dim-2); font: .7rem "JetBrains Mono", monospace; text-transform: uppercase; }
-	dd { margin: .15em 0 0; overflow-wrap: anywhere; color: var(--text); font-size: .85rem; }
-	.copy-id {
-		padding: 0;
-		border: 0;
-		background: transparent;
-		color: var(--text);
-		cursor: pointer;
-		font: inherit;
-		text-align: left;
-	}
-	.copy-id b { color: var(--i); font-size: .77rem; }
 	@media (max-width: 720px) {
-		.profile { margin-top: 2em; }
-		.profile-banner { height: 135px; }
-		.identity-row { flex-wrap: wrap; padding: 0 1.15em 1.2em; }
-		.avatar { width: 88px; height: 88px; font-size: 2.5rem; }
-		.profile-actions { width: 100%; }
 		.profile-actions .button { flex: 1; }
-		.profile-grid, .lower-grid { grid-template-columns: 1fr; }
-		.stats-section, .activity-card, .account-card, .about-card, .rank-card { padding: 1.25em; }
-		.stats-grid { grid-template-columns: repeat(2, 1fr); }
 	}
 </style>
 
@@ -502,6 +517,11 @@ export const prerender = false;
 		} catch {
 			window.prompt('Copy this value:', value);
 		}
+	}
+	function setAccountCardLabel(eyebrowText, titleText) {
+		const eyebrow = document.querySelector('#account-card .account-card-header .eyebrow');
+		if (eyebrow) eyebrow.textContent = eyebrowText;
+		accountCardTitle.textContent = titleText;
 	}
 	function showRetry(message) {
 		status.innerHTML = '';
@@ -670,7 +690,7 @@ export const prerender = false;
 				setEditMode(false);
 				const editBtn = document.getElementById('edit-button');
 				if (editBtn) editBtn.addEventListener('click', () => setEditMode(!editMode));
-				accountCardTitle.innerHTML = '<span class="eyebrow" style="--accent-color: var(--j)">Private</span><span>Account details</span>';
+				setAccountCardLabel('Private', 'Account details');
 				const emailRow = document.getElementById('email-row');
 				if (emailRow) emailRow.hidden = false;
 				const shareBtn = document.getElementById('share-button');
@@ -684,7 +704,7 @@ export const prerender = false;
 				document.getElementById('banner-control').hidden = true;
 				bioForm.hidden = true;
 				profileActions.innerHTML = '';
-				accountCardTitle.innerHTML = '<span class="eyebrow" style="--accent-color: var(--j)">Public</span><span>Player info</span>';
+				setAccountCardLabel('Public', 'Player info');
 				const emailRow = document.getElementById('email-row');
 				if (emailRow) emailRow.hidden = true;
 			}
