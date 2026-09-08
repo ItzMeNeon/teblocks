@@ -196,8 +196,8 @@ export const prerender = false;
 </html>
 
 <style>
-	.loading { max-width: 920px; margin: 5em auto; color: var(--dim); }
-	.profile { max-width: 920px; margin: 3.5em auto 0; }
+	.loading { max-width: 920px; margin: 5em auto; padding: 0 1.25em; color: var(--dim); }
+	.profile { max-width: 920px; margin: 3.5em auto 0; padding: 0 1.25em; }
 	.profile-card, .stats-section, .activity-card, .account-card {
 		border: 1px solid var(--line);
 		background: linear-gradient(145deg, rgba(22,26,33,.98), rgba(14,17,23,.98));
@@ -373,7 +373,7 @@ export const prerender = false;
 	dt { color: var(--dim-2); font: .7rem "JetBrains Mono", monospace; text-transform: uppercase; }
 	dd { margin: .15em 0 0; overflow-wrap: anywhere; color: var(--text); font-size: .85rem; }
 	@media (max-width: 720px) {
-		.profile { margin-top: 2em; }
+		.profile { margin-top: 2em; padding: 0 0.9em; }
 		.profile-banner { height: 135px; }
 		.identity-row { flex-wrap: wrap; padding: 0 1.15em 1.2em; }
 		.avatar { width: 88px; height: 88px; font-size: 2.5rem; }
@@ -473,6 +473,32 @@ export const prerender = false;
 	const userId = window.location.pathname.replace('/profile/', '').replace('/', '') || '';
 
 	let editMode = false;
+
+	// Rank tiers: rating 100 is the first rank. Each division spans 100 rating
+	// points, 3 divisions per tier, until Grandmaster (single open-ended tier).
+	// Ratings below 100 are shown as Unranked regardless of placement status.
+	const RANK_START = 100;
+	const RANK_STEP = 100;
+	const DIVISIONS_PER_TIER = 3;
+	const RANK_TIERS = [
+		{ name: 'Bronze', glyph: 'B' },
+		{ name: 'Silver', glyph: 'S' },
+		{ name: 'Gold', glyph: 'G' },
+		{ name: 'Platinum', glyph: 'P' },
+		{ name: 'Diamond', glyph: 'D' },
+		{ name: 'Master', glyph: 'M' },
+		{ name: 'Grandmaster', glyph: 'GM' },
+	];
+	function getRankForRating(rating) {
+		if (rating == null || rating < RANK_START) return null;
+		const stepsAboveStart = Math.floor((rating - RANK_START) / RANK_STEP);
+		const tierIndex = Math.min(Math.floor(stepsAboveStart / DIVISIONS_PER_TIER), RANK_TIERS.length - 1);
+		const tier = RANK_TIERS[tierIndex];
+		const isTopTier = tierIndex === RANK_TIERS.length - 1;
+		const division = isTopTier ? null : (stepsAboveStart % DIVISIONS_PER_TIER) + 1;
+		return { name: tier.name, glyph: tier.glyph, division };
+	}
+
 	function setEditMode(on) {
 		editMode = on;
 		bioForm.hidden = !on;
@@ -711,15 +737,17 @@ export const prerender = false;
 			const ranked = body.ranked || {};
 			const stats = body.stats || {};
 			const placed = ranked.is_placed;
-			text('#rank-name', ranked.rank_division ? `${ranked.rank} ${ranked.rank_division}` : (ranked.rank || 'Unranked'));
-			text('#rank-glyph', placed ? (ranked.rank || '?').slice(0, 1).toUpperCase() : '?');
+			const tier = placed ? getRankForRating(ranked.rating) : null;
+			const rankLabel = tier ? [tier.name, tier.division].filter(Boolean).join(' ') : 'Unranked';
+			text('#rank-name', rankLabel);
+			text('#rank-glyph', tier ? tier.glyph : '?');
 			text('#rank-copy', placed ? `${ranked.rating} rating` : 'Play ranked matches to place.');
 			const played = ranked.placement_matches_played || 0;
 			const required = ranked.placement_matches_required || 5;
-			text('#placement-count', `${played} / ${required}`);
+			text('#placement-count', `${Math.min(played, required)} / ${required}`);
 			document.querySelector('#placement-progress').style.width = `${Math.min(100, played / required * 100)}%`;
 			text('#stat-rating', ranked.rating ?? '--');
-			text('#rating-detail', placed ? (ranked.rank || 'Ranked') : 'No rating yet');
+			text('#rating-detail', tier ? rankLabel : 'No rating yet');
 			text('#stat-matches', stats.matches_played || 0);
 			text('#matches-detail', `${stats.wins || 0} wins · ${stats.losses || 0} losses`);
 			text('#stat-win-rate', stats.win_rate == null ? '--' : `${stats.win_rate}%`);
