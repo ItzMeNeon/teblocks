@@ -1,0 +1,101 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Page not found | ${SITE_TITLE}`} description="The page you're looking for doesn't exist or has been moved." />
+		<style>
+			.not-found {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				min-height: 70vh;
+				text-align: center;
+				padding: 4rem 1.5rem;
+				gap: 1.25rem;
+			}
+			.not-found-code {
+				font-family: var(--font-display);
+				font-weight: 800;
+				font-size: clamp(5rem, 16vw, 10rem);
+				line-height: 1;
+				background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				margin: 0;
+			}
+			.not-found h1 {
+				font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+				margin: 0;
+			}
+			.not-found p {
+				max-width: 44ch;
+				color: var(--text-dim);
+				font-size: 1.05rem;
+				line-height: 1.7;
+			}
+			.not-found-actions {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.9rem;
+				justify-content: center;
+				margin-top: 0.5rem;
+			}
+			.btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4em;
+				padding: 0.75em 1.4em;
+				border-radius: 999px;
+				font: 700 0.9rem var(--font-ui);
+				text-decoration: none;
+				transition: all var(--transition-fast);
+				cursor: pointer;
+				border: 1px solid transparent;
+			}
+			.btn-primary {
+				background: linear-gradient(135deg, var(--accent), var(--accent-2));
+				color: #03121a;
+				box-shadow: 0 6px 20px var(--accent-glow);
+			}
+			.btn-primary:hover {
+				filter: brightness(1.1);
+				transform: translateY(-1px);
+			}
+			.btn-secondary {
+				background: transparent;
+				color: var(--text);
+				border-color: var(--border);
+			}
+			.btn-secondary:hover {
+				border-color: var(--border-bright);
+				background: var(--panel-hover);
+			}
+			@media (max-width: 640px) {
+				.not-found { min-height: 60vh; padding: 3rem 1rem; }
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="not-found" aria-labelledby="not-found-title">
+				<p class="not-found-code" aria-hidden="true">404</p>
+				<h1 id="not-found-title">Page not found</h1>
+				<p>This page doesn't exist or has been moved. If you think this is a mistake, try going back or head to the home page.</p>
+				<div class="not-found-actions">
+					<a class="btn btn-primary" href="/">Go home</a>
+					<a class="btn btn-secondary" href="/leaderboards/">Leaderboards</a>
+				</div>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
