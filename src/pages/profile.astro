@@ -22,8 +22,11 @@ import { SITE_TITLE } from '../consts';
 		<script>
 			(async function() {
 				const status = document.getElementById('profile-redirect');
-				try {
-					const response = await fetch('/api/auth/me', { credentials: 'include' });
+			const token = localStorage.getItem('teblocks_token');
+			const headers = { 'Content-Type': 'application/json' };
+			if (token) headers['Authorization'] = `Bearer ${token}`;
+			try {
+				const response = await fetch('https://backend.teblocks.my.id/api/auth/me', { headers });
 					if (!response.ok) {
 						status.innerHTML = 'Please <a href="/login/">log in</a> to view your profile.';
 						return;

@@ -199,7 +199,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 			async function loadOnline() {
 				try {
-					const res = await fetch('/api/players/online', { cache: 'no-store' });
+					const res = await fetch('https://backend.teblocks.my.id/api/players/online', { cache: 'no-store' });
 					if (!res.ok) return;
 					const body = await res.json();
 					const count = body.count ?? 0;

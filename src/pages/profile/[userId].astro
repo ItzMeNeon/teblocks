@@ -597,11 +597,16 @@ export const prerender = false;
 		status.append(copy, retry);
 	}
 	async function request(path, options = {}, attempts = 3) {
+		const token = localStorage.getItem('teblocks_token');
+		const headers = new Headers(options.headers);
+		if (token && !headers.has('Authorization')) {
+			headers.set('Authorization', `Bearer ${token}`);
+		}
 		for (let attempt = 0; attempt < attempts; attempt += 1) {
 			const controller = new AbortController();
 			const timeout = window.setTimeout(() => controller.abort(), 8000);
 			try {
-				const response = await fetch(path, { ...options, signal: controller.signal, cache: 'no-store' });
+				const response = await fetch(path, { ...options, headers, signal: controller.signal, cache: 'no-store' });
 				window.clearTimeout(timeout);
 				if (response.status >= 500 && response.status !== 503 && attempt < attempts - 1) {
 					await new Promise((resolve) => window.setTimeout(resolve, 300 * (attempt + 1)));
@@ -632,7 +637,7 @@ export const prerender = false;
 	}
 	async function loadMatches(targetUserId) {
 		try {
-			const endpoint = targetUserId ? `/api/profile/${encodeURIComponent(targetUserId)}/matches` : '/api/profile/matches?limit=8';
+			const endpoint = targetUserId ? `https://backend.teblocks.my.id/api/profile/${encodeURIComponent(targetUserId)}/matches` : 'https://backend.teblocks.my.id/api/profile/matches?limit=8';
 			const response = await request(endpoint);
 			if (!response.ok) { renderMatches([]); return; }
 			renderMatches((await response.json()).matches);
@@ -783,7 +788,7 @@ export const prerender = false;
 	}
 	async function loadRatingHistory(targetUserId) {
 		try {
-			const endpoint = targetUserId ? `/api/profile/${encodeURIComponent(targetUserId)}/rating-history?days=30` : '/api/profile/rating-history?days=30';
+			const endpoint = targetUserId ? `https://backend.teblocks.my.id/api/profile/${encodeURIComponent(targetUserId)}/rating-history?days=30` : 'https://backend.teblocks.my.id/api/profile/rating-history?days=30';
 			const response = await request(endpoint);
 			if (!response.ok) { renderRankGraph([]); return; }
 			renderRankGraph((await response.json()).points);
@@ -803,7 +808,7 @@ export const prerender = false;
 		form.append('file', file);
 		bioStatus.textContent = `Uploading ${kind}...`;
 		try {
-			const response = await request(`/api/profile/media/${kind}`, { method: 'POST', body: form }, 1);
+			const response = await request(`https://backend.teblocks.my.id/api/profile/media/${kind}`, { method: 'POST', body: form }, 1);
 			const body = await response.json().catch(() => ({}));
 			if (!response.ok) {
 				bioStatus.textContent = body.error || `Unable to upload ${kind}.`;
@@ -824,7 +829,7 @@ export const prerender = false;
 	}
 	async function loadProfile() {
 		const isOwnProfile = !userId;
-		const endpoint = isOwnProfile ? '/api/profile/me' : `/api/profile/${encodeURIComponent(userId)}`;
+		const endpoint = isOwnProfile ? 'https://backend.teblocks.my.id/api/profile/me' : `https://backend.teblocks.my.id/api/profile/${encodeURIComponent(userId)}`;
 		// Hide every editable control up front. They are only revealed once we have
 		// positive proof this profile belongs to the signed-in viewer, so a stale
 		// build, a failed request, or a misleading backend flag can never expose them.
@@ -832,7 +837,7 @@ export const prerender = false;
 		try {
 			const [response, meResponse] = await Promise.all([
 				request(endpoint),
-				request('/api/auth/me'),
+				request('https://backend.teblocks.my.id/api/auth/me'),
 			]);
 			if (response.status === 401) { window.location.replace('/login/'); return; }
 			const body = await response.json().catch(() => ({}));
@@ -878,7 +883,7 @@ export const prerender = false;
 				const copyBtn = document.getElementById('copy-id');
 				if (copyBtn) copyBtn.addEventListener('click', () => copyText(body.user_id, copyBtn, 'Copied'));
 				const logoutBtn = document.getElementById('logout-button');
-				if (logoutBtn) logoutBtn.addEventListener('click', async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.assign('/'); });
+				if (logoutBtn) logoutBtn.addEventListener('click', async () => { localStorage.removeItem('teblocks_token'); await fetch('https://backend.teblocks.my.id/api/auth/logout', { method: 'POST' }); window.location.assign('/'); });
 			} else {
 				document.getElementById('avatar-control').hidden = true;
 				document.getElementById('banner-control').hidden = true;
@@ -924,7 +929,7 @@ export const prerender = false;
 		button.disabled = true;
 		bioStatus.textContent = 'Saving...';
 		try {
-			const response = await request('/api/profile/me', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bio: bioInput.value.trim() || null }) }, 1);
+			const response = await request('https://backend.teblocks.my.id/api/profile/me', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bio: bioInput.value.trim() || null }) }, 1);
 			const body = await response.json().catch(() => ({}));
 			if (!response.ok) {
 				bioStatus.textContent = body.error || 'Unable to save your profile note.';
