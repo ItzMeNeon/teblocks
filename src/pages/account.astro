@@ -129,7 +129,7 @@ import { SITE_TITLE } from '../consts';
 		setStatus('Creating account…');
 
 		try {
-			const response = await post('/api/auth/register', Object.fromEntries(formData));
+			const response = await post('https://backend.teblocks.my.id/api/auth/register', Object.fromEntries(formData));
 			if (!response.user_id) throw new Error('The server returned an invalid registration response.');
 			userId = response.user_id;
 			registrationForm.reset();
@@ -153,7 +153,7 @@ import { SITE_TITLE } from '../consts';
 		setStatus('Verifying email…');
 
 		try {
-			await post('/api/auth/verify', { user_id: userId, code });
+			await post('https://backend.teblocks.my.id/api/auth/verify', { user_id: userId, code });
 			verificationForm.reset();
 			verificationPanel.hidden = true;
 			setStatus('Email verified. Your TeBlocks account is ready.');
