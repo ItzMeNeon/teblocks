@@ -64,6 +64,21 @@ import { SITE_TITLE } from '../consts';
 				backdrop-filter: blur(8px);
 				overflow: hidden;
 			}
+			@media (max-width: 640px) {
+				.leaderboard-panel { margin-top: 2em; }
+				.leaderboard-header { flex-direction: column; align-items: flex-start; }
+			}
+		</style>
+		<!--
+			The rules below style markup that is injected client-side (via innerHTML)
+			by the <script> at the bottom of this file, inside #leaderboard-content.
+			Astro's scoped styles only attach their data-astro-cid attribute to markup
+			present in this component's template at build time — HTML created later by
+			JS never receives that attribute, so a normal scoped <style> block silently
+			fails to match it (this was causing player avatars to render at native
+			image size instead of being clipped to 38x38). is:global is required here.
+		-->
+		<style is:global>
 			.leaderboard-table {
 				width: 100%;
 				border-collapse: collapse;
@@ -104,41 +119,41 @@ import { SITE_TITLE } from '../consts';
 			.rank-cell.rank-1 { color: #ffd166; }
 			.rank-cell.rank-2 { color: #d6e2ff; }
 			.rank-cell.rank-3 { color: #ff9d6e; }
-		.player-cell {
-			display: flex;
-			align-items: center;
-			gap: 0.8em;
-			min-width: 0;
-		}
-		.player-avatar {
-			width: 38px;
-			height: 38px;
-			border-radius: 11px;
-			background: linear-gradient(135deg, var(--i), var(--j));
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			color: #04121a;
-			font: 800 0.85rem var(--font-ui);
-			flex-shrink: 0;
-			overflow: hidden;
-			border: 1px solid rgba(255, 255, 255, 0.08);
-		}
-		.player-avatar img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			display: block;
-		}
-		.player-name {
-			font-weight: 700;
-			color: var(--text);
-			min-width: 0;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-		.player-name:hover { color: var(--accent); }
+			.player-cell {
+				display: flex;
+				align-items: center;
+				gap: 0.8em;
+				min-width: 0;
+			}
+			.player-avatar {
+				width: 38px;
+				height: 38px;
+				border-radius: 11px;
+				background: linear-gradient(135deg, var(--i), var(--j));
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #04121a;
+				font: 800 0.85rem var(--font-ui);
+				flex-shrink: 0;
+				overflow: hidden;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+			}
+			.player-avatar img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				display: block;
+			}
+			.player-name {
+				font-weight: 700;
+				color: var(--text);
+				min-width: 0;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			.player-name:hover { color: var(--accent); }
 			.rank-badge {
 				display: inline-block;
 				padding: 0.25em 0.6em;
@@ -176,10 +191,8 @@ import { SITE_TITLE } from '../consts';
 			}
 			.retry-btn:hover { background: var(--panel-hover); border-color: var(--border-bright); }
 			@media (max-width: 640px) {
-				.leaderboard-panel { margin-top: 2em; }
 				.leaderboard-table thead th,
 				.leaderboard-table td { padding: 0.7em 0.7em; }
-				.leaderboard-header { flex-direction: column; align-items: flex-start; }
 			}
 		</style>
 	</head>
@@ -219,17 +232,23 @@ import { SITE_TITLE } from '../consts';
 				lonely: { kind: 'score', url: '/api/score/sprintLock' },
 			};
 
+			function escapeHtml(str) {
+				return String(str).replace(/[&<>"']/g, (c) => ({
+					'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+				}[c]));
+			}
+
 			function avatarMarkup(entry) {
-				const letter = (entry.username || '?').slice(0, 1).toUpperCase();
+				const letter = escapeHtml((entry.username || '?').slice(0, 1).toUpperCase());
 				const img = entry.avatar_url
-					? `<img src="${entry.avatar_url}" alt="">`
+					? `<img src="${encodeURI(entry.avatar_url)}" alt="">`
 					: letter;
 				return `<div class="player-avatar">${img}</div>`;
 			}
 
 			function playerName(entry) {
 				const id = entry.id || entry.user_id;
-				const name = entry.username || 'Unknown';
+				const name = escapeHtml(entry.username || 'Unknown');
 				return id
 					? `<a class="player-name" href="/profile/${encodeURIComponent(id)}">${name}</a>`
 					: `<span class="player-name">${name}</span>`;
@@ -238,7 +257,7 @@ import { SITE_TITLE } from '../consts';
 			function renderRankedRow(entry, index) {
 				const rank = index + 1;
 				const rankClass = rank <= 3 ? `rank-${rank}` : '';
-				const rankName = [entry.rank_name, entry.rank_division].filter(Boolean).join(' ') || 'Unranked';
+				const rankName = escapeHtml([entry.rank_name, entry.rank_division].filter(Boolean).join(' ') || 'Unranked');
 				const winRate = entry.win_rate != null ? `${Number(entry.win_rate).toFixed(1)}%` : '--';
 				return `
 					<tr>
