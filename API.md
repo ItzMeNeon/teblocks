@@ -533,6 +533,174 @@ optional, defaults to `20`, capped at `50`.
 
 ---
 
+## Skin endpoints
+
+All skin files are PNG images. The game client loads them directly from the
+returned `skin_url`. Skins stored in `media/skins/` are served publicly at
+`/media/skins/<uuid>.png`.
+
+A **skin object** looks like:
+
+```json
+{
+  "id": "a1b2c3d4-...",
+  "user_id": "f47ac10b-...",
+  "username": "ItzNeon",
+  "name": "Midnight Neon",
+  "description": "Dark base with neon green highlights.",
+  "tags": ["neon", "dark"],
+  "likes": 12,
+  "downloads": 47,
+  "is_featured": false,
+  "created_at": "2026-09-17T10:00:00Z",
+  "skin_url": "https://backend.teblocks.my.id/media/skins/a1b2c3d4.png",
+  "liked": false
+}
+```
+
+`liked` is `true` when the authenticated viewer has liked the skin, `false`
+otherwise (always `false` for unauthenticated requests).
+
+---
+
+### POST /skins/upload (authenticated)
+
+Upload a new community skin. Uses `multipart/form-data`.
+
+**Form fields:**
+
+| Field | Required | Description |
+|---|---|---|
+| `file` | ✅ | PNG file, exactly **240×90 px** (8-col × 3-row grid of 30×30 tiles), max 2 MB |
+| `name` | ✅ | Skin name, 1–48 characters |
+| `description` | ❌ | Short description, max 200 chars |
+| `tags` | ❌ | Comma-separated tags (max 5, each ≤ 20 chars) |
+
+**Success — 200:**
+```json
+{ "skin": { ...skin object... } }
+```
+
+**Errors:**
+
+| Status | Meaning |
+|---|---|
+| 400 | Missing/invalid file, name required, dimensions too large |
+| 401 | Not authenticated |
+| 413 | File exceeds 2 MB |
+| 500 | Storage or DB error |
+
+---
+
+### GET /skins
+
+Returns a paginated list of community skins. **Public.**
+
+**Query params:**
+
+| Param | Default | Description |
+|---|---|---|
+| `limit` | 20 | Results per page (max 50) |
+| `offset` | 0 | Pagination offset |
+| `tag` | — | Filter by tag (exact match) |
+
+Ordered by `likes DESC, created_at DESC`.
+
+**Success — 200:**
+```json
+{
+  "skins": [ ...skin objects... ],
+  "total": 87,
+  "offset": 0,
+  "limit": 20
+}
+```
+
+When authenticated, each skin object includes the viewer's `liked` status.
+
+---
+
+### GET /skins/{id}
+
+Returns a single skin by ID. **Public.**
+
+**Success — 200:** Returns the full skin object.
+
+**Errors:** `404` if not found.
+
+---
+
+### DELETE /skins/{id} (authenticated)
+
+Deletes a skin. Only the skin's owner can delete it.
+
+**Success — 200:**
+```json
+{ "status": "deleted" }
+```
+
+**Errors:** `401` if not authenticated, `403` if not the owner, `404` if not found.
+
+---
+
+### PATCH /skins/{id} (authenticated)
+
+Update a skin's metadata. Only the owner can update.
+
+**Request body:**
+```json
+{
+  "name": "New Skin Name",
+  "description": "Updated description.",
+  "tags": ["neon", "minimal"]
+}
+```
+
+All fields optional. Tags is a JSON array.
+
+**Success — 200:** Returns updated skin object.
+
+**Errors:** `400` for invalid fields, `401` if not authenticated, `403` if not owner.
+
+---
+
+### POST /skins/{id}/like (authenticated)
+
+Like a skin. Idempotent — liking the same skin twice does not double-count.
+
+**Success — 200:**
+```json
+{ "likes": 13, "liked": true }
+```
+
+**Errors:** `401` if not authenticated, `404` if skin not found.
+
+---
+
+### DELETE /skins/{id}/like (authenticated)
+
+Unlike a skin.
+
+**Success — 200:**
+```json
+{ "likes": 12, "liked": false }
+```
+
+**Errors:** `401` if not authenticated, `404` if skin not found.
+
+---
+
+### GET /skins/{id}/download
+
+Increments the skin's download counter and redirects (302) to the
+direct PNG media URL. Also accessible as a plain URL for direct link usage.
+
+**Success:** `302 Found` redirect to the skin file URL.
+
+**Errors:** `404` if skin not found.
+
+---
+
 ## WebSocket connection (after login)
 
 ```

@@ -2,115 +2,552 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE_TITLE } from '../consts';
+import { SITE_TITLE, API_BASE_URL } from '../consts';
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`Skins | ${SITE_TITLE}`} description="Browse and download community skins for TeBlocks." />
+		<BaseHead title={`Skins | ${SITE_TITLE}`} description="Browse, upload, and download community block skins for TeBlocks." />
 		<style>
-			.skins-panel { max-width: 1100px; margin: 3em auto 0; }
-			.skins-panel h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); }
-			.skins-panel > p { margin: .4rem 0 1.6rem; color: var(--text-muted); }
+			/* ── Layout ── */
+			.skins-panel { max-width: 1200px; margin: 3em auto 0; padding: 0 1rem 4rem; }
+			.page-header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1em; margin-bottom: 1.6em; }
+			.page-header h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); }
+			.page-header > p { margin: .3rem 0 0; color: var(--text-muted); font-size: .93rem; }
+
+			/* ── Toolbar ── */
+			.toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: .75em; margin-bottom: 1.6em; }
+			.toolbar-left { display: flex; gap: .5em; flex-wrap: wrap; flex: 1; }
+			.tag-btn {
+				padding: .3em .85em; border: 1px solid var(--border); border-radius: 20px;
+				background: var(--panel); color: var(--text-muted); font-size: .82rem;
+				cursor: pointer; transition: all .15s;
+			}
+			.tag-btn:hover, .tag-btn.active {
+				border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent);
+			}
+			.upload-btn {
+				padding: .45em 1.1em; border: 1px solid var(--border-bright);
+				border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+				color: #001a12; font-weight: 700; font-size: .86rem; cursor: pointer;
+				white-space: nowrap; transition: filter .15s;
+			}
+			.upload-btn:hover { filter: brightness(1.1); }
+			.upload-btn:disabled { opacity: .5; cursor: default; }
+
+			/* ── Grid ── */
 			.skins-grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+				grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 				gap: 1.1em;
 			}
+
+			/* ── Card ── */
 			.skin-card {
-				border: 1px solid var(--border);
-				border-radius: var(--radius);
-				background: var(--panel);
-				overflow: hidden;
-				display: flex;
-				flex-direction: column;
-				transition: border-color .15s ease, background .15s ease;
+				border: 1px solid var(--border); border-radius: var(--radius);
+				background: var(--panel); overflow: hidden;
+				display: flex; flex-direction: column;
+				transition: border-color .15s ease, transform .1s ease;
 			}
-			.skin-card:hover {
-				border-color: var(--border-bright);
-				background: var(--panel-hover);
-			}
-			.skin-preview {
-				width: 100%;
-				aspect-ratio: 1 / 1;
+			.skin-card:hover { border-color: var(--border-bright); transform: translateY(-2px); }
+			.skin-card.featured { border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+			.featured-badge {
+				font-size: .7rem; font-weight: 700; letter-spacing: .06em;
 				background: linear-gradient(135deg, var(--accent), var(--accent-2));
-				display: grid;
-				place-items: center;
-				color: #001a12;
-				font: 800 1.6rem var(--font-display);
-				border-bottom: 1px solid var(--border);
+				color: #001a12; padding: .18em .55em; border-radius: 4px;
+				text-transform: uppercase;
+			}
+
+			.skin-preview {
+				width: 100%; aspect-ratio: 1 / 1; position: relative;
+				background: repeating-conic-gradient(#1a1a1a 0% 25%, #111 0% 50%) 0 0 / 20px 20px;
+				display: flex; align-items: center; justify-content: center;
+				overflow: hidden; border-bottom: 1px solid var(--border);
 			}
 			.skin-preview img {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				display: block;
+				width: 100%; height: 100%; object-fit: contain;
+				image-rendering: pixelated; display: block;
 			}
-			.skin-meta {
-				padding: 1em;
-				display: flex;
-				flex-direction: column;
-				gap: .4em;
-				flex: 1;
+			.skin-preview-placeholder {
+				font: 800 1.6rem var(--font-display); color: var(--text-muted);
+				opacity: .4; user-select: none;
 			}
-			.skin-name {
-				font-weight: 700;
-				color: var(--text);
-				line-height: 1.3;
-			}
-			.skin-author {
-				font-size: .82rem;
+
+			.skin-meta { padding: .9em 1em; display: flex; flex-direction: column; gap: .35em; flex: 1; }
+			.skin-name { font-weight: 700; color: var(--text); line-height: 1.3; font-size: .97rem; }
+			.skin-author { font-size: .8rem; color: var(--text-muted); }
+			.skin-tags { display: flex; flex-wrap: wrap; gap: .3em; margin-top: .1em; }
+			.skin-tag {
+				font-size: .73rem; padding: .15em .5em;
+				border: 1px solid var(--border); border-radius: 12px;
 				color: var(--text-muted);
 			}
-			.download-btn {
-				margin-top: auto;
-				padding: .55em 1em;
+
+			.skin-actions { display: flex; gap: .5em; padding: .7em 1em 1em; margin-top: auto; }
+			.skin-actions a, .skin-actions button {
+				flex: 1; padding: .45em .6em; border-radius: 7px;
+				font: inherit; font-size: .83rem; font-weight: 700;
+				text-align: center; cursor: pointer; transition: filter .15s, opacity .15s;
+				text-decoration: none;
+			}
+			.btn-download {
 				border: 1px solid var(--border-bright);
-				border-radius: 8px;
 				background: linear-gradient(135deg, var(--accent), var(--accent-2));
 				color: #001a12;
-				font-weight: 700;
-				font-size: .86rem;
-				text-align: center;
-				text-decoration: none;
-				transition: filter .15s ease;
 			}
-			.download-btn:hover { filter: brightness(1.1); }
-			.state { padding: 2em 0; color: var(--text-muted); text-align: center; }
-			.state.error { color: var(--danger); }
+			.btn-download:hover { filter: brightness(1.1); }
+			.btn-like {
+				border: 1px solid var(--border); background: var(--panel-hover);
+				color: var(--text-muted); display: flex; align-items: center;
+				justify-content: center; gap: .3em;
+			}
+			.btn-like.liked { color: #e8385a; border-color: #e8385a; }
+			.btn-like:hover { opacity: .8; }
+
+			/* ── State messages ── */
+			.state { padding: 3em 0; color: var(--text-muted); text-align: center; }
+			.state.error { color: var(--danger, #f66); }
+			.load-more-wrap { text-align: center; margin-top: 1.5em; }
+			.load-more-btn {
+				padding: .6em 2em; border: 1px solid var(--border-bright); border-radius: 8px;
+				background: var(--panel); color: var(--text); font: inherit; font-size: .9rem;
+				cursor: pointer; transition: background .15s;
+			}
+			.load-more-btn:hover { background: var(--panel-hover); }
+
+			/* ── Upload modal ── */
+			.modal-overlay {
+				position: fixed; inset: 0; background: rgba(0,0,0,.7);
+				display: flex; align-items: center; justify-content: center;
+				z-index: 1000; padding: 1rem;
+			}
+			.modal-overlay[hidden] { display: none; }
+			.modal {
+				background: var(--panel); border: 1px solid var(--border-bright);
+				border-radius: var(--radius); padding: 2em; max-width: 480px; width: 100%;
+				max-height: 90vh; overflow-y: auto;
+			}
+			.modal h2 { margin: 0 0 1.2em; font-size: 1.35rem; }
+			.modal label { display: block; font-size: .88rem; font-weight: 600; margin-bottom: .3em; color: var(--text); }
+			.modal input[type="text"], .modal textarea, .modal input[type="file"] {
+				width: 100%; box-sizing: border-box; margin-bottom: 1em;
+				padding: .65em .8em; border: 1px solid var(--border);
+				border-radius: 6px; background: var(--board); color: var(--text); font: inherit;
+			}
+			.modal textarea { resize: vertical; min-height: 70px; }
+			.modal .hint { font-size: .78rem; color: var(--text-muted); margin: -.7em 0 1em; }
+			.modal-actions { display: flex; gap: .75em; justify-content: flex-end; margin-top: .5em; }
+			.btn-cancel {
+				padding: .6em 1.2em; border: 1px solid var(--border); border-radius: 7px;
+				background: transparent; color: var(--text); font: inherit; cursor: pointer;
+			}
+			.btn-submit {
+				padding: .6em 1.4em; border: 0; border-radius: 7px;
+				background: linear-gradient(135deg, var(--accent), var(--accent-2));
+				color: #001a12; font: inherit; font-weight: 700; cursor: pointer;
+			}
+			.btn-submit:disabled { opacity: .5; cursor: default; }
+			.upload-status { font-size: .87rem; color: var(--text-muted); margin-top: .6em; min-height: 1.4em; }
+			.upload-status.err { color: var(--danger, #f66); }
+
+			/* ── Drop zone ── */
+			.drop-zone {
+				border: 2px dashed var(--border); border-radius: 8px;
+				padding: 1.5em; text-align: center; cursor: pointer;
+				color: var(--text-muted); font-size: .87rem; margin-bottom: 1em;
+				transition: border-color .15s, background .15s;
+			}
+			.drop-zone.drag-over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+			.drop-zone .drop-icon { font-size: 1.6rem; margin-bottom: .4em; display: block; }
+			.drop-zone input[type="file"] { display: none; }
+			.file-selected { font-size: .8rem; color: var(--accent); margin-top: .3em; }
+
+			@media (max-width: 600px) {
+				.page-header { flex-direction: column; align-items: flex-start; }
+				.skins-panel { padding: 0 .75rem 3rem; }
+			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
 			<section class="skins-panel" aria-labelledby="skins-title">
-				<h1 id="skins-title">Skins</h1>
-				<p>Community skins for the TeBlocks client. Drop your own PNG skins into the <code>skins</code> folder in-game, or download from here.</p>
-				<div id="skins-content" class="state" role="status">Loading skins...</div>
+				<div class="page-header">
+					<div>
+						<h1 id="skins-title">Skins</h1>
+						<p>Community PNG skins for the TeBlocks client — browse, like, and share.</p>
+					</div>
+					<button class="upload-btn" id="open-upload" aria-haspopup="dialog">⬆ Upload Skin</button>
+				</div>
+
+				<!-- Tag filter toolbar -->
+				<div class="toolbar" role="toolbar" aria-label="Filter skins by tag">
+					<div class="toolbar-left" id="tag-filters">
+						<button class="tag-btn active" data-tag="">All</button>
+						<button class="tag-btn" data-tag="minimal">Minimal</button>
+						<button class="tag-btn" data-tag="neon">Neon</button>
+						<button class="tag-btn" data-tag="retro">Retro</button>
+						<button class="tag-btn" data-tag="dark">Dark</button>
+						<button class="tag-btn" data-tag="colorful">Colorful</button>
+					</div>
+				</div>
+
+				<!-- Grid -->
+				<div id="skins-content" class="state" role="status">Loading skins…</div>
+				<div id="load-more-wrap" class="load-more-wrap" hidden>
+					<button class="load-more-btn" id="load-more">Load more</button>
+				</div>
 			</section>
 		</main>
 		<Footer />
-		<script>
-			const content = document.getElementById('skins-content');
-			const sampleSkins = [
-				{ name: 'TeBlocks Default', author: 'TeBlocks', file: 'default.png' },
-				{ name: 'Classic', author: 'Community', file: 'classic.png' },
-				{ name: 'Neon', author: 'Community', file: 'neon.png' },
-			];
-			function renderCard(skin) {
-				return `
-					<article class="skin-card">
-						<div class="skin-preview" aria-hidden="true">${skin.name}</div>
-						<div class="skin-meta">
-							<span class="skin-name">${skin.name}</span>
-							<span class="skin-author">by ${skin.author}</span>
-							<a class="download-btn" href="/skins/${skin.file}" download>Download</a>
+
+		<!-- Upload modal -->
+		<div class="modal-overlay" id="upload-modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+			<div class="modal">
+				<h2 id="modal-title">Upload a Skin</h2>
+
+				<div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Click or drag to select a skin PNG file">
+					<span class="drop-icon">🎨</span>
+					<div>Drag &amp; drop a PNG skin file here, or <strong>click to browse</strong></div>
+					<div style="font-size:.75rem;margin-top:.4em;color:var(--text-muted)">Must be exactly <strong>240×90 px</strong> — an 8-column × 3-row grid of 30×30 tiles</div>
+					<input type="file" id="skin-file-input" accept=".png,image/png" />
+					<div class="file-selected" id="file-label" hidden></div>
+				</div>
+
+				<label for="skin-name">Skin name <span style="color:var(--danger)">*</span></label>
+				<input type="text" id="skin-name" placeholder="e.g. Midnight Neon" maxlength="48" required />
+
+				<label for="skin-desc">Description <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+				<textarea id="skin-desc" placeholder="Describe your skin in a few words…" maxlength="200"></textarea>
+
+				<label for="skin-tags">Tags <span style="color:var(--text-muted);font-weight:400">(optional, comma-separated)</span></label>
+				<input type="text" id="skin-tags" placeholder="e.g. neon, dark, minimal" maxlength="120" />
+				<p class="hint">Up to 5 tags, each max 20 characters.</p>
+
+				<div id="upload-status" class="upload-status" aria-live="polite"></div>
+
+				<div class="modal-actions">
+					<button class="btn-cancel" id="close-upload">Cancel</button>
+					<button class="btn-submit" id="submit-upload">Upload</button>
+				</div>
+			</div>
+		</div>
+
+		<script define:vars={{ API_BASE_URL }}>
+		const API = API_BASE_URL;
+
+		/* ── State ── */
+		let currentTag = '';
+		let offset = 0;
+		const PAGE_SIZE = 20;
+		let totalSkins = 0;
+		let sessionToken = null;
+		let currentUserId = null;
+		let likedSkins = new Set();
+		let isLoading = false;
+
+		/* ── Auth check ── */
+		async function checkAuth() {
+			// Try to get session from cookie (or localStorage as fallback, matching existing login flow)
+			const cookie = document.cookie.split('; ').find(c => c.startsWith('teblocks_session='));
+			if (cookie) sessionToken = cookie.split('=')[1];
+			if (!sessionToken) sessionToken = localStorage.getItem('teblocks_token');
+			if (!sessionToken) return;
+			try {
+				const res = await fetch(`${API}/api/auth/me`, {
+					headers: { 'Authorization': `Bearer ${sessionToken}` }
+				});
+				if (res.ok) {
+					const data = await res.json();
+					currentUserId = data.user_id;
+				} else {
+					sessionToken = null;
+				}
+			} catch { sessionToken = null; }
+		}
+
+		/* ── Helpers ── */
+		function getToken() { return sessionToken || localStorage.getItem('teblocks_token') || ''; }
+
+		function renderTags(tags) {
+			if (!tags || tags.length === 0) return '';
+			return `<div class="skin-tags">${tags.map(t => `<span class="skin-tag">${escHtml(t)}</span>`).join('')}</div>`;
+		}
+
+		function escHtml(s) {
+			return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+		}
+
+		function heartIcon(liked) {
+			return liked ? '❤️' : '🤍';
+		}
+
+		function renderCard(skin) {
+			const liked = likedSkins.has(skin.id);
+			const previewImg = skin.skin_url
+				? `<img src="${escHtml(skin.skin_url)}" alt="${escHtml(skin.name)} preview" loading="lazy" />`
+				: `<div class="skin-preview-placeholder">PNG</div>`;
+			return `
+				<article class="skin-card${skin.is_featured ? ' featured' : ''}" data-id="${escHtml(skin.id)}">
+					<div class="skin-preview">${previewImg}</div>
+					<div class="skin-meta">
+						<div style="display:flex;align-items:center;gap:.5em">
+							<span class="skin-name">${escHtml(skin.name)}</span>
+							${skin.is_featured ? '<span class="featured-badge">Featured</span>' : ''}
 						</div>
-					</article>
-				`;
+						<span class="skin-author">by ${escHtml(skin.username)}</span>
+						${renderTags(skin.tags)}
+						${skin.description ? `<span style="font-size:.79rem;color:var(--text-muted);margin-top:.15em">${escHtml(skin.description)}</span>` : ''}
+					</div>
+					<div class="skin-actions">
+						<a class="btn-download" href="${escHtml(skin.skin_url || '#')}" download="${escHtml(skin.name)}.png"
+							data-skin-id="${escHtml(skin.id)}" title="${skin.downloads || 0} downloads">
+							↓ Download
+						</a>
+						<button class="btn-like${liked ? ' liked' : ''}" data-skin-id="${escHtml(skin.id)}"
+							title="${liked ? 'Unlike' : 'Like'} this skin" aria-pressed="${liked}">
+							${heartIcon(liked)} ${skin.likes || 0}
+						</button>
+					</div>
+				</article>
+			`;
+		}
+
+		/* ── Load skins ── */
+		const content = document.getElementById('skins-content');
+		const loadMoreWrap = document.getElementById('load-more-wrap');
+
+		async function loadSkins(reset = false) {
+			if (isLoading) return;
+			isLoading = true;
+			if (reset) {
+				offset = 0;
+				content.innerHTML = '';
+				content.className = 'state';
+				content.textContent = 'Loading skins…';
+				loadMoreWrap.hidden = true;
 			}
-			content.innerHTML = `<div class="skins-grid">${sampleSkins.map(renderCard).join('')}</div>`;
+			try {
+				let url = `${API}/skins?limit=${PAGE_SIZE}&offset=${offset}`;
+				if (currentTag) url += `&tag=${encodeURIComponent(currentTag)}`;
+				const headers = {};
+				const tok = getToken();
+				if (tok) headers['Authorization'] = `Bearer ${tok}`;
+				const res = await fetch(url, { headers });
+				if (!res.ok) throw new Error(`Server error ${res.status}`);
+				const { skins, total } = await res.json();
+				totalSkins = total || 0;
+
+				// Collect liked info
+				if (skins && skins.length) {
+					skins.forEach(s => { if (s.liked) likedSkins.add(s.id); });
+				}
+
+				if (reset) {
+					content.className = '';
+					content.removeAttribute('role');
+				}
+
+				if (!skins || skins.length === 0) {
+					if (offset === 0) {
+						content.className = 'state';
+						content.textContent = currentTag
+							? `No skins found with tag "${currentTag}". Be the first to upload one!`
+							: 'No skins yet — be the first to upload!';
+					}
+				} else {
+					if (offset === 0) {
+						content.innerHTML = `<div class="skins-grid" id="skins-grid"></div>`;
+					}
+					const grid = document.getElementById('skins-grid');
+					skins.forEach(skin => {
+						grid.insertAdjacentHTML('beforeend', renderCard(skin));
+					});
+					offset += skins.length;
+					loadMoreWrap.hidden = offset >= totalSkins;
+				}
+			} catch (err) {
+				if (offset === 0) {
+					content.className = 'state error';
+					content.textContent = 'Failed to load skins. Please try again later.';
+				}
+			} finally {
+				isLoading = false;
+			}
+		}
+
+		/* ── Tag filter ── */
+		document.getElementById('tag-filters').addEventListener('click', e => {
+			const btn = e.target.closest('.tag-btn');
+			if (!btn) return;
+			document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			currentTag = btn.dataset.tag || '';
+			likedSkins.clear();
+			loadSkins(true);
+		});
+
+		/* ── Load more ── */
+		document.getElementById('load-more').addEventListener('click', () => loadSkins(false));
+
+		/* ── Like / Unlike ── */
+		document.addEventListener('click', async e => {
+			const btn = e.target.closest('.btn-like');
+			if (!btn) return;
+			const skinId = btn.dataset.skinId;
+			const tok = getToken();
+			if (!tok) {
+				alert('Please log in to like skins.');
+				return;
+			}
+			const liked = likedSkins.has(skinId);
+			const method = liked ? 'DELETE' : 'POST';
+			try {
+				const res = await fetch(`${API}/skins/${skinId}/like`, {
+					method,
+					headers: { 'Authorization': `Bearer ${tok}` }
+				});
+				if (!res.ok) throw new Error();
+				if (liked) likedSkins.delete(skinId); else likedSkins.add(skinId);
+				// Update all like buttons for this skin
+				document.querySelectorAll(`.btn-like[data-skin-id="${skinId}"]`).forEach(b => {
+					const currentCount = parseInt(b.textContent.replace(/\D/g,''), 10) || 0;
+					const newCount = liked ? currentCount - 1 : currentCount + 1;
+					b.classList.toggle('liked', !liked);
+					b.setAttribute('aria-pressed', String(!liked));
+					b.title = liked ? 'Like this skin' : 'Unlike this skin';
+					b.innerHTML = `${heartIcon(!liked)} ${newCount}`;
+				});
+			} catch {
+				alert('Could not update like. Please try again.');
+			}
+		});
+
+		/* ── Download tracking ── */
+		document.addEventListener('click', e => {
+			const link = e.target.closest('a.btn-download[data-skin-id]');
+			if (!link) return;
+			const skinId = link.dataset.skinId;
+			// Fire-and-forget: tell server a download happened
+			fetch(`${API}/skins/${skinId}/download`, { method: 'GET' }).catch(() => {});
+		});
+
+		/* ── Upload modal ── */
+		const modal = document.getElementById('upload-modal');
+		const openBtn = document.getElementById('open-upload');
+		const closeBtn = document.getElementById('close-upload');
+		const submitBtn = document.getElementById('submit-upload');
+		const uploadStatus = document.getElementById('upload-status');
+		const dropZone = document.getElementById('drop-zone');
+		const fileInput = document.getElementById('skin-file-input');
+		const fileLabel = document.getElementById('file-label');
+		let selectedFile = null;
+
+		openBtn.addEventListener('click', () => {
+			const tok = getToken();
+			if (!tok) { alert('Please log in to upload skins.'); return; }
+			modal.hidden = false;
+			document.body.style.overflow = 'hidden';
+		});
+		closeBtn.addEventListener('click', closeModal);
+		modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+		document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+		function closeModal() {
+			modal.hidden = true;
+			document.body.style.overflow = '';
+			selectedFile = null;
+			fileLabel.hidden = true;
+			fileLabel.textContent = '';
+			document.getElementById('skin-name').value = '';
+			document.getElementById('skin-desc').value = '';
+			document.getElementById('skin-tags').value = '';
+			uploadStatus.textContent = '';
+			uploadStatus.className = 'upload-status';
+			submitBtn.disabled = false;
+		}
+
+		function setFile(file) {
+			if (!file || file.type !== 'image/png') {
+				uploadStatus.textContent = 'Only PNG files are accepted.';
+				uploadStatus.className = 'upload-status err';
+				selectedFile = null;
+				return;
+			}
+			if (file.size > 2 * 1024 * 1024) {
+				uploadStatus.textContent = 'File is too large (max 2 MB).';
+				uploadStatus.className = 'upload-status err';
+				selectedFile = null;
+				return;
+			}
+			selectedFile = file;
+			uploadStatus.textContent = '';
+			fileLabel.textContent = `✓ ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+			fileLabel.hidden = false;
+		}
+
+		dropZone.addEventListener('click', () => fileInput.click());
+		dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+		fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+		dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+		dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+		dropZone.addEventListener('drop', e => {
+			e.preventDefault();
+			dropZone.classList.remove('drag-over');
+			if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+		});
+
+		submitBtn.addEventListener('click', async () => {
+			const name = document.getElementById('skin-name').value.trim();
+			const desc = document.getElementById('skin-desc').value.trim();
+			const tagsRaw = document.getElementById('skin-tags').value.trim();
+
+			if (!selectedFile) { uploadStatus.textContent = 'Please select a PNG file.'; uploadStatus.className = 'upload-status err'; return; }
+			if (!name || name.length < 1) { uploadStatus.textContent = 'Skin name is required.'; uploadStatus.className = 'upload-status err'; return; }
+			if (name.length > 48) { uploadStatus.textContent = 'Name must be 48 characters or fewer.'; uploadStatus.className = 'upload-status err'; return; }
+
+			const tok = getToken();
+			if (!tok) { uploadStatus.textContent = 'You must be logged in.'; uploadStatus.className = 'upload-status err'; return; }
+
+			submitBtn.disabled = true;
+			uploadStatus.textContent = 'Uploading…';
+			uploadStatus.className = 'upload-status';
+
+			const fd = new FormData();
+			fd.append('file', selectedFile);
+			fd.append('name', name);
+			if (desc) fd.append('description', desc);
+			if (tagsRaw) fd.append('tags', tagsRaw);
+
+			try {
+				const res = await fetch(`${API}/skins/upload`, {
+					method: 'POST',
+					headers: { 'Authorization': `Bearer ${tok}` },
+					body: fd
+				});
+				const body = await res.json().catch(() => ({}));
+				if (!res.ok) throw new Error(body.error || `Upload failed (${res.status})`);
+
+				uploadStatus.textContent = '✓ Skin uploaded successfully!';
+				uploadStatus.className = 'upload-status';
+				setTimeout(() => {
+					closeModal();
+					likedSkins.clear();
+					loadSkins(true);
+				}, 1200);
+			} catch (err) {
+				uploadStatus.textContent = err instanceof Error ? err.message : 'Upload failed. Please try again.';
+				uploadStatus.className = 'upload-status err';
+				submitBtn.disabled = false;
+			}
+		});
+
+		/* ── Init ── */
+		(async () => {
+			await checkAuth();
+			await loadSkins(true);
+		})();
 		</script>
 	</body>
 </html>
