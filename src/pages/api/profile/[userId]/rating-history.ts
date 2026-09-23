@@ -4,7 +4,7 @@ import { authenticatedApiFetch, forwardedResponse } from '../../../../lib/auth';
 export const prerender = false;
 
 export const GET: APIRoute = async (context) => {
-	const userId = context.params.id;
+	const userId = context.params.userId;
 	const query = new URL(context.request.url).searchParams;
 	const days = query.get('days') ?? '30';
 	const search = new URLSearchParams({ days });

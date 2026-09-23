@@ -413,7 +413,7 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 				// Update all like buttons for this skin
 				document.querySelectorAll(`.btn-like[data-skin-id="${skinId}"]`).forEach(b => {
 					const currentCount = parseInt(b.textContent.replace(/\D/g,''), 10) || 0;
-					const newCount = liked ? currentCount - 1 : currentCount + 1;
+					const newCount = Math.max(0, liked ? currentCount - 1 : currentCount + 1);
 					b.classList.toggle('liked', !liked);
 					b.setAttribute('aria-pressed', String(!liked));
 					b.title = liked ? 'Like this skin' : 'Unlike this skin';
@@ -458,6 +458,7 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 			modal.hidden = true;
 			document.body.style.overflow = '';
 			selectedFile = null;
+			if (fileInput) fileInput.value = '';
 			fileLabel.hidden = true;
 			fileLabel.textContent = '';
 			document.getElementById('skin-name').value = '';

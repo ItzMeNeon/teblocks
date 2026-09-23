@@ -226,10 +226,10 @@ import { SITE_TITLE } from '../consts';
 			const tabs = document.querySelectorAll('.mode-tab');
 
 			const categories = {
-				ranked: { kind: 'ranked', url: 'https://backend.teblocks.my.id/api/leaderboards?mode=ranked_1v1' },
-				lines40: { kind: 'score', url: 'https://backend.teblocks.my.id/api/score/sprint_40l' },
-				sprint: { kind: 'score', url: 'https://backend.teblocks.my.id/api/score/sprint_100l' },
-				lonely: { kind: 'score', url: 'https://backend.teblocks.my.id/api/score/sprintLock' },
+				ranked: { kind: 'ranked', url: '/api/leaderboards?mode=ranked_1v1' },
+				lines40: { kind: 'score', url: '/api/score/sprint_40l' },
+				sprint: { kind: 'score', url: '/api/score/sprint_100l' },
+				lonely: { kind: 'score', url: '/api/score/sprintLock' },
 			};
 
 			function escapeHtml(str) {
@@ -257,7 +257,8 @@ import { SITE_TITLE } from '../consts';
 			function renderRankedRow(entry, index) {
 				const rank = index + 1;
 				const rankClass = rank <= 3 ? `rank-${rank}` : '';
-				const rankName = escapeHtml([entry.rank_name, entry.rank_division].filter(Boolean).join(' ') || 'Unranked');
+				const rankDisplay = entry.rank || entry.rank_name;
+				const rankName = escapeHtml([rankDisplay, entry.rank_division].filter(Boolean).join(' ') || 'Unranked');
 				const winRate = entry.win_rate != null ? `${Number(entry.win_rate).toFixed(1)}%` : '--';
 				return `
 					<tr>
@@ -305,7 +306,7 @@ import { SITE_TITLE } from '../consts';
 					try {
 						const controller = new AbortController();
 						const timeout = window.setTimeout(() => controller.abort(), 8000);
-						const response = await fetch(cfg.url, { signal: controller.signal, credentials: 'include' });
+						const response = await fetch(cfg.url, { signal: controller.signal });
 						window.clearTimeout(timeout);
 						if (response.status === 404 || response.status === 405) {
 							content.innerHTML = '<div class="state">Leaderboards aren’t available for this mode yet.</div>';

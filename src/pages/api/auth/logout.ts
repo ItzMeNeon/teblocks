@@ -4,8 +4,8 @@ import { apiFetch, json, SESSION_COOKIE, API_CONFIGURATION_ERROR } from '../../.
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
-	context.cookies.delete(SESSION_COOKIE, { path: '/' });
 	const token = context.cookies.get(SESSION_COOKIE)?.value;
+	context.cookies.delete(SESSION_COOKIE, { path: '/' });
 	if (!token) return json({ status: 'signed_out' });
 
 	try {

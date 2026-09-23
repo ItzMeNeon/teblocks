@@ -99,7 +99,11 @@ import { SITE_TITLE } from '../consts';
 	const verificationForm = document.querySelector('#verification-form');
 	const verificationPanel = document.querySelector('#verification-panel');
 	const status = document.querySelector('#form-status');
-	let userId = '';
+	let userId = sessionStorage.getItem('pending_verify_uid') || '';
+	if (userId && verificationPanel) {
+		verificationPanel.hidden = false;
+		setStatus('Pending email verification. Enter the 6-digit code sent to your email.');
+	}
 
 	function setStatus(message) {
 		status.textContent = message;
@@ -129,9 +133,10 @@ import { SITE_TITLE } from '../consts';
 		setStatus('Creating account…');
 
 		try {
-			const response = await post('https://backend.teblocks.my.id/api/auth/register', Object.fromEntries(formData));
+			const response = await post('/api/auth/register', Object.fromEntries(formData));
 			if (!response.user_id) throw new Error('The server returned an invalid registration response.');
 			userId = response.user_id;
+			sessionStorage.setItem('pending_verify_uid', userId);
 			registrationForm.reset();
 			verificationPanel.hidden = false;
 			setStatus('Account created. Check your email for the verification code.');
@@ -153,10 +158,11 @@ import { SITE_TITLE } from '../consts';
 		setStatus('Verifying email…');
 
 		try {
-			await post('https://backend.teblocks.my.id/api/auth/verify', { user_id: userId, code });
+			await post('/api/auth/verify', { user_id: userId, code });
+			sessionStorage.removeItem('pending_verify_uid');
 			verificationForm.reset();
 			verificationPanel.hidden = true;
-			setStatus('Email verified. Your TeBlocks account is ready.');
+			setStatus('Email verified. Your TeBlocks account is ready! You can now log in.');
 		} catch (error) {
 			setStatus(error instanceof Error ? error.message : 'Unable to verify the code.');
 		} finally {
