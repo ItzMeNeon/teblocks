@@ -58,7 +58,8 @@ const year = new Date().getFullYear();
 <style>
 	footer {
 		border-top: 1px solid var(--border);
-		background: rgba(6, 9, 18, 0.6);
+		background: var(--neu-bg);
+		box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
 		margin-top: 4rem;
 	}
 	.footer-inner {
@@ -83,6 +84,12 @@ const year = new Date().getFullYear();
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
+	:global([data-theme="light"]) .footer-logo span {
+		background: linear-gradient(120deg, var(--text), var(--accent));
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
 	.footer-brand p {
 		color: var(--text-dim);
 		font-size: 0.9rem;
@@ -99,7 +106,9 @@ const year = new Date().getFullYear();
 		width: 38px;
 		height: 38px;
 		border-radius: 10px;
-		border: 1px solid var(--border);
+		background: var(--neu-bg);
+		box-shadow: var(--neu-shadow-sm);
+		border: none;
 		color: var(--text-dim);
 		font-weight: 700;
 		font-size: 0.8rem;
@@ -107,9 +116,9 @@ const year = new Date().getFullYear();
 		transition: all var(--transition-fast);
 	}
 	.footer-social a:hover {
-		color: var(--text);
-		border-color: var(--border-bright);
-		background: rgba(255, 255, 255, 0.04);
+		color: var(--accent);
+		box-shadow: var(--neu-inset);
+		transform: translateY(1px);
 	}
 
 	.footer-col h4 {

@@ -20,6 +20,15 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta name="generator" content={Astro.generator} />
 
+<!-- Theme script to prevent FOUC -->
+<script is:inline>
+	(function() {
+		const saved = localStorage.getItem('teblocks_theme');
+		const theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.setAttribute('data-theme', theme);
+	})();
+</script>
+
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 

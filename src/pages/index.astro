@@ -16,35 +16,35 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			<!-- HERO -->
 			<section class="hero" id="play" aria-labelledby="hero-title">
 				<div class="hero-content">
-				<p class="eyebrow" style="--accent-color: var(--accent)">Built on Techmino · Server-authoritative · SRS</p>
-				<h1 id="hero-title">Stack fast.<br />Play fair.</h1>
-				<p class="lede">
-					A competitive block-stacking game built on Techmino — real SRS rotation and wall kicks,
-					a fair 7-bag randomizer, and a server that never trusts the client. Climb the ranked
-					ladder, drop into casual multiplayer rooms, or chase records in minigames.
-				</p>
+					<p class="eyebrow" style="--accent-color: var(--accent)">Built on Techmino · Server-authoritative · SRS</p>
+					<h1 id="hero-title">Stack fast.<br />Play fair.</h1>
+					<p class="lede">
+						A competitive block-stacking game built on Techmino — real SRS rotation and wall kicks,
+						a fair 7-bag randomizer, and a server that never trusts the client. Climb the ranked
+						ladder, drop into casual multiplayer rooms, or chase records in minigames.
+					</p>
 					<div class="hero-cta">
 						<a class="btn btn-primary btn-lg" href="#download">Download client</a>
 						<a class="btn btn-secondary btn-lg" href="/leaderboards/">Leaderboards</a>
 					</div>
 				</div>
-			<div class="hero-board">
-				<div class="hero-glow"></div>
-				<div class="hero-video-frame">
-					<video
-						id="hero-video"
-						class="hero-video"
-						autoplay
-						loop
-						muted
-						playsinline
-						preload="auto"
-						aria-label="TeBlocks gameplay preview"
-					>
-						<source src="/media/teblockspreview.webm" type="video/webm" />
-					</video>
+				<div class="hero-board">
+					<div class="hero-glow"></div>
+					<div class="hero-video-frame">
+						<video
+							id="hero-video"
+							class="hero-video"
+							autoplay
+							loop
+							muted
+							playsinline
+							preload="metadata"
+							aria-label="TeBlocks gameplay preview"
+						>
+							<source src="/media/teblockspreview.webm" type="video/webm" />
+						</video>
+					</div>
 				</div>
-			</div>
 			</section>
 
 			<!-- PLAYERS ONLINE NOW -->
@@ -58,17 +58,19 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					<div class="online-stat panel">
 						<div class="online-count" id="online-count">—</div>
 						<div class="online-count-label">players playing</div>
-						<svg id="online-graph" viewBox="0 0 600 160" preserveAspectRatio="none" role="img" aria-label="Players online over time">
-							<defs>
-								<linearGradient id="graph-fill" x1="0" y1="0" x2="0" y2="1">
-									<stop offset="0" stop-color="rgba(46,230,255,0.35)" />
-									<stop offset="1" stop-color="rgba(46,230,255,0)" />
-								</linearGradient>
-							</defs>
-							<path id="online-area" fill="url(#graph-fill)" stroke="none" d="" />
-							<polyline id="online-line" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="" />
-							<circle id="online-dot" r="4" fill="var(--accent)" cx="0" cy="0" />
-						</svg>
+						<div class="online-graph-frame">
+							<svg id="online-graph" viewBox="0 0 600 160" preserveAspectRatio="none" role="img" aria-label="Players online over time">
+								<defs>
+									<linearGradient id="graph-fill" x1="0" y1="0" x2="0" y2="1">
+										<stop offset="0" stop-color="var(--accent)" stop-opacity="0.35" />
+										<stop offset="1" stop-color="var(--accent)" stop-opacity="0" />
+									</linearGradient>
+								</defs>
+								<path id="online-area" fill="url(#graph-fill)" stroke="none" d="" />
+								<polyline id="online-line" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="" />
+								<circle id="online-dot" r="4" fill="var(--accent)" cx="0" cy="0" />
+							</svg>
+						</div>
 					</div>
 					<div class="online-list panel" aria-label="Online players">
 						<div class="online-list-head">In the lobby</div>
@@ -86,25 +88,25 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					<h2 id="modes-title">Ways to play</h2>
 				</div>
 				<div class="mode-grid">
-					<article class="mode-card panel panel-hover">
+					<article class="mode-card panel">
 						<div class="mode-icon" style="--mode-color: var(--z)"></div>
 						<h3>Ranked</h3>
 						<p>Strict 1v1 matchmaking with rating stakes. Climb the competitive ladder with promotion, demotion, and a leaderboard that means something.</p>
 						<span class="mode-tag">Competitive</span>
 					</article>
-					<article class="mode-card panel panel-hover">
+					<article class="mode-card panel">
 						<div class="mode-icon" style="--mode-color: var(--i)"></div>
 						<h3>Casual MP</h3>
 						<p>Make a room or jump into someone else's. Play with everyone — no rating pressure, just drop in and stack together.</p>
 						<span class="mode-tag">Multiplayer</span>
 					</article>
-					<article class="mode-card panel panel-hover">
+					<article class="mode-card panel">
 						<div class="mode-icon" style="--mode-color: var(--o)"></div>
 						<h3>Minigames</h3>
 						<p>Bite-sized challenges: 40 Lines, Sprint, and Missions. Chase your best time and high score at your own pace.</p>
 						<span class="mode-tag">Single-player</span>
 					</article>
-					<article class="mode-card panel panel-hover">
+					<article class="mode-card panel">
 						<div class="mode-icon" style="--mode-color: var(--t)"></div>
 						<h3>Battle Royale</h3>
 						<p>100 players, one board each, elimination targeting. Last stack standing wins.</p>
@@ -216,10 +218,17 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					/* keep last good values */
 				}
 			}
-			loadOnline();
-			setInterval(loadOnline, 15000);
-		</script>
 
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', () => {
+					loadOnline();
+					setInterval(loadOnline, 15000);
+				});
+			} else {
+				loadOnline();
+				setInterval(loadOnline, 15000);
+			}
+		</script>
 
 		<style>
 			/* ---------- HERO ---------- */
@@ -227,7 +236,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				display: grid;
 				grid-template-columns: 1.05fr 0.95fr;
 				align-items: center;
-				gap: 3rem;
+				gap: 3.5rem;
 				padding: 5rem 0 4rem;
 				min-height: 64vh;
 			}
@@ -240,7 +249,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			}
 			.hero-cta {
 				display: flex;
-				gap: 1rem;
+				gap: 1.2rem;
 				flex-wrap: wrap;
 			}
 			.hero-board {
@@ -252,8 +261,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			.hero-glow {
 				position: absolute;
 				inset: -10% 10% 10% -10%;
-				background: radial-gradient(closest-side, rgba(62, 166, 195, 0.25), transparent 70%);
-				filter: blur(20px);
+				background: radial-gradient(closest-side, rgba(62, 166, 195, 0.2), transparent 70%);
+				filter: blur(25px);
 				z-index: 0;
 			}
 			.hero-video-frame {
@@ -261,11 +270,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				z-index: 1;
 				width: auto;
 				max-width: 100%;
-				border-radius: 18px;
+				border-radius: 22px;
 				overflow: hidden;
-				border: 1px solid var(--border-bright);
-				background: rgba(0, 0, 0, 0.7);
-				box-shadow: var(--shadow), 0 0 0 1px rgba(62, 166, 195, 0.12);
+				background: var(--neu-bg);
+				box-shadow: var(--neu-shadow);
+				padding: 10px;
 			}
 			.hero-video {
 				display: block;
@@ -274,6 +283,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				max-width: 100%;
 				max-height: 70vh;
 				object-fit: contain;
+				border-radius: 14px;
+				box-shadow: var(--neu-inset);
 			}
 			@media (max-width: 860px) {
 				.hero {
@@ -296,22 +307,25 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			/* ---------- PLAYERS ONLINE ---------- */
 			.online-grid {
 				display: grid;
-				grid-template-columns: 1.1fr 0.9fr;
-				gap: 1.5rem;
+				grid-template-columns: 1.15fr 0.85fr;
+				gap: 1.8rem;
 				align-items: stretch;
 			}
 			.online-stat {
-				padding: 2rem;
+				padding: 2.2rem;
 				display: flex;
 				flex-direction: column;
 				gap: 0.4rem;
+				border-radius: var(--radius-lg);
+				box-shadow: var(--neu-shadow);
+				background: var(--panel);
 			}
 			.online-count {
 				font-family: var(--font-display);
 				font-weight: 800;
 				font-size: clamp(3rem, 8vw, 5rem);
 				line-height: 1;
-				background: linear-gradient(120deg, #ffffff, var(--accent));
+				background: linear-gradient(120deg, var(--h1-grad-start), var(--accent));
 				-webkit-background-clip: text;
 				background-clip: text;
 				-webkit-text-fill-color: transparent;
@@ -322,18 +336,31 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				font-size: 0.75rem;
 				letter-spacing: 0.12em;
 				text-transform: uppercase;
-				margin-bottom: 1rem;
+				margin-bottom: 1.2rem;
+			}
+			.online-graph-frame {
+				width: 100%;
+				height: 160px;
+				margin-top: auto;
+				border-radius: 14px;
+				background: var(--bg);
+				box-shadow: var(--neu-inset);
+				padding: 8px;
+				display: flex;
+				align-items: center;
 			}
 			#online-graph {
 				width: 100%;
-				height: 160px;
+				height: 100%;
 				display: block;
-				margin-top: auto;
 			}
 			.online-list {
-				padding: 1.4rem 1.5rem;
+				padding: 1.8rem;
 				display: flex;
 				flex-direction: column;
+				border-radius: var(--radius-lg);
+				box-shadow: var(--neu-shadow);
+				background: var(--panel);
 			}
 			.online-list-head {
 				font-size: 0.7rem;
@@ -341,7 +368,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				text-transform: uppercase;
 				color: var(--text-muted);
 				font-family: var(--font-mono);
-				margin-bottom: 1rem;
+				margin-bottom: 1.2rem;
 			}
 			.online-players {
 				list-style: none;
@@ -349,7 +376,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				padding: 0;
 				display: flex;
 				flex-direction: column;
-				gap: 0.4rem;
+				gap: 0.6rem;
 				overflow-y: auto;
 				max-height: 240px;
 			}
@@ -357,11 +384,16 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				display: flex;
 				align-items: center;
 				gap: 0.75rem;
-				padding: 0.4rem 0.5rem;
-				border-radius: 10px;
-				transition: background var(--transition-fast);
+				padding: 0.5rem 0.75rem;
+				border-radius: 12px;
+				background: var(--bg);
+				box-shadow: var(--neu-shadow-sm);
+				transition: all var(--transition-fast);
 			}
-			.online-player:hover { background: rgba(255, 255, 255, 0.04); }
+			.online-player:hover {
+				box-shadow: var(--neu-inset);
+				transform: translateY(1px);
+			}
 			.online-avatar {
 				width: 32px;
 				height: 32px;
@@ -401,21 +433,32 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			.mode-grid {
 				display: grid;
 				grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-				gap: 1.5rem;
+				gap: 1.8rem;
 			}
 			.mode-card {
 				display: flex;
 				flex-direction: column;
-				padding: 2rem;
-				gap: 1rem;
+				padding: 2.2rem 2rem;
+				gap: 1.1rem;
+				border-radius: 20px;
+				background: var(--panel);
+				box-shadow: var(--neu-shadow);
+				transition: transform var(--transition-base), box-shadow var(--transition-base);
+			}
+			.mode-card:hover {
+				transform: translateY(-4px);
+				box-shadow: var(--neu-shadow-hover);
 			}
 			.mode-icon {
-				width: 50px;
-				height: 50px;
+				width: 52px;
+				height: 52px;
 				border-radius: 14px;
 				background: linear-gradient(135deg, var(--mode-color), color-mix(in srgb, var(--mode-color) 65%, #000));
-				box-shadow: 0 0 26px color-mix(in srgb, var(--mode-color) 45%, transparent);
+				box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25), 0 0 20px color-mix(in srgb, var(--mode-color) 40%, transparent);
 				flex-shrink: 0;
+			}
+			:global([data-theme="light"]) .mode-icon {
+				box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.15), 0 0 16px color-mix(in srgb, var(--mode-color) 35%, transparent);
 			}
 			.mode-card h3 { font-size: 1.3rem; margin: 0.25rem 0 0; }
 			.mode-card p {
@@ -427,10 +470,10 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			}
 			.mode-tag {
 				align-self: flex-start;
-				padding: 0.35rem 0.75rem;
+				padding: 0.35rem 0.85rem;
 				border-radius: 999px;
-				background: rgba(255, 255, 255, 0.05);
-				border: 1px solid var(--border);
+				background: var(--bg);
+				box-shadow: var(--neu-inset);
 				font-family: var(--font-mono);
 				font-size: 0.65rem;
 				font-weight: 700;
@@ -446,37 +489,38 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			.download-card {
 				display: grid;
 				grid-template-columns: 1.1fr 0.9fr;
-				gap: 2rem;
-				padding: 2.5rem;
+				gap: 2.5rem;
+				padding: 3rem;
 				align-items: center;
-				background:
-					radial-gradient(600px 300px at 100% 0%, rgba(62, 166, 195, 0.14), transparent 60%),
-					var(--panel);
+				border-radius: 24px;
+				background: var(--panel);
+				box-shadow: var(--neu-shadow);
 			}
 			.download-copy h2 { margin-bottom: 0.5rem; }
 			.download-copy p { color: var(--text-dim); margin: 0 0 1.5rem; max-width: 42ch; }
 			.download-platforms {
 				display: flex;
 				flex-direction: column;
-				gap: 0.7rem;
+				gap: 0.9rem;
 			}
 			.platform {
 				display: flex;
 				flex-direction: column;
-				padding: 0.9rem 1.1rem;
-				border-radius: 12px;
-				border: 1px solid var(--border);
+				padding: 1rem 1.3rem;
+				border-radius: 14px;
+				background: var(--bg);
+				box-shadow: var(--neu-shadow-sm);
 				transition: all var(--transition-fast);
+				border: none;
 			}
 			.platform:hover {
-				border-color: var(--border-bright);
-				background: rgba(255, 255, 255, 0.04);
-				transform: translateX(2px);
+				box-shadow: var(--neu-inset);
+				transform: translateY(1px);
 			}
 			.platform-name { font-weight: 700; font-size: 1rem; }
 			.platform-meta { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-mono); }
 			@media (max-width: 820px) {
-				.download-card { grid-template-columns: 1fr; }
+				.download-card { grid-template-columns: 1fr; padding: 2rem; }
 			}
 		</style>
 	</body>

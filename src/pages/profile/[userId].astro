@@ -946,7 +946,13 @@ export const prerender = false;
 		}
 	});
 	document.querySelector('#avatar-upload')?.addEventListener('change', (event) => uploadMedia('avatar', event.currentTarget));
-	document.querySelector('#banner-upload')?.addEventListener('change', (event) => uploadMedia('banner', event.currentTarget));
-	setupRankGraphHover();
-	loadProfile();
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', () => {
+			setupRankGraphHover();
+			loadProfile();
+		});
+	} else {
+		setupRankGraphHover();
+		loadProfile();
+	}
 </script>

@@ -16,6 +16,24 @@ import { SITE_TITLE } from '../consts';
 			<a href="/skins/">Skins</a>
 			<a href="/wiki/">Wiki</a>
 			<span class="nav-divider" aria-hidden="true"></span>
+			
+			<button class="theme-toggle" aria-label="Toggle theme">
+				<svg xmlns="http://www.w3.org/2000/svg" class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+					<circle cx="12" cy="12" r="5"></circle>
+					<line x1="12" y1="1" x2="12" y2="3"></line>
+					<line x1="12" y1="21" x2="12" y2="23"></line>
+					<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+					<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+					<line x1="1" y1="12" x2="3" y2="12"></line>
+					<line x1="21" y1="12" x2="23" y2="12"></line>
+					<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+					<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+				</svg>
+				<svg xmlns="http://www.w3.org/2000/svg" class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+				</svg>
+			</button>
+
 			<a href="/login/" id="nav-account" class="nav-cta" data-account-toggle>Account</a>
 		</div>
 
@@ -31,8 +49,8 @@ import { SITE_TITLE } from '../consts';
 		top: 0;
 		z-index: 30;
 		padding: 0 1.4rem;
-		background: rgba(6, 9, 18, 0.72);
-		backdrop-filter: blur(14px);
+		background: var(--neu-bg);
+		box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 		border-bottom: 1px solid var(--border);
 	}
 	nav {
@@ -101,14 +119,53 @@ import { SITE_TITLE } from '../consts';
 		background: var(--border);
 		margin: 0 0.35em;
 	}
+
+	.theme-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		margin: 0 0.25em;
+		border-radius: 50%;
+		background: var(--neu-bg);
+		border: 1px solid var(--border);
+		box-shadow: 4px 4px 10px rgba(0,0,0,0.4), -4px -4px 10px rgba(255,255,255,0.05);
+		cursor: pointer;
+		color: var(--text);
+		transition: all 0.2s ease;
+	}
+	:global([data-theme="light"]) .theme-toggle {
+		box-shadow: 4px 4px 10px rgba(0,0,0,0.1), -4px -4px 10px rgba(255,255,255,0.8);
+	}
+	.theme-toggle:hover {
+		box-shadow: inset 4px 4px 10px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(255,255,255,0.05);
+	}
+	:global([data-theme="light"]) .theme-toggle:hover {
+		box-shadow: inset 4px 4px 10px rgba(0,0,0,0.1), inset -4px -4px 10px rgba(255,255,255,0.8);
+	}
+	.theme-toggle .moon-icon { display: none; }
+	.theme-toggle .sun-icon { display: block; }
+	:global([data-theme="light"]) .theme-toggle .sun-icon { display: none; }
+	:global([data-theme="light"]) .theme-toggle .moon-icon { display: block; }
+
 	.nav-cta {
-		background: linear-gradient(135deg, var(--accent), var(--accent-2));
-		color: #03121a !important;
+		background: var(--neu-bg);
+		color: var(--accent) !important;
 		font-weight: 700;
+		border: 1px solid var(--border);
+		box-shadow: 4px 4px 10px rgba(0,0,0,0.4), -4px -4px 10px rgba(255,255,255,0.05);
+		margin-left: 0.25em;
+	}
+	:global([data-theme="light"]) .nav-cta {
+		box-shadow: 4px 4px 10px rgba(0,0,0,0.1), -4px -4px 10px rgba(255,255,255,0.8);
 	}
 	.nav-cta:hover {
-		filter: brightness(1.08);
-		background: linear-gradient(135deg, var(--accent), var(--accent-2));
+		filter: brightness(1.05);
+		box-shadow: inset 4px 4px 10px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(255,255,255,0.05);
+	}
+	:global([data-theme="light"]) .nav-cta:hover {
+		box-shadow: inset 4px 4px 10px rgba(0,0,0,0.1), inset -4px -4px 10px rgba(255,255,255,0.8);
 	}
 	.nav-pill {
 		border: 1px solid var(--border);
@@ -157,9 +214,8 @@ import { SITE_TITLE } from '../consts';
 			gap: 0;
 			padding: 0.6em 0.7em 0.8em;
 			border-bottom: 1px solid var(--border);
-			background: rgba(6, 9, 18, 0.96);
-			backdrop-filter: blur(14px);
-			box-shadow: var(--shadow);
+			background: var(--neu-bg);
+			box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 		}
 		.nav-links.open {
 			display: flex;
@@ -179,6 +235,12 @@ import { SITE_TITLE } from '../consts';
 		}
 		.nav-cta {
 			text-align: center;
+			margin-left: 0;
+			margin-top: 0.5em;
+		}
+		.theme-toggle {
+			align-self: flex-start;
+			margin: 0.4em 0;
 		}
 	}
 </style>
@@ -214,4 +276,19 @@ import { SITE_TITLE } from '../consts';
 			navLinks.classList.remove('open');
 		})
 	);
+
+	// Theme Toggle
+	const themeToggle = document.querySelector('.theme-toggle');
+	const root = document.documentElement;
+	const savedTheme = localStorage.getItem('teblocks_theme');
+	const defaultTheme = savedTheme ? savedTheme : 'dark';
+	
+	root.setAttribute('data-theme', defaultTheme);
+
+	themeToggle?.addEventListener('click', () => {
+		const currentTheme = root.getAttribute('data-theme') || 'dark';
+		const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+		root.setAttribute('data-theme', newTheme);
+		localStorage.setItem('teblocks_theme', newTheme);
+	});
 </script>
