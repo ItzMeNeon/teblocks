@@ -207,6 +207,7 @@ import { SITE_TITLE } from '../consts';
 					</div>
 					<div class="mode-tabs" role="tablist" aria-label="Leaderboard category">
 						<button class="mode-tab" role="tab" aria-selected="true" data-category="ranked">Ranked Elo</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-category="daily">📅 Daily Challenge</button>
 						<button class="mode-tab" role="tab" aria-selected="false" data-category="lines40">40 Lines</button>
 						<button class="mode-tab" role="tab" aria-selected="false" data-category="sprint">Sprint</button>
 						<button class="mode-tab" role="tab" aria-selected="false" data-category="lonely">L Only</button>
@@ -227,6 +228,7 @@ import { SITE_TITLE } from '../consts';
 
 			const categories = {
 				ranked: { kind: 'ranked', url: '/api/leaderboards?mode=ranked_1v1' },
+				daily: { kind: 'daily', url: '/api/daily/leaderboard' },
 				lines40: { kind: 'score', url: '/api/score/sprint_40l' },
 				sprint: { kind: 'score', url: '/api/score/sprint_100l' },
 				lonely: { kind: 'score', url: '/api/score/sprintLock' },
@@ -271,6 +273,28 @@ import { SITE_TITLE } from '../consts';
 					</tr>`;
 			}
 
+			function formatTimeMs(ms) {
+				if (!ms) return '--';
+				const totalSec = ms / 1000;
+				const m = Math.floor(totalSec / 60);
+				const s = (totalSec % 60).toFixed(2).padStart(5, '0');
+				return `${m}:${s}`;
+			}
+
+			function renderDailyRow(entry, index) {
+				const rank = entry.rank || index + 1;
+				const rankClass = rank <= 3 ? `rank-${rank}` : '';
+				const timeStr = formatTimeMs(entry.timeMs);
+				const piecesStr = entry.pieceCount ? `${entry.pieceCount} pcs` : '--';
+				return `
+					<tr>
+						<td class="rank-cell ${rankClass}">#${rank}</td>
+						<td><div class="player-cell">${avatarMarkup(entry)}${playerName(entry)}</div></td>
+						<td class="stat-cell">${timeStr}</td>
+						<td class="stat-cell dim">${piecesStr}</td>
+					</tr>`;
+			}
+
 			function renderScoreRow(entry, index) {
 				const rank = index + 1;
 				const rankClass = rank <= 3 ? `rank-${rank}` : '';
@@ -287,9 +311,15 @@ import { SITE_TITLE } from '../consts';
 			const head =
 				kind === 'ranked'
 					? `<th>Rank</th><th>Player</th><th>Tier</th><th>Rating</th><th>Matches</th><th>Win rate</th>`
+					: kind === 'daily'
+					? `<th>Rank</th><th>Player</th><th>Time</th><th>Pieces</th>`
 					: `<th>Rank</th><th>Player</th><th>Score</th>`;
 				const body = rows
-					.map((entry, i) => (kind === 'ranked' ? renderRankedRow(entry, i) : renderScoreRow(entry, i)))
+					.map((entry, i) => (
+						kind === 'ranked' ? renderRankedRow(entry, i) :
+						kind === 'daily' ? renderDailyRow(entry, i) :
+						renderScoreRow(entry, i)
+					))
 					.join('');
 				return `
 					<table class="leaderboard-table">
@@ -318,7 +348,9 @@ import { SITE_TITLE } from '../consts';
 							return;
 						}
 						const data = await response.json();
-						const rows = cfg.kind === 'ranked' ? (data.entries || []) : (data.data || []);
+						const rows = cfg.kind === 'ranked'
+							? (data.entries || [])
+							: (data.data?.leaderboard || data.data || []);
 						if (!rows.length) {
 							content.innerHTML = '<div class="state">No rankings yet — be the first to compete.</div>';
 							return;
