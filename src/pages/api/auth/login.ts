@@ -21,7 +21,7 @@ export const POST: APIRoute = async (context) => {
 	}
 	if (!response) return json({ error: 'Authentication service is unavailable.' }, 503);
 
-	const responseBody = await response.json().catch(() => null) as { token?: unknown; error?: string } | null;
+	const responseBody = await response.json().catch(() => null) as { token?: unknown; error?: string; user_id?: string; username?: string } | null;
 	if (!response.ok) return json(responseBody ?? { error: 'Login failed.' }, response.status);
 	if (!responseBody?.token || typeof responseBody.token !== 'string') {
 		return json({ error: 'Authentication service returned an invalid response.' }, 502);
@@ -34,5 +34,10 @@ export const POST: APIRoute = async (context) => {
 		secure: context.url.protocol === 'https:',
 		maxAge: 30 * 24 * 60 * 60,
 	});
-	return json({ status: 'authenticated' });
+	return json({
+		status: 'authenticated',
+		token: responseBody.token,
+		user_id: responseBody.user_id,
+		username: responseBody.username,
+	});
 };

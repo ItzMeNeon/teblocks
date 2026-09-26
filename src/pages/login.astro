@@ -63,8 +63,10 @@ import { SITE_TITLE } from '../consts';
 			const body = await response.json().catch(() => ({}));
 			if (!response.ok) throw new Error(body.message || body.error || 'Unable to log in.');
 			if (body.token) localStorage.setItem('teblocks_token', body.token);
+			if (body.user_id) localStorage.setItem('teblocks_user_id', body.user_id);
+			if (body.username) localStorage.setItem('teblocks_username', body.username);
 			form.reset();
-			window.location.assign('/profile/');
+			window.location.assign(body.user_id ? `/profile/${body.user_id}` : '/profile/');
 		} catch (error) {
 			status.textContent = error instanceof Error ? error.message : 'Unable to log in.';
 			submitButton.disabled = false;
