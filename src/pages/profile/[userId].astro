@@ -125,11 +125,6 @@ export const prerender = false;
 								<small>Fastest clear</small>
 							</div>
 							<div class="stat">
-								<span>Best L survival</span>
-								<strong id="casual-l">--</strong>
-								<small>Longest run</small>
-							</div>
-							<div class="stat">
 								<span>Best sprint</span>
 								<strong id="casual-sprint">--</strong>
 								<small>Top ultra score</small>
@@ -914,7 +909,6 @@ export const prerender = false;
 			const casual = body.casual || {};
 			text('#casual-total', casual.total_plays || 0);
 			text('#casual-40l', formatDuration(casual.best_40l_time));
-			text('#casual-l', formatDuration(casual.best_l_survival));
 			text('#casual-sprint', casual.best_sprint_score != null ? Number(casual.best_sprint_score).toLocaleString() : '--');
 
 			status.hidden = true;

@@ -209,8 +209,7 @@ import { SITE_TITLE } from '../consts';
 						<button class="mode-tab" role="tab" aria-selected="true" data-category="ranked">Ranked Elo</button>
 						<button class="mode-tab" role="tab" aria-selected="false" data-category="daily">📅 Daily Challenge</button>
 						<button class="mode-tab" role="tab" aria-selected="false" data-category="lines40">40 Lines</button>
-						<button class="mode-tab" role="tab" aria-selected="false" data-category="sprint">Sprint</button>
-						<button class="mode-tab" role="tab" aria-selected="false" data-category="lonely">L Only</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-category="sprint">Sprint (100L)</button>
 					</div>
 				</div>
 				<div class="table-card">
@@ -231,7 +230,6 @@ import { SITE_TITLE } from '../consts';
 				daily: { kind: 'daily', url: '/api/daily/leaderboard' },
 				lines40: { kind: 'score', url: '/api/score/sprint_40l' },
 				sprint: { kind: 'score', url: '/api/score/sprint_100l' },
-				lonely: { kind: 'score', url: '/api/score/sprintLock' },
 			};
 
 			function escapeHtml(str) {
