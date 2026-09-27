@@ -156,57 +156,57 @@ export const ACHIEVEMENTS: Achievement[] = [
 	{
 		id: 'ranked_gold',
 		title: 'Gold Standard',
-		description: 'Attain a competitive rating of 1,400+ ELO.',
+		description: 'Attain a competitive rating of 700+ ELO in Season 0.',
 		category: 'ranked',
 		tier: 'silver',
 		icon: '🏅',
 		points: 30,
 		check: (p) => {
-			const rating = p.ranked?.rating ?? 1000;
-			const unlocked = rating >= 1400;
+			const rating = p.ranked?.rating ?? 100;
+			const unlocked = rating >= 700;
 			return {
 				unlocked,
-				progress: Math.min(1400, rating),
-				maxProgress: 1400,
-				progressText: `${rating} / 1400 ELO`,
+				progress: Math.min(700, rating),
+				maxProgress: 700,
+				progressText: `${rating} / 700 ELO`,
 			};
 		},
 	},
 	{
 		id: 'ranked_platinum',
 		title: 'Platinum Vanguard',
-		description: 'Attain a competitive rating of 1,700+ ELO.',
+		description: 'Attain a competitive rating of 1,000+ ELO in Season 0.',
 		category: 'ranked',
 		tier: 'gold',
 		icon: '🏆',
 		points: 60,
 		check: (p) => {
-			const rating = p.ranked?.rating ?? 1000;
-			const unlocked = rating >= 1700;
+			const rating = p.ranked?.rating ?? 100;
+			const unlocked = rating >= 1000;
 			return {
 				unlocked,
-				progress: Math.min(1700, rating),
-				maxProgress: 1700,
-				progressText: `${rating} / 1700 ELO`,
+				progress: Math.min(1000, rating),
+				maxProgress: 1000,
+				progressText: `${rating} / 1000 ELO`,
 			};
 		},
 	},
 	{
 		id: 'ranked_grandmaster',
 		title: 'Grandmaster Pinnacle',
-		description: 'Reach 2,000+ competitive rating among the stacking elite.',
+		description: 'Reach 1,900+ competitive rating among the Season 0 stacking elite.',
 		category: 'ranked',
 		tier: 'diamond',
 		icon: '👑',
 		points: 100,
 		check: (p) => {
-			const rating = p.ranked?.rating ?? 1000;
-			const unlocked = rating >= 2000;
+			const rating = p.ranked?.rating ?? 100;
+			const unlocked = rating >= 1900;
 			return {
 				unlocked,
-				progress: Math.min(2000, rating),
-				maxProgress: 2000,
-				progressText: `${rating} / 2000 ELO`,
+				progress: Math.min(1900, rating),
+				maxProgress: 1900,
+				progressText: `${rating} / 1900 ELO`,
 			};
 		},
 	},
