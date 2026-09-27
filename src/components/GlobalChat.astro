@@ -1,0 +1,664 @@
+---
+// Global in-game chat drawer component synced via WebSocket (action: 1316)
+---
+
+<div id="global-chat-root">
+	<!-- Floating toggle button on bottom right -->
+	<button id="chat-fab-toggle" class="chat-fab" type="button" aria-label="Open game global chat" title="Open Global Chat">
+		<span class="chat-fab-icon">
+			<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+			</svg>
+		</span>
+		<span class="chat-fab-label">Game Chat</span>
+		<span id="chat-unread-badge" class="chat-badge" hidden>0</span>
+		<span class="chat-live-pulse" title="Connected to server"></span>
+	</button>
+
+	<!-- Backdrop overlay for mobile / outside click -->
+	<div id="chat-backdrop" class="chat-backdrop" hidden></div>
+
+	<!-- Slide-over Drawer -->
+	<aside id="chat-drawer" class="chat-drawer" aria-label="In-Game Global Chat" aria-hidden="true">
+		<header class="chat-header">
+			<div class="chat-title-group">
+				<div class="chat-live-indicator">
+					<span id="chat-conn-dot" class="conn-dot offline"></span>
+					<span id="chat-conn-status" class="conn-text">Connecting…</span>
+				</div>
+				<h3 class="chat-title">In-Game Global Chat</h3>
+				<span class="chat-subtitle">Direct relay with active players</span>
+			</div>
+			<div class="chat-header-actions">
+				<button id="chat-sound-toggle" class="chat-icon-btn" type="button" aria-label="Toggle chat sounds" title="Toggle notification sound">
+					<svg id="sound-icon-on" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+						<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+					</svg>
+					<svg id="sound-icon-off" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
+						<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+						<line x1="23" y1="9" x2="17" y2="15"></line>
+						<line x1="17" y1="9" x2="23" y2="15"></line>
+					</svg>
+				</button>
+				<button id="chat-close-btn" class="chat-icon-btn" type="button" aria-label="Close chat drawer" title="Close">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</div>
+		</header>
+
+		<!-- Messages Stream -->
+		<div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
+			<div class="chat-system-message">
+				<span class="system-icon">💬</span>
+				<span>Connected to TeBlocks global chat. Messages sent here appear live in-game and on the web.</span>
+			</div>
+		</div>
+
+		<!-- Input Footer -->
+		<footer class="chat-footer">
+			<div id="chat-auth-prompt" class="chat-auth-prompt" hidden>
+				<span>Log in to send messages to active players in-game.</span>
+				<a href="/login/" class="btn btn-primary btn-sm">Log in</a>
+			</div>
+			<form id="chat-form" class="chat-input-row" hidden>
+				<input
+					id="chat-input"
+					type="text"
+					placeholder="Message #global-chat… (Enter to send)"
+					maxlength="500"
+					autocomplete="off"
+				/>
+				<button id="chat-send-btn" type="submit" aria-label="Send message">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="22" y1="2" x2="11" y2="13"></line>
+						<polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+					</svg>
+				</button>
+			</form>
+		</footer>
+	</aside>
+</div>
+
+<style>
+	/* Floating Action Button */
+	.chat-fab {
+		position: fixed;
+		bottom: 1.5rem;
+		right: 1.5rem;
+		z-index: 90;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.75rem 1.15rem;
+		background: rgba(10, 22, 34, 0.88);
+		color: #fff;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 16px var(--accent-glow);
+		backdrop-filter: blur(14px);
+		-webkit-backdrop-filter: blur(14px);
+		cursor: pointer;
+		font-family: var(--font-ui);
+		font-size: 0.9rem;
+		font-weight: 600;
+		transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.chat-fab:hover {
+		transform: translateY(-2px);
+		border-color: var(--accent);
+		box-shadow: 0 10px 36px rgba(0, 0, 0, 0.55), 0 0 24px var(--accent-glow-strong);
+	}
+	.chat-fab-icon {
+		display: flex;
+		align-items: center;
+		color: var(--accent);
+	}
+	.chat-live-pulse {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: #5bfa80;
+		box-shadow: 0 0 8px #5bfa80;
+		animation: pulse-ring 2s infinite;
+	}
+	@keyframes pulse-ring {
+		0%, 100% { transform: scale(1); opacity: 1; }
+		50% { transform: scale(1.3); opacity: 0.6; }
+	}
+	.chat-badge {
+		background: #ff5555;
+		color: white;
+		font-size: 0.75rem;
+		font-weight: 700;
+		padding: 2px 7px;
+		border-radius: 999px;
+	}
+
+	/* Backdrop */
+	.chat-backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(4px);
+		z-index: 95;
+		animation: fadeIn 0.2s ease-out;
+	}
+
+	/* Drawer Container */
+	.chat-drawer {
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 440px;
+		max-width: 100vw;
+		background: rgba(8, 16, 26, 0.94);
+		border-left: 1px solid var(--border);
+		box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		z-index: 100;
+		display: flex;
+		flex-direction: column;
+		transform: translateX(100%);
+		transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+	.chat-drawer.open {
+		transform: translateX(0);
+	}
+
+	/* Header */
+	.chat-header {
+		padding: 1.1rem 1.4rem;
+		border-bottom: 1px solid var(--border);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		background: rgba(14, 28, 42, 0.5);
+	}
+	.chat-title-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+	.chat-live-indicator {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--text-muted);
+	}
+	.conn-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+	}
+	.conn-dot.online {
+		background: #5bfa80;
+		box-shadow: 0 0 6px #5bfa80;
+	}
+	.conn-dot.connecting {
+		background: #ffb86c;
+		box-shadow: 0 0 6px #ffb86c;
+		animation: pulse-ring 1s infinite;
+	}
+	.conn-dot.offline {
+		background: #ff5555;
+	}
+	.chat-title {
+		margin: 0;
+		font-size: 1.05rem;
+		font-weight: 700;
+		color: var(--text);
+	}
+	.chat-subtitle {
+		font-size: 0.78rem;
+		color: var(--text-dim);
+	}
+	.chat-header-actions {
+		display: flex;
+		gap: 0.4rem;
+	}
+	.chat-icon-btn {
+		background: transparent;
+		border: 1px solid transparent;
+		color: var(--text-muted);
+		border-radius: var(--radius-sm);
+		padding: 0.4rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all var(--transition-fast);
+	}
+	.chat-icon-btn:hover {
+		color: var(--text);
+		background: var(--surface-hover);
+		border-color: var(--border);
+	}
+
+	/* Message Stream */
+	.chat-messages {
+		flex: 1;
+		overflow-y: auto;
+		padding: 1.2rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+		scroll-behavior: smooth;
+	}
+	.chat-system-message {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.6rem;
+		padding: 0.75rem 0.9rem;
+		background: rgba(62, 166, 195, 0.08);
+		border: 1px dashed rgba(62, 166, 195, 0.25);
+		border-radius: var(--radius);
+		font-size: 0.82rem;
+		color: var(--text-dim);
+		line-height: 1.45;
+	}
+	.system-icon {
+		font-size: 1.1rem;
+		flex-shrink: 0;
+	}
+
+	/* Chat Message Cards */
+	.chat-msg {
+		display: flex;
+		gap: 0.75rem;
+		font-size: 0.88rem;
+		animation: slideIn 0.2s ease-out;
+	}
+	@keyframes slideIn {
+		from { opacity: 0; transform: translateY(6px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+	.chat-avatar {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, var(--accent), var(--accent-2));
+		color: #001a1c;
+		font-weight: 700;
+		font-size: 0.85rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	}
+	.chat-content {
+		flex: 1;
+		min-width: 0;
+	}
+	.chat-meta {
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+		margin-bottom: 0.2rem;
+	}
+	.chat-user {
+		font-weight: 700;
+		font-size: 0.85rem;
+		color: var(--accent);
+		text-decoration: none;
+	}
+	.chat-user:hover {
+		text-decoration: underline;
+	}
+	.chat-time {
+		font-size: 0.72rem;
+		color: var(--text-muted);
+	}
+	.chat-text {
+		color: var(--text);
+		word-break: break-word;
+		line-height: 1.45;
+		margin: 0;
+	}
+
+	/* Server Announcement */
+	.chat-msg.server-broadcast {
+		background: rgba(255, 184, 108, 0.08);
+		border: 1px solid rgba(255, 184, 108, 0.25);
+		border-radius: var(--radius);
+		padding: 0.65rem 0.85rem;
+	}
+	.chat-msg.server-broadcast .chat-user {
+		color: #ffb86c;
+	}
+	.chat-msg.server-broadcast .chat-avatar {
+		background: linear-gradient(135deg, #ffb86c, #ff79c6);
+	}
+
+	/* Footer & Input */
+	.chat-footer {
+		padding: 1rem 1.2rem;
+		border-top: 1px solid var(--border);
+		background: rgba(14, 28, 42, 0.6);
+	}
+	.chat-auth-prompt {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.8rem;
+		font-size: 0.84rem;
+		color: var(--text-dim);
+	}
+	.btn-sm {
+		padding: 0.45rem 0.9rem !important;
+		font-size: 0.82rem !important;
+	}
+	.chat-input-row {
+		display: flex;
+		gap: 0.5rem;
+	}
+	.chat-input-row input {
+		flex: 1;
+		padding: 0.65rem 0.9rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--bg-elevated);
+		color: var(--text);
+		font-family: var(--font-ui);
+		font-size: 0.88rem;
+		transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+	}
+	.chat-input-row input:focus {
+		outline: none;
+		border-color: var(--accent);
+		box-shadow: var(--focus-ring);
+	}
+	.chat-input-row button {
+		background: var(--accent);
+		color: #001a1c;
+		border: 0;
+		border-radius: var(--radius);
+		padding: 0 1rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: filter var(--transition-fast), transform var(--transition-fast);
+	}
+	.chat-input-row button:hover {
+		filter: brightness(1.1);
+		transform: scale(1.04);
+	}
+	.chat-input-row button:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	@media (max-width: 600px) {
+		.chat-fab {
+			bottom: 1rem;
+			right: 1rem;
+			padding: 0.65rem 0.95rem;
+		}
+		.chat-drawer {
+			width: 100vw;
+		}
+	}
+</style>
+
+<script>
+	// In-game Global Chat Client via WebSocket
+	let socket: WebSocket | null = null;
+	let reconnectTimer: any = null;
+	let unreadCount = 0;
+	let isOpen = false;
+	let soundEnabled = true;
+
+	const fab = document.getElementById('chat-fab-toggle');
+	const drawer = document.getElementById('chat-drawer');
+	const backdrop = document.getElementById('chat-backdrop');
+	const closeBtn = document.getElementById('chat-close-btn');
+	const soundToggle = document.getElementById('chat-sound-toggle');
+	const soundOn = document.getElementById('sound-icon-on');
+	const soundOff = document.getElementById('sound-icon-off');
+	const unreadBadge = document.getElementById('chat-unread-badge');
+	const connDot = document.getElementById('chat-conn-dot');
+	const connStatus = document.getElementById('chat-conn-status');
+	const messagesContainer = document.getElementById('chat-messages');
+	const authPrompt = document.getElementById('chat-auth-prompt');
+	const chatForm = document.getElementById('chat-form');
+	const chatInput = document.getElementById('chat-input') as HTMLInputElement | null;
+
+	// Simple Web Audio API Ping
+	function playPing() {
+		if (!soundEnabled) return;
+		try {
+			const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+			const osc = ctx.createOscillator();
+			const gain = ctx.createGain();
+			osc.type = 'sine';
+			osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+			osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1); // A5
+			gain.gain.setValueAtTime(0.08, ctx.currentTime);
+			gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+			osc.connect(gain);
+			gain.connect(ctx.destination);
+			osc.start();
+			osc.stop(ctx.currentTime + 0.25);
+		} catch {}
+	}
+
+	function openDrawer() {
+		isOpen = true;
+		drawer?.classList.add('open');
+		drawer?.setAttribute('aria-hidden', 'false');
+		if (backdrop) backdrop.hidden = false;
+		unreadCount = 0;
+		updateBadge();
+		if (chatInput) chatInput.focus();
+		scrollToBottom();
+	}
+
+	function closeDrawer() {
+		isOpen = false;
+		drawer?.classList.remove('open');
+		drawer?.setAttribute('aria-hidden', 'true');
+		if (backdrop) backdrop.hidden = true;
+	}
+
+	function updateBadge() {
+		if (!unreadBadge) return;
+		if (unreadCount > 0 && !isOpen) {
+			unreadBadge.textContent = unreadCount > 99 ? '99+' : unreadCount.toString();
+			unreadBadge.hidden = false;
+		} else {
+			unreadBadge.hidden = true;
+		}
+	}
+
+	function scrollToBottom() {
+		if (!messagesContainer) return;
+		messagesContainer.scrollTop = messagesContainer.scrollHeight;
+	}
+
+	function setConnectionState(state: 'online' | 'connecting' | 'offline', label: string) {
+		if (!connDot || !connStatus) return;
+		connDot.className = `conn-dot ${state}`;
+		connStatus.textContent = label;
+	}
+
+	function escapeHtml(str: string) {
+		const div = document.createElement('div');
+		div.textContent = str;
+		return div.innerHTML;
+	}
+
+	function appendMessage(senderName: string, text: string, isServer: boolean, senderId?: string) {
+		if (!messagesContainer) return;
+
+		const card = document.createElement('div');
+		card.className = `chat-msg ${isServer ? 'server-broadcast' : ''}`;
+
+		const now = new Date();
+		const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+		const initial = (senderName || '?').slice(0, 1).toUpperCase();
+
+		const userLink = senderId && senderId !== 'system'
+			? `<a class="chat-user" href="/profile/${encodeURIComponent(senderId)}">${escapeHtml(senderName)}</a>`
+			: `<span class="chat-user">${escapeHtml(senderName)}</span>`;
+
+		card.innerHTML = `
+			<div class="chat-avatar">${initial}</div>
+			<div class="chat-content">
+				<div class="chat-meta">
+					${userLink}
+					<span class="chat-time">${timeStr}</span>
+				</div>
+				<p class="chat-text">${escapeHtml(text)}</p>
+			</div>
+		`;
+
+		messagesContainer.appendChild(card);
+		scrollToBottom();
+
+		if (!isOpen) {
+			unreadCount++;
+			updateBadge();
+			playPing();
+		}
+	}
+
+	function checkAuth() {
+		const token = localStorage.getItem('teblocks_token');
+		if (token && chatForm && authPrompt) {
+			chatForm.hidden = false;
+			authPrompt.hidden = true;
+		} else if (chatForm && authPrompt) {
+			chatForm.hidden = true;
+			authPrompt.hidden = false;
+		}
+		return token;
+	}
+
+	function connect() {
+		if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+			return;
+		}
+
+		setConnectionState('connecting', 'Connecting…');
+		const token = localStorage.getItem('teblocks_token') || '';
+		
+		// Determine WebSocket URL
+		const wsUrl = `wss://backend.teblocks.my.id/api/ws${token ? `?token=${encodeURIComponent(token)}` : ''}`;
+
+		try {
+			socket = new WebSocket(wsUrl);
+
+			socket.onopen = () => {
+				setConnectionState('online', 'Connected');
+				if (reconnectTimer) {
+					clearTimeout(reconnectTimer);
+					reconnectTimer = null;
+				}
+			};
+
+			socket.onmessage = (event) => {
+				try {
+					const data = JSON.parse(event.data);
+					// Action 1316: Global Chat message
+					if (data.action === 1316 && data.data) {
+						const msg = data.data.message || '';
+						const pid = data.data.playerId || '';
+						const username = data.data.username || (pid === 'system' ? 'SERVER' : `Player_${pid.slice(0, 6)}`);
+						const isServer = pid === 'system' || msg.startsWith('[SERVER');
+						appendMessage(username, msg, isServer, pid);
+					}
+				} catch {}
+			};
+
+			socket.onerror = () => {
+				setConnectionState('offline', 'Offline');
+			};
+
+			socket.onclose = () => {
+				setConnectionState('offline', 'Disconnected');
+				socket = null;
+				// Try auto-reconnecting every 5 seconds
+				if (!reconnectTimer) {
+					reconnectTimer = setTimeout(connect, 5000);
+				}
+			};
+		} catch {
+			setConnectionState('offline', 'Offline');
+			if (!reconnectTimer) {
+				reconnectTimer = setTimeout(connect, 5000);
+			}
+		}
+	}
+
+	// Send message handler
+	chatForm?.addEventListener('submit', (e) => {
+		e.preventDefault();
+		if (!chatInput) return;
+		const text = chatInput.value.trim();
+		if (!text) return;
+
+		const token = localStorage.getItem('teblocks_token');
+		if (!token) {
+			checkAuth();
+			return;
+		}
+
+		if (!socket || socket.readyState !== WebSocket.OPEN) {
+			alert('Connecting to game chat server. Please try again in a moment.');
+			connect();
+			return;
+		}
+
+		// Action 1316
+		const payload = {
+			action: 1316,
+			data: {
+				message: text,
+			},
+		};
+
+		socket.send(JSON.stringify(payload));
+		chatInput.value = '';
+	});
+
+	// UI Event Listeners
+	fab?.addEventListener('click', () => {
+		if (isOpen) closeDrawer();
+		else openDrawer();
+	});
+
+	closeBtn?.addEventListener('click', closeDrawer);
+	backdrop?.addEventListener('click', closeDrawer);
+
+	soundToggle?.addEventListener('click', () => {
+		soundEnabled = !soundEnabled;
+		if (soundOn && soundOff) {
+			soundOn.hidden = !soundEnabled;
+			soundOff.hidden = soundEnabled;
+		}
+	});
+
+	// Setup on load
+	checkAuth();
+	connect();
+
+	// Listen for auth changes across tabs or login
+	window.addEventListener('storage', () => {
+		checkAuth();
+		// Reconnect with new token if token changed
+		if (socket) {
+			socket.close();
+		}
+	});
+</script>

@@ -3,6 +3,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import { SITE_TITLE } from '../../consts';
+import { COUNTRIES } from '../../lib/countries';
 
 export const prerender = false;
 ---
@@ -45,11 +46,37 @@ export const prerender = false;
 						</p>
 						<h1 id="profile-name">Player</h1>
 						<p class="player-meta">
+							<span id="country-banner" class="country-banner" hidden>
+								<span id="country-flag" class="country-flag">🌐</span>
+								<span id="country-name" class="country-name">Global</span>
+								<span class="country-locked-tag" title="Region is permanently locked. Open a Discord support ticket to request a change.">🔒 Locked</span>
+							</span>
 							<span id="verification-badge" class="verification-badge">Unverified</span>
 							<span id="member-since"></span>
 						</p>
 					</div>
 					<div class="profile-actions" id="profile-actions"></div>
+				</div>
+
+				<!-- Set Country Banner Callout (One-time setup for profile owner) -->
+				<div id="set-country-box" class="country-setup-card" hidden>
+					<div class="country-setup-header">
+						<span class="country-setup-icon">🌍</span>
+						<div>
+							<strong>Choose Your Country / Region Banner</strong>
+							<p>Lock in your official country banner for your profile and leaderboards. <em>Note: Once set, your region cannot be changed without emailing or opening a Discord support ticket.</em></p>
+						</div>
+					</div>
+					<form id="set-country-form" class="country-setup-form">
+						<select id="set-country-select" required>
+							<option value="" disabled selected>Select country / region…</option>
+							{COUNTRIES.map((c) => (
+								<option value={c.code}>{c.flag} {c.name}</option>
+							))}
+						</select>
+						<button type="submit" class="button compact">Confirm & Lock Region</button>
+					</form>
+					<p id="country-setup-status" class="form-status" role="status"></p>
 				</div>
 					<div class="profile-grid">
 						<section class="about-card" aria-labelledby="about-title">
@@ -141,6 +168,17 @@ export const prerender = false;
 							<svg id="rank-graph" viewBox="0 0 600 200" preserveAspectRatio="none" role="img" aria-label="Rating over the last 30 days"></svg>
 							<div id="rank-graph-tooltip" class="graph-tooltip" hidden></div>
 							<p id="rank-graph-empty" class="activity-empty">Play ranked matches to build your rating history.</p>
+						</div>
+					<section class="stats-section" aria-labelledby="achievements-title">
+						<div class="section-heading" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.8rem;">
+							<div>
+								<p class="eyebrow" style="--accent-color: var(--l)">Badges & Milestones</p>
+								<h2 id="achievements-title">Achievements</h2>
+							</div>
+							<a href="/achievements/" class="btn btn-secondary btn-sm" style="font-size: 0.82rem; padding: 0.35rem 0.8rem; text-decoration: none;">View All Achievements →</a>
+						</div>
+						<div id="profile-achievements-grid" class="profile-achievements-showcase">
+							<p class="activity-empty">Loading player achievements...</p>
 						</div>
 					</section>
 
@@ -298,6 +336,117 @@ export const prerender = false;
 		background: rgba(111,224,122,.13);
 		color: var(--s);
 		border-color: rgba(111,224,122,.3);
+	}
+	.country-banner {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.25rem 0.65rem;
+		border-radius: 999px;
+		background: rgba(62, 166, 195, 0.12);
+		border: 1px solid rgba(62, 166, 195, 0.3);
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--text);
+	}
+	.country-flag {
+		font-size: 1.1rem;
+	}
+	.country-locked-tag {
+		font-size: 0.72rem;
+		color: var(--text-muted);
+		background: var(--bg-elevated);
+		padding: 1px 6px;
+		border-radius: 4px;
+		cursor: help;
+	}
+	.country-setup-card {
+		margin: 1.2rem 1.8rem 0;
+		padding: 1.2rem 1.4rem;
+		border-radius: var(--radius);
+		background: rgba(62, 166, 195, 0.08);
+		border: 1px dashed rgba(62, 166, 195, 0.35);
+		display: flex;
+		flex-direction: column;
+		gap: 0.8rem;
+	}
+	.country-setup-header {
+		display: flex;
+		gap: 0.8rem;
+		align-items: flex-start;
+	}
+	.country-setup-icon {
+		font-size: 1.5rem;
+		flex-shrink: 0;
+	}
+	.country-setup-header strong {
+		display: block;
+		font-size: 0.95rem;
+		color: var(--text);
+		margin-bottom: 0.2rem;
+	}
+	.country-setup-header p {
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--text-dim);
+		line-height: 1.4;
+	}
+	.country-setup-form {
+		display: flex;
+		gap: 0.6rem;
+		flex-wrap: wrap;
+	}
+	.country-setup-form select {
+		min-width: 220px;
+		padding: 0.5rem 0.8rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		background: var(--bg-elevated);
+		color: var(--text);
+		font: inherit;
+		font-size: 0.88rem;
+	}
+	.profile-achievements-showcase {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		gap: 0.9rem;
+		margin-top: 1.2rem;
+	}
+	.profile-ach-card {
+		padding: 0.9rem 1rem;
+		border-radius: var(--radius);
+		border: 1px solid var(--border);
+		background: var(--panel);
+		display: flex;
+		gap: 0.75rem;
+		align-items: center;
+		transition: all var(--transition-fast);
+	}
+	.profile-ach-card.unlocked {
+		border-color: var(--ach-border, var(--border));
+		background: linear-gradient(135deg, var(--ach-bg, transparent), var(--panel));
+		box-shadow: 0 4px 16px var(--ach-glow, transparent);
+	}
+	.profile-ach-card.locked {
+		opacity: 0.5;
+	}
+	.profile-ach-icon {
+		font-size: 1.5rem;
+		flex-shrink: 0;
+	}
+	.profile-ach-title {
+		font-weight: 700;
+		font-size: 0.88rem;
+		color: var(--text);
+		margin: 0 0 0.15rem;
+	}
+	.profile-ach-status {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+	}
+	.profile-ach-card.unlocked .profile-ach-status {
+		color: #5bfa80;
+		font-weight: 600;
 	}
 	.profile-grid, .lower-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; margin-top: 1.2em; }
 	.about-card, .rank-card { min-height: 185px; padding: 1.8em; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }
@@ -496,6 +645,9 @@ export const prerender = false;
 </style>
 
 <script>
+	import { getCountryFlag, formatCountryName } from '../../lib/countries';
+	import { evaluatePlayerAchievements, getTierColor } from '../../lib/achievements';
+
 	const status = document.querySelector('#profile-status');
 	const profileEl = document.querySelector('#profile');
 	const bioForm = document.querySelector('#bio-form');
@@ -592,6 +744,7 @@ export const prerender = false;
 		if (fallback) fallback.hidden = Boolean(url);
 		if (url) { image.src = url; image.alt = alt; }
 	};
+	const escapeHtml = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 	async function copyText(value, button, label) {
 		try {
 			await navigator.clipboard.writeText(value);
@@ -897,6 +1050,87 @@ export const prerender = false;
 			badge.textContent = body.email_verified ? 'Verified account' : 'Email not verified';
 			badge.classList.toggle('verified', Boolean(body.email_verified));
 			text('#player-bio', body.bio || 'No profile note yet.');
+
+			// Country banner display & setup
+			const countryBanner = document.querySelector('#country-banner');
+			const countryFlag = document.querySelector('#country-flag');
+			const countryName = document.querySelector('#country-name');
+			const setCountryBox = document.querySelector('#set-country-box');
+			const setCountryForm = document.querySelector('#set-country-form');
+			const setCountrySelect = document.querySelector('#set-country-select') as HTMLSelectElement | null;
+			const countrySetupStatus = document.querySelector('#country-setup-status');
+
+			const savedCountry = body.country || localStorage.getItem('teblocks_user_country_' + body.user_id) || '';
+
+			if (savedCountry) {
+				if (countryBanner) countryBanner.hidden = false;
+				if (countryFlag) countryFlag.textContent = getCountryFlag(savedCountry);
+				if (countryName) countryName.textContent = formatCountryName(savedCountry);
+				if (setCountryBox) setCountryBox.hidden = true;
+			} else {
+				if (countryBanner) countryBanner.hidden = true;
+				if (isOwn && setCountryBox) {
+					setCountryBox.hidden = false;
+				}
+			}
+
+			// Handle locking in country if submitted by owner
+			if (setCountryForm && !setCountryForm.dataset.bound) {
+				setCountryForm.dataset.bound = 'true';
+				setCountryForm.addEventListener('submit', async (e) => {
+					e.preventDefault();
+					if (!setCountrySelect) return;
+					const selectedCode = setCountrySelect.value;
+					if (!selectedCode) return;
+					if (countrySetupStatus) countrySetupStatus.textContent = 'Locking in your region…';
+
+					try {
+						const patchRes = await request('https://backend.teblocks.my.id/profile/me', {
+							method: 'PATCH',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ country: selectedCode }),
+						}, 1);
+						const patchBody = await patchRes.json().catch(() => ({}));
+						if (!patchRes.ok) {
+							if (countrySetupStatus) countrySetupStatus.textContent = patchBody.error || 'Failed to lock country.';
+							return;
+						}
+						localStorage.setItem('teblocks_user_country_' + body.user_id, selectedCode);
+						if (setCountryBox) setCountryBox.hidden = true;
+						if (countryBanner) countryBanner.hidden = false;
+						if (countryFlag) countryFlag.textContent = getCountryFlag(selectedCode);
+						if (countryName) countryName.textContent = formatCountryName(selectedCode);
+						if (countrySetupStatus) countrySetupStatus.textContent = 'Region locked successfully!';
+					} catch {
+						if (countrySetupStatus) countrySetupStatus.textContent = 'Request timed out. Please try again.';
+					}
+				});
+			}
+
+			// Achievements Showcase
+			const achContainer = document.querySelector('#profile-achievements-grid');
+			if (achContainer) {
+				const achData = evaluatePlayerAchievements(body);
+				achContainer.innerHTML = '';
+				const showcaseList = achData.achievements.slice(0, 8);
+				showcaseList.forEach((ach) => {
+					const colors = getTierColor(ach.tier);
+					const card = document.createElement('div');
+					card.className = `profile-ach-card ${ach.unlocked ? 'unlocked' : 'locked'}`;
+					card.style.setProperty('--ach-border', colors.border);
+					card.style.setProperty('--ach-bg', colors.bg);
+					card.style.setProperty('--ach-glow', colors.glow);
+					card.innerHTML = `
+						<span class="profile-ach-icon">${ach.icon}</span>
+						<div>
+							<div class="profile-ach-title">${escapeHtml(ach.title)}</div>
+							<div class="profile-ach-status">${ach.unlocked ? '✓ Unlocked' : escapeHtml(ach.progressText || 'In Progress')}</div>
+						</div>
+					`;
+					achContainer.appendChild(card);
+				});
+			}
+
 			if (isOwn) {
 				bioInput.value = body.bio || '';
 				profileActions.innerHTML = '<button id="edit-button" class="button-native" type="button">Edit profile</button><button id="share-button" class="button-native" type="button">Share</button><button id="logout-button" class="button-native danger" type="button">Log out</button>';
