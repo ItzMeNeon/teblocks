@@ -20,17 +20,11 @@ const { size = 30, class: className = '' } = Astro.props;
 			<stop offset="0" stop-color="#3ea6c3" />
 			<stop offset="1" stop-color="#5bfa80" />
 		</linearGradient>
-		<filter id="neumorphic" x="-20%" y="-20%" width="140%" height="140%">
-			<feDropShadow dx="-1.5" dy="-1.5" stdDeviation="1.5" flood-color="#ffffff" flood-opacity="0.4" result="light" />
-			<feDropShadow dx="1.5" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.25" result="dark" />
-			<feMerge>
-				<feMergeNode in="light" />
-				<feMergeNode in="dark" />
-				<feMergeNode in="SourceGraphic" />
-			</feMerge>
+		<filter id="logo-glow" x="-30%" y="-30%" width="160%" height="160%">
+			<feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#3ea6c3" flood-opacity="0.45" />
 		</filter>
 	</defs>
-	<g class="logo-wave" filter="url(#neumorphic)">
+	<g class="logo-wave" filter="url(#logo-glow)">
 		<rect x="2" y="7" width="8" height="8" rx="2" fill="url(#tb-grad)" />
 		<rect x="12" y="7" width="8" height="8" rx="2" fill="url(#tb-grad)" />
 		<rect x="22" y="7" width="8" height="8" rx="2" fill="url(#tb-grad)" />

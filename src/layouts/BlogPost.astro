@@ -15,41 +15,58 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+				max-width: 820px;
+				margin: 3.5rem auto 0;
+			}
+			.blog-card {
+				padding: 2.5rem;
+				border-radius: var(--radius-lg);
+				border: 1px solid var(--border);
+				background: var(--panel);
+				box-shadow: var(--shadow);
+				backdrop-filter: blur(14px);
+				-webkit-backdrop-filter: blur(14px);
 			}
 			.hero-image {
 				width: 100%;
+				margin-bottom: 2rem;
+				border-radius: var(--radius);
+				overflow: hidden;
+				border: 1px solid var(--border);
 			}
 			.hero-image img {
 				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+				width: 100%;
+				height: auto;
+				object-fit: cover;
 			}
 			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+				color: var(--text-dim);
+				line-height: 1.75;
+				font-size: 1.02rem;
 			}
 			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+				margin-bottom: 2rem;
+				padding-bottom: 1.5rem;
+				border-bottom: 1px solid var(--border);
 			}
 			.title h1 {
-				margin: 0 0 0.5em 0;
+				margin: 0 0 0.5rem 0;
+				font-size: clamp(2rem, 4.5vw, 2.8rem);
 			}
 			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+				margin-bottom: 0.8rem;
+				color: var(--text-muted);
+				font-family: var(--font-mono);
+				font-size: 0.85rem;
 			}
 			.last-updated-on {
 				font-style: italic;
+				margin-left: 0.5rem;
+			}
+			@media (max-width: 680px) {
+				main { margin-top: 2rem; }
+				.blog-card { padding: 1.5rem; }
 			}
 		</style>
 	</head>
@@ -57,24 +74,25 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<body>
 		<Header />
 		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
-				</div>
+			<article class="blog-card">
+				{heroImage && (
+					<div class="hero-image">
+						<img width={1020} height={510} src={heroImage} alt="" />
+					</div>
+				)}
 				<div class="prose">
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
 							{
 								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
+									<span class="last-updated-on">
+										(Updated <FormattedDate date={updatedDate} />)
+									</span>
 								)
 							}
 						</div>
 						<h1>{title}</h1>
-						<hr />
 					</div>
 					<slot />
 				</div>

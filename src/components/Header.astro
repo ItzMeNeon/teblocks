@@ -7,7 +7,7 @@ import { SITE_TITLE } from '../consts';
 <header>
 	<nav>
 		<a href="/" class="brand" aria-label={SITE_TITLE}>
-			<Logo size={30} />
+			<Logo size={32} />
 			<span class="brand-name">{SITE_TITLE}</span>
 		</a>
 
@@ -15,9 +15,10 @@ import { SITE_TITLE } from '../consts';
 			<a href="/leaderboards/">Leaderboards</a>
 			<a href="/skins/">Skins</a>
 			<a href="/wiki/">Wiki</a>
+			<a href="/about/">About</a>
 			<span class="nav-divider" aria-hidden="true"></span>
 			
-			<button class="theme-toggle" aria-label="Toggle theme">
+			<button class="theme-toggle" type="button" aria-label="Toggle theme">
 				<svg xmlns="http://www.w3.org/2000/svg" class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
 					<circle cx="12" cy="12" r="5"></circle>
 					<line x1="12" y1="1" x2="12" y2="3"></line>
@@ -37,7 +38,7 @@ import { SITE_TITLE } from '../consts';
 			<a href="/login/" id="nav-account" class="nav-cta" data-account-toggle>Account</a>
 		</div>
 
-		<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+		<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation menu">
 			<span></span><span></span><span></span>
 		</button>
 	</nav>
@@ -47,36 +48,45 @@ import { SITE_TITLE } from '../consts';
 	header {
 		position: sticky;
 		top: 0;
-		z-index: 30;
-		padding: 0 1.4rem;
-		background: var(--neu-bg);
-		box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+		z-index: 50;
+		padding: 0 1.5rem;
+		background: rgba(3, 7, 11, 0.82);
+		backdrop-filter: blur(18px);
+		-webkit-backdrop-filter: blur(18px);
 		border-bottom: 1px solid var(--border);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+		transition: background-color 0.3s ease, border-color 0.3s ease;
+	}
+	:global([data-theme="light"]) header {
+		background: rgba(255, 255, 255, 0.88);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 	}
 	nav {
-		max-width: 1120px;
+		max-width: 1140px;
 		margin: 0 auto;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 4rem;
-		gap: 1em;
+		height: 4.2rem;
+		gap: 1.2em;
 	}
 	.brand {
 		display: flex;
 		align-items: center;
-		gap: 0.55em;
+		gap: 0.6em;
 		font-weight: 800;
-		font-size: 1.1rem;
+		font-size: 1.15rem;
 		color: var(--text);
-		letter-spacing: -0.01em;
+		letter-spacing: -0.015em;
 		flex-shrink: 0;
+		text-decoration: none;
+		transition: opacity var(--transition-fast);
 	}
 	.brand:hover {
-		color: var(--text);
+		opacity: 0.9;
 	}
 	.brand-name {
-		background: linear-gradient(120deg, #ffffff, var(--accent));
+		background: linear-gradient(120deg, var(--h1-grad-start) 20%, var(--accent) 90%);
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
@@ -85,64 +95,51 @@ import { SITE_TITLE } from '../consts';
 	.nav-links {
 		display: flex;
 		align-items: center;
-		gap: 0.25em;
+		gap: 0.35em;
 	}
 	.nav-links a {
-		padding: 0.55em 0.85em;
+		padding: 0.5em 0.9em;
 		color: var(--text-dim);
 		font-size: 0.9rem;
 		font-weight: 600;
 		border-radius: 999px;
-		transition: color 0.15s ease, background 0.15s ease;
+		transition: all var(--transition-fast);
 		text-decoration: none;
 	}
 	.nav-links a:hover {
 		color: var(--text);
-		background: rgba(255, 255, 255, 0.05);
+		background: rgba(62, 166, 195, 0.08);
 	}
-	.nav-links a.active {
-		color: var(--text);
-	}
-	.nav-links a.active::after {
-		content: '';
-		display: block;
-		width: 20px;
-		height: 2px;
-		margin: 0.3em auto 0;
-		border-radius: 2px;
-		background: linear-gradient(90deg, var(--accent), var(--accent-2));
+	:global([data-theme="light"]) .nav-links a:hover {
+		background: rgba(2, 132, 199, 0.08);
 	}
 
 	.nav-divider {
 		width: 1px;
 		height: 1.4em;
 		background: var(--border);
-		margin: 0 0.35em;
+		margin: 0 0.4em;
 	}
 
 	.theme-toggle {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 34px;
-		height: 34px;
+		width: 36px;
+		height: 36px;
 		margin: 0 0.25em;
 		border-radius: 50%;
-		background: var(--neu-bg);
+		background: rgba(255, 255, 255, 0.04);
 		border: 1px solid var(--border);
-		box-shadow: 4px 4px 10px rgba(0,0,0,0.4), -4px -4px 10px rgba(255,255,255,0.05);
 		cursor: pointer;
-		color: var(--text);
-		transition: all 0.2s ease;
-	}
-	:global([data-theme="light"]) .theme-toggle {
-		box-shadow: 4px 4px 10px rgba(0,0,0,0.1), -4px -4px 10px rgba(255,255,255,0.8);
+		color: var(--text-dim);
+		transition: all var(--transition-fast);
 	}
 	.theme-toggle:hover {
-		box-shadow: inset 4px 4px 10px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(255,255,255,0.05);
-	}
-	:global([data-theme="light"]) .theme-toggle:hover {
-		box-shadow: inset 4px 4px 10px rgba(0,0,0,0.1), inset -4px -4px 10px rgba(255,255,255,0.8);
+		color: var(--accent);
+		border-color: var(--border-bright);
+		background: rgba(62, 166, 195, 0.1);
+		transform: scale(1.05);
 	}
 	.theme-toggle .moon-icon { display: none; }
 	.theme-toggle .sun-icon { display: block; }
@@ -150,51 +147,58 @@ import { SITE_TITLE } from '../consts';
 	:global([data-theme="light"]) .theme-toggle .moon-icon { display: block; }
 
 	.nav-cta {
-		background: var(--neu-bg);
+		background: linear-gradient(135deg, var(--accent), var(--accent-2));
+		color: #00191c !important;
+		font-weight: 700;
+		padding: 0.48em 1.15em !important;
+		border-radius: 999px;
+		box-shadow: 0 2px 12px var(--accent-glow);
+		margin-left: 0.35em;
+		transition: all var(--transition-fast);
+	}
+	.nav-cta:hover {
+		filter: brightness(1.08);
+		box-shadow: 0 4px 18px var(--accent-glow-strong);
+		transform: translateY(-1px);
+	}
+
+	.nav-pill {
+		background: rgba(62, 166, 195, 0.1);
 		color: var(--accent) !important;
 		font-weight: 700;
 		border: 1px solid var(--border);
-		box-shadow: 4px 4px 10px rgba(0,0,0,0.4), -4px -4px 10px rgba(255,255,255,0.05);
-		margin-left: 0.25em;
-	}
-	:global([data-theme="light"]) .nav-cta {
-		box-shadow: 4px 4px 10px rgba(0,0,0,0.1), -4px -4px 10px rgba(255,255,255,0.8);
-	}
-	.nav-cta:hover {
-		filter: brightness(1.05);
-		box-shadow: inset 4px 4px 10px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(255,255,255,0.05);
-	}
-	:global([data-theme="light"]) .nav-cta:hover {
-		box-shadow: inset 4px 4px 10px rgba(0,0,0,0.1), inset -4px -4px 10px rgba(255,255,255,0.8);
-	}
-	.nav-pill {
-		border: 1px solid var(--border);
+		padding: 0.45em 1.1em !important;
 	}
 	.nav-pill:hover {
+		background: rgba(62, 166, 195, 0.18);
 		border-color: var(--border-bright);
-		background: rgba(255, 255, 255, 0.05);
 	}
 
 	.menu-toggle {
 		display: none;
 		flex-direction: column;
-		gap: 4px;
+		justify-content: center;
+		gap: 5px;
+		width: 38px;
+		height: 38px;
 		padding: 0.5em;
 		border: 1px solid var(--border);
 		border-radius: 10px;
-		background: transparent;
+		background: rgba(255, 255, 255, 0.04);
 		cursor: pointer;
 	}
 	.menu-toggle span {
-		width: 18px;
+		display: block;
+		width: 20px;
 		height: 2px;
 		border-radius: 2px;
 		background: var(--text);
+		transition: transform 0.2s ease, opacity 0.2s ease;
 	}
 
 	@media (max-width: 760px) {
 		header {
-			padding: 0 0.9rem;
+			padding: 0 1rem;
 		}
 		nav {
 			position: relative;
@@ -211,36 +215,34 @@ import { SITE_TITLE } from '../consts';
 			display: none;
 			flex-direction: column;
 			align-items: stretch;
-			gap: 0;
-			padding: 0.6em 0.7em 0.8em;
+			gap: 0.3em;
+			padding: 1rem;
 			border-bottom: 1px solid var(--border);
-			background: var(--neu-bg);
-			box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+			background: var(--bg-elevated);
+			box-shadow: var(--shadow-lg);
+			border-radius: 0 0 var(--radius) var(--radius);
 		}
 		.nav-links.open {
 			display: flex;
 		}
 		.nav-links a {
-			padding: 0.7em 0.6em;
+			padding: 0.75em 1em;
 			font-size: 0.95rem;
-			border-radius: 8px;
-		}
-		.nav-links a.active::after {
-			display: none;
+			border-radius: var(--radius-sm);
 		}
 		.nav-divider {
 			width: 100%;
 			height: 1px;
-			margin: 0.4em 0;
+			margin: 0.5em 0;
 		}
 		.nav-cta {
 			text-align: center;
 			margin-left: 0;
-			margin-top: 0.5em;
+			margin-top: 0.3em;
 		}
 		.theme-toggle {
 			align-self: flex-start;
-			margin: 0.4em 0;
+			margin: 0.3em 0;
 		}
 	}
 </style>
@@ -273,7 +275,7 @@ import { SITE_TITLE } from '../consts';
 	navLinks?.querySelectorAll('a').forEach((link) =>
 		link.addEventListener('click', () => {
 			menuToggle?.setAttribute('aria-expanded', 'false');
-			navLinks.classList.remove('open');
+			navLinks?.classList.remove('open');
 		})
 	);
 

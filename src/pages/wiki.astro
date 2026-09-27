@@ -8,52 +8,379 @@ import { SITE_TITLE } from '../consts';
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`Wiki | ${SITE_TITLE}`} description="Rules, controls, and how to play TeBlocks." />
+		<BaseHead title={`Game Guide & Wiki | ${SITE_TITLE}`} description="Mechanics, controls, attack tables, and modes guide for TeBlocks." />
 		<style>
-			.wiki-panel { max-width: 820px; margin: 3em auto 0; }
-			.wiki-panel h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); }
-			.wiki-panel > p { margin: .4rem 0 1.6rem; color: var(--text-muted); }
-			.wiki-section {
-				border: 1px solid var(--border);
+			.wiki-container {
+				max-width: 960px;
+				margin: 3.5rem auto 0;
+			}
+			.wiki-header {
+				margin-bottom: 2.5rem;
+			}
+			.wiki-header h1 {
+				margin: 0 0 0.5rem;
+				font-size: clamp(2.2rem, 5vw, 3rem);
+			}
+			.wiki-header p {
+				color: var(--text-dim);
+				font-size: 1.1rem;
+				max-width: 60ch;
+				line-height: 1.6;
+			}
+
+			.wiki-nav {
+				display: flex;
+				gap: 0.5rem;
+				flex-wrap: wrap;
+				margin-bottom: 2.5rem;
+				padding: 0.6rem;
 				border-radius: var(--radius);
 				background: var(--panel);
-				padding: 1.6em;
-				margin-bottom: 1em;
+				border: 1px solid var(--border);
 			}
-			.wiki-section h2 { margin: 0 0 .6rem; font-size: 1.25rem; }
-			.wiki-section p { margin: .4rem 0; color: var(--text-dim); line-height: 1.7; }
-			.wiki-section ul { margin: .4rem 0; padding-left: 1.4rem; color: var(--text-dim); }
-			.wiki-section li { margin: .25rem 0; }
-			.coming-soon { color: var(--text-muted); font-style: italic; }
+			.wiki-nav a {
+				padding: 0.45rem 0.95rem;
+				border-radius: 8px;
+				font-size: 0.85rem;
+				font-weight: 700;
+				color: var(--text-dim);
+				transition: all var(--transition-fast);
+				text-decoration: none;
+			}
+			.wiki-nav a:hover {
+				color: var(--accent);
+				background: rgba(62, 166, 195, 0.1);
+			}
+
+			.wiki-section {
+				margin-bottom: 3rem;
+				padding: 2.2rem;
+				border-radius: var(--radius-lg);
+				border: 1px solid var(--border);
+				background: var(--panel);
+				box-shadow: var(--shadow);
+			}
+			.wiki-section h2 {
+				margin: 0 0 1.2rem;
+				font-size: 1.55rem;
+				display: flex;
+				align-items: center;
+				gap: 0.6rem;
+			}
+			.wiki-section p {
+				color: var(--text-dim);
+				line-height: 1.7;
+				margin-bottom: 1.1rem;
+			}
+			.wiki-section ul {
+				margin: 0.8rem 0 1.2rem;
+				padding-left: 1.4rem;
+				color: var(--text-dim);
+				line-height: 1.7;
+			}
+			.wiki-section li {
+				margin-bottom: 0.5rem;
+			}
+			.wiki-section strong {
+				color: var(--text);
+			}
+
+			.info-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+				gap: 1.2rem;
+				margin: 1.5rem 0;
+			}
+			.info-card {
+				padding: 1.2rem;
+				border-radius: var(--radius-sm);
+				background: rgba(255, 255, 255, 0.03);
+				border: 1px solid var(--border);
+			}
+			.info-card h4 {
+				margin: 0 0 0.4rem;
+				font-size: 1.05rem;
+				color: var(--accent);
+			}
+			.info-card p {
+				margin: 0;
+				font-size: 0.88rem;
+				line-height: 1.55;
+			}
+
+			.wiki-table {
+				width: 100%;
+				border-collapse: collapse;
+				margin: 1.2rem 0;
+				font-size: 0.92rem;
+				border: 1px solid var(--border);
+				border-radius: var(--radius-sm);
+				overflow: hidden;
+			}
+			.wiki-table th, .wiki-table td {
+				padding: 0.8rem 1rem;
+				text-align: left;
+				border-bottom: 1px solid var(--border);
+			}
+			.wiki-table th {
+				background: rgba(255, 255, 255, 0.04);
+				color: var(--text-muted);
+				font-family: var(--font-mono);
+				font-size: 0.72rem;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+			}
+			.wiki-table tr:last-child td {
+				border-bottom: 0;
+			}
+			.wiki-table tr:hover td {
+				background: var(--panel-hover);
+			}
+
+			.badge {
+				display: inline-block;
+				padding: 0.2em 0.6em;
+				border-radius: 4px;
+				font-family: var(--font-mono);
+				font-size: 0.76rem;
+				font-weight: 700;
+				background: rgba(62, 166, 195, 0.12);
+				color: var(--accent);
+				border: 1px solid rgba(62, 166, 195, 0.25);
+			}
+			.badge-gold {
+				background: rgba(255, 209, 102, 0.15);
+				color: var(--o);
+				border-color: rgba(255, 209, 102, 0.3);
+			}
+			.badge-green {
+				background: rgba(91, 250, 128, 0.15);
+				color: var(--s);
+				border-color: rgba(91, 250, 128, 0.3);
+			}
+
+			@media (max-width: 720px) {
+				.wiki-container { margin-top: 2rem; }
+				.wiki-section { padding: 1.5rem; }
+				.wiki-table th, .wiki-table td { padding: 0.6rem 0.7rem; font-size: 0.85rem; }
+			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<section class="wiki-panel" aria-labelledby="wiki-title">
-				<h1 id="wiki-title">Wiki</h1>
-				<p>Rules, controls, and everything you need to know about TeBlocks.</p>
+			<div class="wiki-container">
+				<header class="wiki-header">
+					<p class="eyebrow" style="--accent-color: var(--accent)">Documentation & Handbook</p>
+					<h1>TeBlocks Wiki</h1>
+					<p>Everything you need to know about the engine, rotation physics, attack mechanics, and competitive systems.</p>
+				</header>
 
-				<article class="wiki-section" aria-labelledby="how-to-play">
-					<h2 id="how-to-play">How to play</h2>
-					<p class="coming-soon">This section is being written. Check back soon.</p>
-				</article>
+				<nav class="wiki-nav" aria-label="Wiki table of contents">
+					<a href="#how-to-play">Core Mechanics</a>
+					<a href="#controls">Controls & Handling</a>
+					<a href="#attacks">Attacks & Garbage</a>
+					<a href="#modes">Game Modes</a>
+					<a href="#upstream">Techmino Heritage</a>
+				</nav>
 
-				<article class="wiki-section" aria-labelledby="controls">
-					<h2 id="controls">Controls</h2>
-					<p class="coming-soon">Key bindings and control customization will be documented here.</p>
-				</article>
+				<!-- CORE MECHANICS -->
+				<section class="wiki-section" id="how-to-play" aria-labelledby="mech-title">
+					<p class="eyebrow" style="--accent-color: var(--i)">Physics & Rules</p>
+					<h2 id="mech-title">Core Gameplay Mechanics</h2>
+					<p>
+						TeBlocks is a modern, fast-paced tetromino game built for competitive parity. It adheres to standard guideline-compatible rotation and piece generation, ensuring that all competitive skills translate seamlessly.
+					</p>
 
-				<article class="wiki-section" aria-labelledby="rules">
-					<h2 id="rules">Rules</h2>
-					<p class="coming-soon">Mode rules, scoring, and competitive formats will be explained here.</p>
-				</article>
+					<div class="info-grid">
+						<div class="info-card">
+							<h4>SRS (Super Rotation System)</h4>
+							<p>Standard SRS with 5-point wall kicks, enabling floor kicks, spin recoveries, and advanced T-Spin twists around obstacles.</p>
+						</div>
+						<div class="info-card">
+							<h4>7-Bag Randomizer</h4>
+							<p>Pieces are dealt in complete sets of 7 unique tetrominoes (I, J, L, O, S, T, Z) before repeating, eliminating piece drought.</p>
+						</div>
+						<div class="info-card">
+							<h4>Hold & Next Queue</h4>
+							<p>1 Hold slot with instantaneous swap upon piece spawn, and a customizable 5–6 piece lookahead Next Queue for route planning.</p>
+						</div>
+						<div class="info-card">
+							<h4>Lock Delay & Reset</h4>
+							<p>500ms manipulation window upon touching the surface with up to 15 step resets, allowing fast spin positioning.</p>
+						</div>
+					</div>
+				</section>
 
-				<article class="wiki-section" aria-labelledby="modes">
-					<h2 id="modes">Modes</h2>
-					<p class="coming-soon">A breakdown of each game mode will be added later.</p>
-				</article>
-			</section>
+				<!-- CONTROLS & HANDLING -->
+				<section class="wiki-section" id="controls" aria-labelledby="controls-title">
+					<p class="eyebrow" style="--accent-color: var(--o)">Input & Customization</p>
+					<h2 id="controls-title">Controls & Handling Configuration</h2>
+					<p>
+						High-level stacking requires sub-frame input responsiveness. TeBlocks features fully rebindable controls and customizable keyboard handling values.
+					</p>
+
+					<table class="wiki-table" aria-label="Default keyboard controls">
+						<thead>
+							<tr>
+								<th>Action</th>
+								<th>Primary Key</th>
+								<th>Secondary Alternative</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>Move Left / Right</strong></td>
+								<td><span class="badge">Left</span> / <span class="badge">Right</span></td>
+								<td><span class="badge">A</span> / <span class="badge">D</span></td>
+							</tr>
+							<tr>
+								<td><strong>Soft Drop</strong></td>
+								<td><span class="badge">Down</span></td>
+								<td><span class="badge">S</span></td>
+							</tr>
+							<tr>
+								<td><strong>Hard Drop (Instant Lock)</strong></td>
+								<td><span class="badge">Space</span></td>
+								<td><span class="badge">W</span></td>
+							</tr>
+							<tr>
+								<td><strong>Rotate Clockwise (CW)</strong></td>
+								<td><span class="badge">Up</span></td>
+								<td><span class="badge">X</span></td>
+							</tr>
+							<tr>
+								<td><strong>Rotate Counter-Clockwise (CCW)</strong></td>
+								<td><span class="badge">Z</span></td>
+								<td><span class="badge">Ctrl</span></td>
+							</tr>
+							<tr>
+								<td><strong>Rotate 180°</strong></td>
+								<td><span class="badge">A</span></td>
+								<td><span class="badge">Shift</span></td>
+							</tr>
+							<tr>
+								<td><strong>Hold Piece</strong></td>
+								<td><span class="badge">C</span></td>
+								<td><span class="badge">Left Shift</span></td>
+							</tr>
+							<tr>
+								<td><strong>Quick Restart</strong></td>
+								<td><span class="badge">R</span></td>
+								<td><span class="badge">F2</span></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<h3 style="margin-top: 1.8rem; font-size: 1.2rem;">Handling Parameters (DAS / ARR / SDF)</h3>
+					<ul>
+						<li><strong>DAS (Delayed Auto Shift):</strong> The initial delay (typically 80ms – 160ms) before the piece auto-repeats across the matrix when a directional key is held.</li>
+						<li><strong>ARR (Auto Repeat Rate):</strong> The repetition speed (typically 0ms – 30ms) between piece steps after DAS activates. 0ms ARR produces instant wall teleportation.</li>
+						<li><strong>SDF (Soft Drop Factor):</strong> Multiplier for soft drop speed, from standard 5x up to Instant (sonic drop), matching modern competitive standards.</li>
+					</ul>
+				</section>
+
+				<!-- ATTACKS & GARBAGE -->
+				<section class="wiki-section" id="attacks" aria-labelledby="attacks-title">
+					<p class="eyebrow" style="--accent-color: var(--z)">Combat & Garbage</p>
+					<h2 id="attacks-title">Attack Table & Garbage Mechanics</h2>
+					<p>
+						In multiplayer modes (Ranked 1v1 and Casual MP), clearing lines sends garbage lines to your opponent's board with a single random hole. Incoming attacks enter a red warning buffer and can be cancelled out by clearing lines defensively.
+					</p>
+
+					<table class="wiki-table" aria-label="Garbage lines sent per clear">
+						<thead>
+							<tr>
+								<th>Clear Type</th>
+								<th>Base Lines Sent</th>
+								<th>Back-to-Back (B2B) Bonus</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Single (1 Line)</td>
+								<td>0</td>
+								<td>—</td>
+							</tr>
+							<tr>
+								<td>Double (2 Lines)</td>
+								<td>1</td>
+								<td>—</td>
+							</tr>
+							<tr>
+								<td>Triple (3 Lines)</td>
+								<td>2</td>
+								<td>—</td>
+							</tr>
+							<tr>
+								<td><strong>Tetris (4 Lines)</strong></td>
+								<td><span class="badge badge-green">4 lines</span></td>
+								<td>+1 line (Total 5)</td>
+							</tr>
+							<tr>
+								<td><strong>T-Spin Single (TSS)</strong></td>
+								<td><span class="badge">2 lines</span></td>
+								<td>+1 line (Total 3)</td>
+							</tr>
+							<tr>
+								<td><strong>T-Spin Double (TSD)</strong></td>
+								<td><span class="badge badge-green">4 lines</span></td>
+								<td>+1 line (Total 5)</td>
+							</tr>
+							<tr>
+								<td><strong>T-Spin Triple (TST)</strong></td>
+								<td><span class="badge badge-green">6 lines</span></td>
+								<td>+1 line (Total 7)</td>
+							</tr>
+							<tr>
+								<td><strong>Perfect Clear (All Clear)</strong></td>
+								<td><span class="badge badge-gold">10 lines</span></td>
+								<td>Adds on top of clear type</td>
+							</tr>
+						</tbody>
+					</table>
+					<p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.8rem;">
+						<strong>Combos:</strong> Consecutive line clears ramp attack exponentially. A 2-combo sends +1 line, a 4-combo sends +2 lines, an 8-combo sends +4 lines, and combos exceeding 11 scale aggressively.
+					</p>
+				</section>
+
+				<!-- GAME MODES -->
+				<section class="wiki-section" id="modes" aria-labelledby="modes-wiki-title">
+					<p class="eyebrow" style="--accent-color: var(--s)">Modes Guide</p>
+					<h2 id="modes-wiki-title">Game Modes Overview</h2>
+
+					<div class="info-grid">
+						<div class="info-card">
+							<h4>Ranked 1v1</h4>
+							<p>Competitive matchmaking with rollback netcode. Earn ELO rating points to rank up through placement tiers from Bronze to Grandmaster.</p>
+						</div>
+						<div class="info-card">
+							<h4>Casual Multiplayer</h4>
+							<p>Create password-protected or public rooms. Supports unranked 1v1, multi-player free-for-all, custom garbage settings, and spectating.</p>
+						</div>
+						<div class="info-card">
+							<h4>Daily Challenge</h4>
+							<p>A globally synchronized puzzle challenge updated every 24 hours. Everyone plays the exact same piece seed and target goal.</p>
+						</div>
+						<div class="info-card">
+							<h4>Sprint (40 Lines & 100L)</h4>
+							<p>The definitive speedrun benchmark. Clear 40 or 100 lines as fast as humanly possible, with millisecond-accurate timer tracking.</p>
+						</div>
+					</div>
+				</section>
+
+				<!-- TECHMINO UPSTREAM -->
+				<section class="wiki-section" id="upstream" aria-labelledby="upstream-title">
+					<p class="eyebrow" style="--accent-color: var(--t)">Heritage</p>
+					<h2 id="upstream-title">About Techmino & TeBlocks</h2>
+					<p>
+						TeBlocks is an open source project proudly forked and evolved from <a href="https://github.com/26f-studio/Techmino" target="_blank" rel="noopener noreferrer">Techmino</a> by 26f-studio. Powered by Lua and LÖVE 11.5, TeBlocks extends Techmino with competitive real-time multiplayer servers, matchmaking ladders, dedicated replay verifiers, and an expansive web platform for profiles and skins.
+					</p>
+					<p>
+						Licensed under LGPLv3. All game code and server repositories are transparent, community-driven, and cheat-resistant.
+					</p>
+				</section>
+			</div>
 		</main>
 		<Footer />
 	</body>

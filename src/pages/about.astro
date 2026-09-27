@@ -1,27 +1,170 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
 ---
 
-<Layout
-	title="About TeBlocks"
-	description="Learn about TeBlocks, the open source competitive tetromino stacking game."
-	pubDate={new Date('September 2024')}
->
-	<p>
-		<strong>TeBlocks</strong> is a modern, fast-paced, and cross-platform tetromino stacking game built with Lua and LÖVE 11.5, forked and evolved from <a href="https://github.com/26f-studio/Techmino" target="_blank" rel="noopener noreferrer">Techmino</a>.
-	</p>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`About | ${SITE_TITLE}`} description="Learn about TeBlocks, the open source competitive tetromino stacking game." />
+		<style>
+			.about-container {
+				max-width: 860px;
+				margin: 3.5rem auto 0;
+			}
+			.about-header {
+				margin-bottom: 2.5rem;
+			}
+			.about-header h1 {
+				margin: 0 0 0.5rem;
+				font-size: clamp(2.2rem, 5vw, 3rem);
+			}
+			.about-header p {
+				color: var(--text-dim);
+				font-size: 1.15rem;
+				line-height: 1.6;
+			}
+			.about-card {
+				padding: 2.5rem;
+				border-radius: var(--radius-lg);
+				border: 1px solid var(--border);
+				background: var(--panel);
+				box-shadow: var(--shadow);
+				margin-bottom: 2rem;
+			}
+			.about-card h2 {
+				font-size: 1.5rem;
+				margin: 2rem 0 1rem;
+				color: var(--text);
+			}
+			.about-card h2:first-of-type {
+				margin-top: 0;
+			}
+			.about-card p {
+				color: var(--text-dim);
+				line-height: 1.75;
+				font-size: 1.02rem;
+				margin-bottom: 1.2rem;
+			}
+			.feature-list {
+				list-style: none;
+				padding: 0;
+				margin: 1.5rem 0 2rem;
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 1rem;
+			}
+			.feature-item {
+				display: flex;
+				align-items: flex-start;
+				gap: 0.85rem;
+				padding: 1rem 1.2rem;
+				border-radius: var(--radius-sm);
+				background: rgba(255, 255, 255, 0.03);
+				border: 1px solid var(--border);
+			}
+			.feature-icon {
+				display: grid;
+				place-items: center;
+				width: 32px;
+				height: 32px;
+				border-radius: 8px;
+				background: rgba(62, 166, 195, 0.15);
+				color: var(--accent);
+				flex-shrink: 0;
+				margin-top: 0.1rem;
+			}
+			.feature-text strong {
+				display: block;
+				color: var(--text);
+				font-size: 0.98rem;
+				margin-bottom: 0.2rem;
+			}
+			.feature-text span {
+				color: var(--text-dim);
+				font-size: 0.88rem;
+				line-height: 1.5;
+			}
+			.actions-row {
+				display: flex;
+				gap: 1rem;
+				flex-wrap: wrap;
+				margin-top: 2rem;
+			}
+			@media (max-width: 680px) {
+				.about-container { margin-top: 2rem; }
+				.about-card { padding: 1.5rem; }
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="about-container">
+				<header class="about-header">
+					<p class="eyebrow" style="--accent-color: var(--accent)">Project & Mission</p>
+					<h1>About TeBlocks</h1>
+					<p>A competitive, open source block stacking game engineered for fair multiplayer, deterministic physics, and responsive play.</p>
+				</header>
 
-	<h2>Key Features</h2>
-	<ul>
-		<li><strong>Real-time Deterministic Physics:</strong> 60Hz deterministic physics with rollback netcode for seamless competitive 1v1 play.</li>
-		<li><strong>Competitive Ranked System:</strong> ELO ratings, placement tiers, and global leaderboards to track your progress against the best players worldwide.</li>
-		<li><strong>Single-player Modes:</strong> Sprint 40L, Sprint 100L, Marathon, Ultra, Master, and custom practice modes.</li>
-		<li><strong>Replay System:</strong> Full deterministic replay recording and verification to study match highlights and analyze strategies.</li>
-		<li><strong>Customization:</strong> Community skins, customizable handling (DAS, ARR, SDF), and custom keymaps.</li>
-	</ul>
+				<article class="about-card">
+					<h2>The Vision</h2>
+					<p>
+						<strong>TeBlocks</strong> is a modern, fast-paced tetromino stacking game built with Lua and LÖVE 11.5, forked and evolved from the legendary <a href="https://github.com/26f-studio/Techmino" target="_blank" rel="noopener noreferrer">Techmino</a> project.
+					</p>
+					<p>
+						We believe block stacking competition should be accessible, lightweight, transparent, and completely free from pay-to-win mechanics or proprietary lock-in. Whether you're a casual player looking to speedrun 40 Lines or a competitive veteran climbing the 1v1 ELO ladder, TeBlocks is designed to provide the cleanest stacking experience possible.
+					</p>
 
-	<h2>Open Source & Community</h2>
-	<p>
-		TeBlocks is community-driven and open source under the LGPLv3 license. We believe in fair, cheat-free competition, accessible gameplay, and continuous improvement. Check out our source code on <a href="https://github.com/ItzMeNeon/teblocks" target="_blank" rel="noopener noreferrer">GitHub</a>.
-	</p>
-</Layout>
+					<h2>Key Architecture & Highlights</h2>
+					<ul class="feature-list">
+						<li class="feature-item">
+							<div class="feature-icon">⚡</div>
+							<div class="feature-text">
+								<strong>Deterministic 60Hz Physics & Netcode</strong>
+								<span>Real-time multiplayer powered by rollback netcode for zero-lag local responsiveness and fair resolution under fluctuating latency.</span>
+							</div>
+						</li>
+						<li class="feature-item">
+							<div class="feature-icon">🏆</div>
+							<div class="feature-text">
+								<strong>Global Ranked Ladder</strong>
+								<span>Skill-based ELO rating with seasonal placement tiers, detailed match history, and cheat-resistant deterministic server verification.</span>
+							</div>
+						</li>
+						<li class="feature-item">
+							<div class="feature-icon">🎨</div>
+							<div class="feature-text">
+								<strong>Open Skinning & Community Hub</strong>
+								<span>Customize your board, tetromino blocks, ghost piece, and sound effects with full community skin repository support.</span>
+							</div>
+						</li>
+						<li class="feature-item">
+							<div class="feature-icon">💻</div>
+							<div class="feature-text">
+								<strong>Lightweight & Cross-Platform</strong>
+								<span>Native standalone packages for Windows, macOS, and Linux that run smoothly on modern rigs and modest hardware alike.</span>
+							</div>
+						</li>
+					</ul>
+
+					<h2>Open Source & Community</h2>
+					<p>
+						TeBlocks is distributed under the GNU Lesser General Public License (LGPLv3). We actively welcome community contributions, bug reports, skins, and documentation improvements.
+					</p>
+					<div class="actions-row">
+						<a class="btn btn-primary" href="https://github.com/ItzMeNeon/teblocks" target="_blank" rel="noopener noreferrer">
+							View GitHub Repository
+						</a>
+						<a class="btn btn-secondary" href="https://discord.gg/f9pUvkh" target="_blank" rel="noopener noreferrer">
+							Join the Discord
+						</a>
+					</div>
+				</article>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
