@@ -106,7 +106,7 @@ import { SITE_TITLE } from '../consts';
 				<header class="about-header">
 					<p class="eyebrow" style="--accent-color: var(--accent)">Project & Mission</p>
 					<h1>About TeBlocks</h1>
-					<p>A competitive, open source block stacking game engineered for fair multiplayer, deterministic physics, and responsive play.</p>
+					<p>A competitive, open source block stacking game engineered for responsive gameplay, fair multiplayer, and community competition.</p>
 				</header>
 
 				<article class="about-card">
@@ -123,15 +123,22 @@ import { SITE_TITLE } from '../consts';
 						<li class="feature-item">
 							<div class="feature-icon">⚡</div>
 							<div class="feature-text">
-								<strong>Deterministic 60Hz Physics & Netcode</strong>
-								<span>Real-time multiplayer powered by rollback netcode for zero-lag local responsiveness and fair resolution under fluctuating latency.</span>
+								<strong>Client-Simulated Physics (Zero Input Lag)</strong>
+								<span>Piece movement, SRS rotation, and handling are simulated locally on the client for instantaneous, sub-frame response times, while WebSocket streams relay live attack and garbage events.</span>
+							</div>
+						</li>
+						<li class="feature-item">
+							<div class="feature-icon">🛡️</div>
+							<div class="feature-text">
+								<strong>Server-Side Replay Verification</strong>
+								<span>Ranked match outcomes are verified server-side against the match seed and replay event streams before ELO rating is awarded, preventing falsified match results.</span>
 							</div>
 						</li>
 						<li class="feature-item">
 							<div class="feature-icon">🏆</div>
 							<div class="feature-text">
-								<strong>Global Ranked Ladder</strong>
-								<span>Skill-based ELO rating with seasonal placement tiers, detailed match history, and cheat-resistant deterministic server verification.</span>
+								<strong>Competitive Ranked & Casual Modes</strong>
+								<span>Skill-based ELO matchmaking with placement tiers, detailed match history, custom casual rooms, and single-player speedruns.</span>
 							</div>
 						</li>
 						<li class="feature-item">

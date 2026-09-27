@@ -181,6 +181,7 @@ import { SITE_TITLE } from '../consts';
 					<a href="#controls">Controls & Handling</a>
 					<a href="#attacks">Attacks & Garbage</a>
 					<a href="#modes">Game Modes</a>
+					<a href="#networking">Network Model</a>
 					<a href="#upstream">Techmino Heritage</a>
 				</nav>
 
@@ -352,7 +353,7 @@ import { SITE_TITLE } from '../consts';
 					<div class="info-grid">
 						<div class="info-card">
 							<h4>Ranked 1v1</h4>
-							<p>Competitive matchmaking with rollback netcode. Earn ELO rating points to rank up through placement tiers from Bronze to Grandmaster.</p>
+							<p>Competitive matchmaking with server replay verification. Earn ELO rating points to rank up through placement tiers from Bronze to Grandmaster.</p>
 						</div>
 						<div class="info-card">
 							<h4>Casual Multiplayer</h4>
@@ -367,6 +368,18 @@ import { SITE_TITLE } from '../consts';
 							<p>The definitive speedrun benchmark. Clear 40 or 100 lines as fast as humanly possible, with millisecond-accurate timer tracking.</p>
 						</div>
 					</div>
+				</section>
+
+				<!-- NETWORKING -->
+				<section class="wiki-section" id="networking" aria-labelledby="networking-title">
+					<p class="eyebrow" style="--accent-color: var(--i)">Architecture</p>
+					<h2 id="networking-title">Network Model & Ranked Verification</h2>
+					<p>
+						TeBlocks uses a <strong>client-simulated</strong> networking model. Rather than forcing players through a high-latency server-authoritative loop that delays every keypress, all piece movement, rotation, and drops are handled instantaneously on the local client (zero perceived input lag).
+					</p>
+					<p>
+						During multiplayer matches, the GameServer acts as a high-speed relay for attack events, garbage lines, and board snapshots over WebSockets. For ranked play, match integrity is safeguarded through <strong>server-side replay verification</strong>: at the conclusion of each match, client replay recordings (<code>.rep</code>) are checked against the initial match seed and event history to validate the legitimate winner before updating ELO ratings.
+					</p>
 				</section>
 
 				<!-- TECHMINO UPSTREAM -->
