@@ -43,10 +43,25 @@ export async function apiFetch(
 
 	const url = new URL(path, origin).toString();
 
+	const headers = new Headers(init?.headers);
+	if (context.request) {
+		const cfIp = context.request.headers.get('CF-Connecting-IP');
+		const cfCountry = context.request.headers.get('CF-IPCountry');
+		const xff = context.request.headers.get('X-Forwarded-For');
+		const ua = context.request.headers.get('User-Agent');
+		if (cfIp && !headers.has('CF-Connecting-IP')) headers.set('CF-Connecting-IP', cfIp);
+		if (cfCountry && !headers.has('CF-IPCountry')) headers.set('CF-IPCountry', cfCountry);
+		if (xff && !headers.has('X-Forwarded-For')) headers.set('X-Forwarded-For', xff);
+		if (ua && !headers.has('User-Agent')) headers.set('User-Agent', ua);
+	}
+
 	console.log(`[apiFetch] ${init?.method ?? 'GET'} ${url}`);
 
 	try {
-		const response = await fetch(url, init);
+		const response = await fetch(url, {
+			...init,
+			headers,
+		});
 
 		console.log(
 			`[apiFetch] <- ${response.status} ${response.statusText}`

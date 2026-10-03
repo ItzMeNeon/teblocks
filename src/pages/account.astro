@@ -3,7 +3,6 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_TITLE } from '../consts';
-import { COUNTRIES } from '../lib/countries';
 ---
 
 <!doctype html>
@@ -99,6 +98,22 @@ import { COUNTRIES } from '../lib/countries';
 				line-height: 1.5;
 				margin: 0.2rem 0 0;
 			}
+			.network-hint {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				background: rgba(59, 130, 246, 0.08);
+				border: 1px solid rgba(59, 130, 246, 0.25);
+				border-radius: var(--radius-sm);
+				padding: 0.8rem 1rem;
+				font-size: 0.85rem;
+				color: var(--text-dim);
+				line-height: 1.45;
+			}
+			.network-hint-icon {
+				font-size: 1.3rem;
+				flex-shrink: 0;
+			}
 			.status {
 				color: var(--text);
 				min-height: 1.5em;
@@ -157,15 +172,9 @@ import { COUNTRIES } from '../lib/countries';
 							<input id="password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="••••••••" required />
 						</div>
 
-						<div class="form-field">
-							<label for="country">Country / Region</label>
-							<select id="country" name="country" required>
-								<option value="" disabled selected>Select your region…</option>
-								{COUNTRIES.map((c) => (
-									<option value={c.code}>{c.flag} {c.name}</option>
-								))}
-							</select>
-							<p class="field-hint">🔒 <strong>Region is locked once set.</strong> It determines your regional banner and leaderboard flag, and cannot be changed without contacting support or opening a Discord ticket.</p>
+						<div class="network-hint">
+							<span class="network-hint-icon">🌐</span>
+							<span>Your country flag is automatically detected from your network connection upon registration (reference from osu!) and locked to your profile.</span>
 						</div>
 
 						<button type="submit">Create account</button>
