@@ -10,182 +10,259 @@ export const prerender = false;
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`Profile | ${SITE_TITLE}`} description="TeBlocks player profile." />
+		<BaseHead title={`Profile | ${SITE_TITLE}`} description="TeBlocks player profile and competitive statistics." />
 	</head>
 	<body>
 		<Header />
 		<main>
 			<div id="profile-status" class="loading" role="status" aria-live="polite">Loading player profile...</div>
+
 			<section id="profile" class="profile" hidden aria-labelledby="profile-name">
+				<!-- Cover Banner with Tetromino Parallax Accents -->
 				<div id="profile-banner" class="profile-banner">
 					<img id="banner-image" alt="" hidden />
 					<div class="banner-blocks" aria-hidden="true">
 						<i></i><i></i><i></i><i></i>
 					</div>
+					<div class="banner-overlay" aria-hidden="true"></div>
 					<label id="banner-control" class="media-control banner-control" hidden>
 						<span>Change banner</span>
 						<input id="banner-upload" type="file" accept="image/png,image/jpeg,image/webp" />
 					</label>
 				</div>
-			<div class="profile-card">
-				<div class="identity-row">
-					<div class="avatar-wrap">
-						<div id="avatar" class="avatar">
-							<img id="avatar-image" alt="" hidden />
-							<span id="avatar-initial">?</span>
-						</div>
-						<label id="avatar-control" class="media-control avatar-control" hidden>
-							<span>Change</span>
-							<input id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp" />
-						</label>
-					</div>
-					<div class="identity">
-						<p class="eyebrow" style="--accent-color: var(--i)">
-							<span class="presence"></span> Player profile
-						</p>
-						<h1 id="profile-name">Player</h1>
-						<p class="player-meta">
-							<span id="country-banner" class="country-banner" hidden>
-								<span id="country-flag" class="country-flag">🌐</span>
-								<span id="country-name" class="country-name">Global</span>
-								<span class="country-locked-tag" title="Region is permanently locked. Open a Discord support ticket to request a change.">🔒 Locked</span>
-							</span>
-							<span id="verification-badge" class="verification-badge">Unverified</span>
-							<span id="member-since"></span>
-						</p>
-					</div>
-					<div class="profile-actions" id="profile-actions"></div>
-				</div>
 
-					<div class="profile-grid">
-						<section class="about-card" aria-labelledby="about-title">
-							<div class="section-heading">
-								<p class="eyebrow" style="--accent-color: var(--t)">Player card</p>
-								<h2 id="about-title">About</h2>
+				<div class="profile-card">
+					<!-- Identity Row (Avatar + Name + Badges + Actions) -->
+					<div class="identity-row">
+						<div class="avatar-wrap">
+							<div id="avatar" class="avatar">
+								<img id="avatar-image" alt="" hidden />
+								<span id="avatar-initial">?</span>
 							</div>
-							<p id="player-bio" class="player-bio">No profile note yet.</p>
-							<form id="bio-form" class="bio-form" hidden>
-							<label class="sr-only" for="profile-bio-input">Profile note</label>
-							<input id="profile-bio-input" maxlength="120" placeholder="Add a short profile note" />
-								<button class="button compact" type="submit">Save</button>
-							</form>
-							<p id="bio-status" class="form-status" role="status"></p>
-						</section>
-						<section class="rank-card" aria-labelledby="rank-title">
-							<div class="section-heading">
-								<p class="eyebrow" style="--accent-color: var(--o)">Competitive</p>
-								<h2 id="rank-title">Rank</h2>
+							<label id="avatar-control" class="media-control avatar-control" hidden>
+								<span>Change</span>
+								<input id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp" />
+							</label>
+						</div>
+						<div class="identity">
+							<p class="eyebrow" style="--accent-color: var(--i)">
+								<span class="presence"></span> Player profile
+							</p>
+							<h1 id="profile-name">Player</h1>
+							<div class="player-meta">
+								<span id="country-banner" class="country-banner" hidden>
+									<span id="country-flag" class="country-flag">🌐</span>
+									<span id="country-name" class="country-name">Global</span>
+									<span class="country-locked-tag" title="Region is permanently detected and locked.">🔒 Locked</span>
+								</span>
+								<span id="verification-badge" class="verification-badge">Unverified</span>
+								<span id="member-since" class="member-since"></span>
 							</div>
-							<div class="rank-display">
-								<span id="rank-glyph" class="rank-glyph">?</span>
-								<div>
-									<strong id="rank-name">Unranked</strong>
-									<p id="rank-copy">Play your first ranked match to place.</p>
+						</div>
+						<div class="profile-actions" id="profile-actions"></div>
+					</div>
+
+					<!-- osu! × TETR.IO Style Sticky Sub-Nav Tabs -->
+					<nav class="profile-tabs-nav" role="tablist" aria-label="Profile navigation">
+						<button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="overview">
+							<span class="tab-icon">👤</span> Overview
+						</button>
+						<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="stats">
+							<span class="tab-icon">📊</span> Statistics
+						</button>
+						<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="history">
+							<span class="tab-icon">📈</span> Rating Chart
+						</button>
+						<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="matches">
+							<span class="tab-icon">⚔️</span> Matches
+						</button>
+						<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="achievements">
+							<span class="tab-icon">🏆</span> Badges
+						</button>
+					</nav>
+
+					<!-- Tab Panels Container -->
+					<div class="tab-panels">
+						<!-- TAB 1: OVERVIEW -->
+						<div id="tab-overview" class="tab-panel active" role="tabpanel">
+							<div class="overview-grid">
+								<!-- Left Column: Bio & Account Details -->
+								<div class="overview-col-left">
+									<section class="about-card panel-sub" aria-labelledby="about-title">
+										<div class="section-heading">
+											<p class="eyebrow" style="--accent-color: var(--t)">Player card</p>
+											<h2 id="about-title">About Me</h2>
+										</div>
+										<p id="player-bio" class="player-bio">No profile note yet.</p>
+										<form id="bio-form" class="bio-form" hidden>
+											<label class="sr-only" for="profile-bio-input">Profile note</label>
+											<input id="profile-bio-input" maxlength="120" placeholder="Add a short profile note" />
+											<button class="button compact" type="submit">Save</button>
+										</form>
+										<p id="bio-status" class="form-status" role="status"></p>
+									</section>
+
+									<div class="account-card panel-sub" id="account-card">
+										<div class="account-card-header">
+											<span class="eyebrow" style="--accent-color: var(--j)">Player</span>
+											<strong id="account-card-title">Account details</strong>
+										</div>
+										<dl>
+											<div>
+												<dt>Player ID</dt>
+												<dd>
+													<button id="copy-id" class="copy-id" type="button">
+														<span id="profile-id"></span> <b>Copy</b>
+													</button>
+												</dd>
+											</div>
+										</dl>
+									</div>
+								</div>
+
+								<!-- Right Column: Rank & Quick Stat Highlights -->
+								<div class="overview-col-right">
+									<section class="rank-card panel-sub" aria-labelledby="rank-title">
+										<div class="section-heading">
+											<p class="eyebrow" style="--accent-color: var(--o)">Competitive</p>
+											<h2 id="rank-title">Current Standing</h2>
+										</div>
+										<div class="rank-display">
+											<div class="rank-glyph-wrapper">
+												<span id="rank-glyph" class="rank-glyph">?</span>
+											</div>
+											<div class="rank-details">
+												<strong id="rank-name" class="rank-name">Unranked</strong>
+												<p id="rank-copy">Play your first ranked match to place.</p>
+											</div>
+										</div>
+									</section>
+
+									<!-- Quick Glance Stats Rack (TETR.IO inspired) -->
+									<div class="quick-stats-rack">
+										<div class="quick-stat-box">
+											<span class="quick-stat-label">Rating</span>
+											<strong class="quick-stat-value" id="quick-stat-rating">--</strong>
+										</div>
+										<div class="quick-stat-box">
+											<span class="quick-stat-label">Win Rate</span>
+											<strong class="quick-stat-value" id="quick-stat-winrate">--</strong>
+										</div>
+										<div class="quick-stat-box">
+											<span class="quick-stat-label">Matches</span>
+											<strong class="quick-stat-value" id="quick-stat-matches">0</strong>
+										</div>
+										<div class="quick-stat-box">
+											<span class="quick-stat-label">Best 40L</span>
+											<strong class="quick-stat-value" id="quick-stat-40l">--</strong>
+										</div>
+									</div>
 								</div>
 							</div>
-						</section>
-					</div>
-					<section class="stats-section" aria-labelledby="stats-title">
-						<div class="section-heading">
-							<p class="eyebrow" style="--accent-color: var(--s)">Performance</p>
-							<h2 id="stats-title">Player statistics</h2>
 						</div>
-						<div class="stats-grid">
-							<div class="stat">
-								<span>Rating</span>
-								<strong id="stat-rating">--</strong>
-								<small id="rating-detail">No rating yet</small>
-							</div>
-							<div class="stat">
-								<span>Matches</span>
-								<strong id="stat-matches">0</strong>
-								<small id="matches-detail">Start your first game</small>
-							</div>
-							<div class="stat">
-								<span>Win rate</span>
-								<strong id="stat-win-rate">--</strong>
-								<small id="win-detail">Pending matches</small>
-							</div>
-							<div class="stat">
-								<span>Best streak</span>
-								<strong id="stat-streak">0</strong>
-								<small id="streak-detail">Build a run</small>
-							</div>
-						</div>
-					</section>
 
-					<section class="stats-section" aria-labelledby="casual-title">
-						<div class="section-heading">
-							<p class="eyebrow" style="--accent-color: var(--z)">Casual</p>
-							<h2 id="casual-title">Casual play</h2>
-						</div>
-						<div class="stats-grid">
-							<div class="stat">
-								<span>Total plays</span>
-								<strong id="casual-total">0</strong>
-								<small id="casual-total-detail">Casual games</small>
-							</div>
-							<div class="stat">
-								<span>Best 40L</span>
-								<strong id="casual-40l">--</strong>
-								<small>Fastest clear</small>
-							</div>
-							<div class="stat">
-								<span>Best sprint</span>
-								<strong id="casual-sprint">--</strong>
-								<small>Top ultra score</small>
-							</div>
-						</div>
-					</section>
+						<!-- TAB 2: STATISTICS -->
+						<div id="tab-stats" class="tab-panel" role="tabpanel" hidden>
+							<div class="stats-category-grid">
+								<!-- Ranked Multiplayer Performance -->
+								<section class="stats-section panel-sub" aria-labelledby="stats-title">
+									<div class="section-heading">
+										<p class="eyebrow" style="--accent-color: var(--s)">Multiplayer</p>
+										<h2 id="stats-title">Ranked Combat Metrics</h2>
+									</div>
+									<div class="stats-grid">
+										<div class="stat">
+											<span>Rating</span>
+											<strong id="stat-rating">--</strong>
+											<small id="rating-detail">No rating yet</small>
+										</div>
+										<div class="stat">
+											<span>Matches</span>
+											<strong id="stat-matches">0</strong>
+											<small id="matches-detail">Start your first game</small>
+										</div>
+										<div class="stat">
+											<span>Win rate</span>
+											<strong id="stat-win-rate">--</strong>
+											<small id="win-detail">Pending matches</small>
+										</div>
+										<div class="stat">
+											<span>Best streak</span>
+											<strong id="stat-streak">0</strong>
+											<small id="streak-detail">Build a run</small>
+										</div>
+									</div>
+								</section>
 
-					<section class="stats-section" aria-labelledby="rank-graph-title">
-						<div class="section-heading">
-							<p class="eyebrow" style="--accent-color: var(--j)">Rating</p>
-							<h2 id="rank-graph-title">Rank history · 30 days</h2>
-						</div>
-						<div class="rank-graph-card panel">
-							<svg id="rank-graph" viewBox="0 0 600 200" preserveAspectRatio="none" role="img" aria-label="Rating over the last 30 days"></svg>
-							<div id="rank-graph-tooltip" class="graph-tooltip" hidden></div>
-							<p id="rank-graph-empty" class="activity-empty">Play ranked matches to build your rating history.</p>
-						</div>
-					<section class="stats-section" aria-labelledby="achievements-title">
-						<div class="section-heading" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.8rem;">
-							<div>
-								<p class="eyebrow" style="--accent-color: var(--l)">Badges & Milestones</p>
-								<h2 id="achievements-title">Achievements</h2>
+								<!-- Solo & Speedrun Records -->
+								<section class="stats-section panel-sub" aria-labelledby="casual-title">
+									<div class="section-heading">
+										<p class="eyebrow" style="--accent-color: var(--z)">Solo & Casual</p>
+										<h2 id="casual-title">Speedrun & Records</h2>
+									</div>
+									<div class="stats-grid stats-grid-3">
+										<div class="stat">
+											<span>Total plays</span>
+											<strong id="casual-total">0</strong>
+											<small id="casual-total-detail">Casual games</small>
+										</div>
+										<div class="stat">
+											<span>Best 40L</span>
+											<strong id="casual-40l">--</strong>
+											<small>Fastest sprint clear</small>
+										</div>
+										<div class="stat">
+											<span>Best sprint</span>
+											<strong id="casual-sprint">--</strong>
+											<small>Top ultra score</small>
+										</div>
+									</div>
+								</section>
 							</div>
-							<a href="/achievements/" class="btn btn-secondary btn-sm" style="font-size: 0.82rem; padding: 0.35rem 0.8rem; text-decoration: none;">View All Achievements →</a>
 						</div>
-						<div id="profile-achievements-grid" class="profile-achievements-showcase">
-							<p class="activity-empty">Loading player achievements...</p>
-						</div>
-					</section>
 
-					<div class="lower-grid">
-						<section class="activity-card" aria-labelledby="activity-title">
-							<div class="section-heading">
-								<p class="eyebrow" style="--accent-color: var(--z)">Timeline</p>
-								<h2 id="activity-title">Recent activity</h2>
-							</div>
-							<div id="match-list" class="match-list">
-								<p class="activity-empty">Loading recent matches...</p>
-							</div>
-						</section>
-						<div class="account-card" id="account-card">
-							<div class="account-card-header">
-								<span class="eyebrow" style="--accent-color: var(--j)">Player</span>
-								<strong id="account-card-title">Account details</strong>
-							</div>
-							<dl>
-								<div>
-									<dt>Player ID</dt>
-									<dd>
-										<button id="copy-id" class="copy-id" type="button">
-											<span id="profile-id"></span> <b>Copy</b>
-										</button>
-									</dd>
+						<!-- TAB 3: RATING CHART -->
+						<div id="tab-history" class="tab-panel" role="tabpanel" hidden>
+							<section class="stats-section panel-sub" aria-labelledby="rank-graph-title">
+								<div class="section-heading">
+									<p class="eyebrow" style="--accent-color: var(--j)">Trajectory</p>
+									<h2 id="rank-graph-title">Rank History · 30 Days</h2>
 								</div>
-							</dl>
+								<div class="rank-graph-card panel">
+									<svg id="rank-graph" viewBox="0 0 600 200" preserveAspectRatio="none" role="img" aria-label="Rating over the last 30 days"></svg>
+									<div id="rank-graph-tooltip" class="graph-tooltip" hidden></div>
+									<p id="rank-graph-empty" class="activity-empty">Play ranked matches to build your rating history.</p>
+								</div>
+							</section>
+						</div>
+
+						<!-- TAB 4: MATCHES -->
+						<div id="tab-matches" class="tab-panel" role="tabpanel" hidden>
+							<section class="activity-card panel-sub" aria-labelledby="activity-title">
+								<div class="section-heading">
+									<p class="eyebrow" style="--accent-color: var(--z)">Match History</p>
+									<h2 id="activity-title">Recent 1v1 Duels</h2>
+								</div>
+								<div id="match-list" class="match-list">
+									<p class="activity-empty">Loading recent matches...</p>
+								</div>
+							</section>
+						</div>
+
+						<!-- TAB 5: ACHIEVEMENTS -->
+						<div id="tab-achievements" class="tab-panel" role="tabpanel" hidden>
+							<section class="stats-section panel-sub" aria-labelledby="achievements-title">
+								<div class="section-heading" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.8rem;">
+									<div>
+										<p class="eyebrow" style="--accent-color: var(--l)">Badges & Milestones</p>
+										<h2 id="achievements-title">Achievements</h2>
+									</div>
+									<a href="/achievements/" class="btn btn-secondary btn-sm" style="font-size: 0.82rem; padding: 0.35rem 0.8rem; text-decoration: none;">View All Achievements →</a>
+								</div>
+								<div id="profile-achievements-grid" class="profile-achievements-showcase">
+									<p class="activity-empty">Loading player achievements...</p>
+								</div>
+							</section>
 						</div>
 					</div>
 				</div>
@@ -196,51 +273,58 @@ export const prerender = false;
 </html>
 
 <style>
-	.loading { max-width: 920px; margin: 5em auto; padding: 0 1.25em; color: var(--dim); }
-	.profile { max-width: 920px; margin: 3.5em auto 0; padding: 0 1.25em; }
-	.profile-card, .stats-section, .activity-card, .account-card {
+	.loading { max-width: 960px; margin: 5em auto; padding: 0 1.25em; color: var(--dim); }
+	.profile { max-width: 960px; margin: 3.5em auto 0; padding: 0 1.25em; }
+	.profile-card {
 		border: 1px solid var(--border);
 		background: var(--panel);
-		box-shadow: var(--shadow);
+		box-shadow: var(--shadow-lg);
 		backdrop-filter: blur(14px);
 		-webkit-backdrop-filter: blur(14px);
+		border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+		overflow: hidden;
 	}
-	.profile-card { border-radius: 0 0 var(--radius) var(--radius); }
 	.profile-banner {
 		position: relative;
-		height: 180px;
+		height: 200px;
 		overflow: hidden;
 		border: 1px solid var(--border);
 		border-bottom: 0;
-		border-radius: var(--radius) var(--radius) 0 0;
-		background: radial-gradient(circle at 75% 20%, rgba(61,219,217,.27), transparent 30%), linear-gradient(112deg, #09131d, #1a152e 56%, #281a0b);
+		border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+		background: radial-gradient(circle at 75% 20%, rgba(61,219,217,.25), transparent 35%), linear-gradient(115deg, #070d14, #141026 55%, #221307);
 	}
 	.profile-banner img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 	}
+	.banner-overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to bottom, transparent 60%, rgba(3, 7, 11, 0.75));
+		pointer-events: none;
+	}
 	.banner-blocks {
 		position: absolute;
 		inset: 0;
 		display: flex;
 		align-items: end;
-		gap: 13px;
-		padding-left: 10%;
+		gap: 14px;
+		padding-left: 8%;
 		pointer-events: none;
 	}
 	.banner-blocks[hidden] { display: none; }
 	.banner-blocks i {
-		width: 64px;
-		height: 64px;
+		width: 68px;
+		height: 68px;
 		margin-bottom: -24px;
 		transform: rotate(45deg);
-		border: 1px solid rgba(236,239,243,.17);
-		background: rgba(236,239,243,.08);
+		border: 1px solid rgba(236,239,243,.15);
+		background: rgba(236,239,243,.06);
 	}
-	.banner-blocks i:nth-child(2) { height: 112px; background: rgba(176,132,245,.22); }
-	.banner-blocks i:nth-child(3) { height: 50px; background: rgba(245,213,71,.18); }
-	.banner-blocks i:nth-child(4) { height: 86px; background: rgba(111,224,122,.16); }
+	.banner-blocks i:nth-child(2) { height: 118px; background: rgba(176,132,245,.18); }
+	.banner-blocks i:nth-child(3) { height: 55px; background: rgba(245,213,71,.14); }
+	.banner-blocks i:nth-child(4) { height: 92px; background: rgba(111,224,122,.14); }
 	.media-control {
 		position: absolute;
 		z-index: 2;
@@ -286,10 +370,19 @@ export const prerender = false;
 		font-family: var(--font-display);
 		font-weight: 800;
 		font-size: 3.2rem;
+		transition: border-color .3s ease, box-shadow .3s ease;
 	}
+	.avatar.tier-bronze      { border-color: #ff9f73; box-shadow: 0 0 25px rgba(205,127,50,0.4), 0 10px 28px rgba(0,0,0,.5); }
+	.avatar.tier-silver      { border-color: #e0e0e0; box-shadow: 0 0 25px rgba(192,192,192,0.4), 0 10px 28px rgba(0,0,0,.5); }
+	.avatar.tier-gold        { border-color: #ffd700; box-shadow: 0 0 25px rgba(255,215,0,0.45), 0 10px 28px rgba(0,0,0,.5); }
+	.avatar.tier-platinum    { border-color: #4ec9b0; box-shadow: 0 0 25px rgba(78,201,176,0.45), 0 10px 28px rgba(0,0,0,.5); }
+	.avatar.tier-diamond     { border-color: #b388ff; box-shadow: 0 0 30px rgba(179,136,255,0.5), 0 10px 28px rgba(0,0,0,.5); }
+	.avatar.tier-master      { border-color: #ff6b8b; box-shadow: 0 0 32px rgba(255,107,139,0.55), 0 10px 28px rgba(0,0,0,.5); }
+	.avatar.tier-grandmaster { border-color: #ff9d6e; box-shadow: 0 0 35px rgba(255,157,110,0.6), 0 10px 28px rgba(0,0,0,.5); }
+
 	.avatar img { width: 100%; height: 100%; object-fit: cover; }
 	.avatar-control { right: -6px; bottom: -6px; }
-	.identity-row { display: flex; align-items: flex-end; gap: 1.4em; padding: 0 1.8em 1.8em; }
+	.identity-row { display: flex; align-items: flex-end; gap: 1.4em; padding: 0 1.8em 1.4em; }
 	.identity { flex: 1; min-width: 0; }
 	.identity .eyebrow { margin: 0 0 .25em; }
 	.presence {
@@ -300,8 +393,8 @@ export const prerender = false;
 		background: var(--s);
 		box-shadow: 0 0 0 3px var(--success-glow);
 	}
-	.identity h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.2rem); overflow-wrap: anywhere; }
-	.player-meta { display: flex; gap: .75em; align-items: center; margin: .35em 0 0; font-size: .88rem; }
+	.identity h1 { margin: 0; font-size: clamp(1.8rem, 4.5vw, 2.8rem); overflow-wrap: anywhere; }
+	.player-meta { display: flex; gap: .75em; align-items: center; margin: .35em 0 0; font-size: .88rem; flex-wrap: wrap; }
 	.verification-badge {
 		padding: .2em .6em;
 		border-radius: 999px;
@@ -328,9 +421,7 @@ export const prerender = false;
 		font-weight: 600;
 		color: var(--text);
 	}
-	.country-flag {
-		font-size: 1.1rem;
-	}
+	.country-flag { font-size: 1.1rem; }
 	.country-locked-tag {
 		font-size: 0.72rem;
 		color: var(--text-muted);
@@ -339,6 +430,220 @@ export const prerender = false;
 		border-radius: 4px;
 		cursor: help;
 	}
+
+	/* ---------- osu! × TETR.IO SUB-NAV TABS ---------- */
+	.profile-tabs-nav {
+		display: flex;
+		gap: 0.3rem;
+		padding: 0 1.8em;
+		border-bottom: 1px solid var(--border);
+		background: rgba(0, 0, 0, 0.25);
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.profile-tabs-nav::-webkit-scrollbar { display: none; }
+	.tab-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.95rem 1.25rem;
+		border: none;
+		border-bottom: 2px solid transparent;
+		background: transparent;
+		color: var(--text-dim);
+		font-family: var(--font-ui);
+		font-size: 0.92rem;
+		font-weight: 600;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: all var(--transition-fast);
+	}
+	.tab-btn:hover {
+		color: var(--text);
+		background: rgba(255, 255, 255, 0.03);
+	}
+	.tab-btn.active {
+		color: var(--accent);
+		border-bottom-color: var(--accent);
+		background: rgba(62, 166, 195, 0.06);
+	}
+	.tab-icon { font-size: 1.05rem; }
+
+	/* ---------- TAB PANELS ---------- */
+	.tab-panel {
+		padding: 1.8em;
+		animation: tabFadeIn 0.22s ease-out;
+	}
+	.tab-panel[hidden] { display: none !important; }
+	@keyframes tabFadeIn {
+		from { opacity: 0; transform: translateY(4px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	.panel-sub {
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--bg-elevated);
+		padding: 1.6em;
+	}
+
+	/* ---------- TAB 1: OVERVIEW GRID ---------- */
+	.overview-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.4em;
+	}
+	.overview-col-left, .overview-col-right {
+		display: flex;
+		flex-direction: column;
+		gap: 1.4em;
+	}
+	.section-heading .eyebrow { margin-bottom: .35em; }
+	.section-heading h2 { font-size: 1.3rem; margin: 0; }
+	.player-bio { min-height: 2.3em; margin: 1.1em 0 .8em; color: var(--text); line-height: 1.6; }
+	.bio-form { display: flex; gap: .55em; }
+	.bio-form[hidden] { display: none; }
+	.bio-form input {
+		min-width: 0;
+		flex: 1;
+		padding: .6em .8em;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		background: var(--panel);
+		color: var(--text);
+		font: inherit;
+	}
+	.bio-form input:focus {
+		outline: none;
+		border-color: var(--accent);
+		box-shadow: var(--focus-ring);
+	}
+	.form-status { min-height: 1.1em; margin: .45em 0 0; color: var(--dim); font-size: .76rem; }
+
+	/* Rank Card */
+	.rank-display { display: flex; gap: 1.2em; align-items: center; margin: 1.2em 0 0.4em; }
+	.rank-glyph-wrapper { flex-shrink: 0; }
+	.rank-glyph {
+		display: grid;
+		place-items: center;
+		width: 58px;
+		height: 58px;
+		border-radius: 50%;
+		font-family: var(--font-display);
+		font-weight: 800;
+		font-size: 1.6rem;
+		border: 2px solid var(--border);
+		transition: color .2s ease, border-color .2s ease, background .2s ease;
+	}
+	.rank-glyph.tier-bronze     { color: #ff9f73; border-color: rgba(205,127,50,.45);  background: rgba(205,127,50,.12); }
+	.rank-glyph.tier-silver     { color: #e0e0e0; border-color: rgba(192,192,192,.45); background: rgba(192,192,192,.12); }
+	.rank-glyph.tier-gold       { color: #ffd700; border-color: rgba(255,215,0,.45);   background: rgba(255,215,0,.12); }
+	.rank-glyph.tier-platinum   { color: #4ec9b0; border-color: rgba(78,201,176,.45);  background: rgba(78,201,176,.12); }
+	.rank-glyph.tier-diamond    { color: #b388ff; border-color: rgba(179,136,255,.45); background: rgba(179,136,255,.12); }
+	.rank-glyph.tier-master     { color: #ff6b8b; border-color: rgba(255,107,139,.45); background: rgba(255,107,139,.12); }
+	.rank-glyph.tier-grandmaster{ color: #ff9d6e; border-color: rgba(255,157,110,.45); background: rgba(255,157,110,.12); }
+	.rank-name { font-size: 1.25rem; display: block; margin-bottom: 0.15rem; }
+	.rank-name.tier-bronze     { color: #ff9f73; }
+	.rank-name.tier-silver     { color: #e0e0e0; }
+	.rank-name.tier-gold       { color: #ffd700; }
+	.rank-name.tier-platinum   { color: #4ec9b0; }
+	.rank-name.tier-diamond    { color: #b388ff; }
+	.rank-name.tier-master     { color: #ff6b8b; }
+	.rank-name.tier-grandmaster{ color: #ff9d6e; }
+	.rank-details p { margin: 0; font-size: .88rem; color: var(--text-muted); }
+
+	/* Quick Glance Stats Rack */
+	.quick-stats-rack {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 0.8rem;
+	}
+	.quick-stat-box {
+		padding: 1rem 0.8rem;
+		border-radius: var(--radius-sm);
+		background: var(--bg-elevated);
+		border: 1px solid var(--border);
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+	.quick-stat-label {
+		font-family: var(--font-mono);
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--text-muted);
+	}
+	.quick-stat-value {
+		font-family: var(--font-display);
+		font-size: 1.35rem;
+		font-weight: 700;
+		color: var(--text);
+	}
+
+	/* Account Details Card */
+	.account-card-header {
+		display: flex;
+		flex-direction: column;
+		gap: .25em;
+		margin-bottom: 1em;
+	}
+	.account-card-header strong { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
+	.account-card dl { margin: 1em 0 0; }
+	.account-card dl div { padding: .7em 0; border-top: 1px solid var(--border); }
+	dt { color: var(--text-muted); font: 700 .72rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+	dd { margin: .15em 0 0; overflow-wrap: anywhere; color: var(--text); font-size: .88rem; }
+
+	/* ---------- TAB 2: STATISTICS ---------- */
+	.stats-category-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5em;
+	}
+	.stats-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		margin-top: 1.2em;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		overflow: hidden;
+	}
+	.stats-grid-3 {
+		grid-template-columns: repeat(3, 1fr);
+	}
+	.stat {
+		padding: 1.2em;
+		border-right: 1px solid var(--border);
+		background: rgba(255, 255, 255, 0.015);
+	}
+	.stat:last-child { border-right: 0; }
+	.stat span, .stat small { display: block; }
+	.stat span { color: var(--text-dim); font: 700 .72rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+	.stat strong { display: block; margin: .2em 0; font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; color: var(--text); }
+	.stat small { color: var(--text-muted); font-size: .78rem; }
+
+	/* ---------- TAB 3: RATING CHART ---------- */
+	.rank-graph-card { position: relative; padding: 1.4em; margin-top: 1.2em; border-radius: var(--radius-sm); }
+	.graph-tooltip {
+		position: absolute;
+		transform: translate(-50%, -125%);
+		pointer-events: none;
+		background: rgba(10,12,16,.94);
+		border: 1px solid var(--border-bright);
+		border-radius: 6px;
+		padding: .45em .65em;
+		font-size: .72rem;
+		white-space: nowrap;
+		z-index: 3;
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+	}
+	.graph-tooltip strong { display: block; color: var(--text); font-size: .82rem; }
+	.graph-tooltip span { color: var(--dim); }
+	.graph-tooltip[hidden] { display: none; }
+	#rank-graph { width: 100%; height: 220px; display: block; }
+
+	/* ---------- TAB 5: ACHIEVEMENTS ---------- */
 	.profile-achievements-showcase {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -349,7 +654,7 @@ export const prerender = false;
 		padding: 0.9rem 1rem;
 		border-radius: var(--radius);
 		border: 1px solid var(--border);
-		background: var(--panel);
+		background: var(--bg-elevated);
 		display: flex;
 		gap: 0.75rem;
 		align-items: center;
@@ -357,157 +662,34 @@ export const prerender = false;
 	}
 	.profile-ach-card.unlocked {
 		border-color: var(--ach-border, var(--border));
-		background: linear-gradient(135deg, var(--ach-bg, transparent), var(--panel));
+		background: linear-gradient(135deg, var(--ach-bg, transparent), var(--bg-elevated));
 		box-shadow: 0 4px 16px var(--ach-glow, transparent);
 	}
-	.profile-ach-card.locked {
-		opacity: 0.5;
-	}
-	.profile-ach-icon {
-		font-size: 1.5rem;
-		flex-shrink: 0;
-	}
+	.profile-ach-card.locked { opacity: 0.5; }
+	.profile-ach-icon { font-size: 1.5rem; flex-shrink: 0; }
 	.profile-ach-title {
 		font-weight: 700;
 		font-size: 0.88rem;
 		color: var(--text);
 		margin: 0 0 0.15rem;
 	}
-	.profile-ach-status {
-		font-size: 0.75rem;
-		color: var(--text-muted);
-	}
-	.profile-ach-card.unlocked .profile-ach-status {
-		color: #5bfa80;
-		font-weight: 600;
-	}
-	.profile-grid, .lower-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; margin-top: 1.2em; }
-	.about-card, .rank-card { min-height: 185px; padding: 1.8em; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }
-	.section-heading .eyebrow { margin-bottom: .35em; }
-	.section-heading h2 { font-size: 1.35rem; }
-	.player-bio { min-height: 2.3em; margin: 1.1em 0 .8em; color: var(--text); line-height: 1.6; }
-	.bio-form { display: flex; gap: .55em; }
-	.bio-form[hidden] { display: none; }
-	.bio-form input {
-		min-width: 0;
-		flex: 1;
-		padding: .6em .8em;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		background: var(--bg-elevated);
-		color: var(--text);
-		font: inherit;
-	}
-	.bio-form input:focus {
-		outline: none;
-		border-color: var(--accent);
-		box-shadow: var(--focus-ring);
-	}
-	.form-status { min-height: 1.1em; margin: .45em 0 0; color: var(--dim); font-size: .76rem; }
-	.rank-display { display: flex; gap: 1.1em; align-items: center; margin: 1.2em 0; }
-	.rank-glyph {
-		display: grid;
-		place-items: center;
-		width: 54px;
-		height: 54px;
-		border-radius: 50%;
-		font-family: var(--font-display);
-		font-weight: 800;
-		font-size: 1.5rem;
-		border: 2px solid var(--border);
-		transition: color .2s ease, border-color .2s ease, background .2s ease;
-	}
-	.rank-glyph.tier-bronze     { color: #ff9f73; border-color: rgba(205,127,50,.35);  background: rgba(205,127,50,.10); }
-	.rank-glyph.tier-silver     { color: #e0e0e0; border-color: rgba(192,192,192,.35); background: rgba(192,192,192,.10); }
-	.rank-glyph.tier-gold       { color: #ffd700; border-color: rgba(255,215,0,.35);   background: rgba(255,215,0,.10); }
-	.rank-glyph.tier-platinum   { color: #4ec9b0; border-color: rgba(78,201,176,.35);  background: rgba(78,201,176,.10); }
-	.rank-glyph.tier-diamond    { color: #b388ff; border-color: rgba(179,136,255,.35); background: rgba(179,136,255,.10); }
-	.rank-glyph.tier-master     { color: #ff6b8b; border-color: rgba(255,107,139,.35); background: rgba(255,107,139,.10); }
-	.rank-glyph.tier-grandmaster{ color: #ff9d6e; border-color: rgba(255,157,110,.35); background: rgba(255,157,110,.10); }
-	.rank-name {
-		font-size: 1.15rem;
-		transition: color .2s ease;
-	}
-	.rank-name.tier-bronze     { color: #ff9f73; }
-	.rank-name.tier-silver     { color: #e0e0e0; }
-	.rank-name.tier-gold       { color: #ffd700; }
-	.rank-name.tier-platinum   { color: #4ec9b0; }
-	.rank-name.tier-diamond    { color: #b388ff; }
-	.rank-name.tier-master     { color: #ff6b8b; }
-	.rank-name.tier-grandmaster{ color: #ff9d6e; }
-	.rank-display p { margin: 0; font-size: .85rem; color: var(--text-muted); }
-	.stats-section, .activity-card, .account-card { padding: 1.8em; border-radius: var(--radius); }
-	.stats-section { margin-top: 1.2em; }
-	.stats-grid {
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		margin-top: 1.2em;
-		border: 1px solid var(--border);
-		border-radius: var(--radius-sm);
-		overflow: hidden;
-	}
-	.stat {
-		padding: 1.1em;
-		border-right: 1px solid var(--border);
-		border-bottom: 1px solid var(--border);
-		background: rgba(255, 255, 255, 0.02);
-	}
-	.stat:nth-child(4n) { border-right: 0; }
-	.stat span, .stat small { display: block; }
-	.stat span { color: var(--text-dim); font: 700 .72rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
-	.stat strong { display: block; margin: .2em 0; font-family: var(--font-display); font-weight: 700; font-size: 1.8rem; color: var(--text); }
-	.stat small { color: var(--text-muted); font-size: .78rem; }
-	.rank-graph-card { position: relative; padding: 1.2em; }
-	.graph-tooltip {
-		position: absolute;
-		transform: translate(-50%, -125%);
-		pointer-events: none;
-		background: rgba(10,12,16,.92);
-		border: 1px solid var(--border-bright);
-		border-radius: 6px;
-		padding: .45em .65em;
-		font-size: .72rem;
-		white-space: nowrap;
-		z-index: 3;
-	}
-	.graph-tooltip strong { display: block; color: var(--text); font-size: .82rem; }
-	.graph-tooltip span { color: var(--dim); }
-	.graph-tooltip[hidden] { display: none; }
-	#rank-graph { width: 100%; height: 200px; display: block; }
-	.account-card { min-width: 0; }
-	.account-card-header {
-		display: flex;
-		flex-direction: column;
-		gap: .25em;
-		margin-bottom: 1em;
-	}
-	.account-card-header .eyebrow { display: block; }
-	.account-card-header strong { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
-	.account-card dl { margin: 1em 0 0; }
-	.account-card dl div { padding: .7em 0; border-top: 1px solid var(--border); }
-	dt { color: var(--text-muted); font: 700 .72rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
-	dd { margin: .15em 0 0; overflow-wrap: anywhere; color: var(--text); font-size: .88rem; }
-	@media (max-width: 720px) {
+	.profile-ach-status { font-size: 0.75rem; color: var(--text-muted); }
+	.profile-ach-card.unlocked .profile-ach-status { color: #5bfa80; font-weight: 600; }
+
+	@media (max-width: 780px) {
 		.profile { margin-top: 2em; padding: 0 0.9em; }
-		.profile-banner { height: 135px; }
-		.identity-row { flex-wrap: wrap; padding: 0 1.15em 1.2em; }
+		.profile-banner { height: 140px; }
+		.identity-row { flex-wrap: wrap; padding: 0 1.2em 1.2em; }
 		.avatar { width: 88px; height: 88px; font-size: 2.5rem; }
 		.profile-actions { width: 100%; }
-		.profile-grid, .lower-grid { grid-template-columns: 1fr; }
-		.stats-section, .activity-card, .account-card, .about-card, .rank-card { padding: 1.25em; }
-		.stats-grid { grid-template-columns: repeat(2, 1fr); }
+		.overview-grid { grid-template-columns: 1fr; }
+		.stats-grid, .stats-grid-3 { grid-template-columns: repeat(2, 1fr); }
+		.quick-stats-rack { grid-template-columns: repeat(2, 1fr); }
+		.tab-panel { padding: 1.2em; }
+		.tab-btn { padding: 0.85rem 0.9rem; font-size: 0.84rem; }
 	}
 </style>
 
-<!--
-	The rules below style markup created client-side (via innerHTML / createElement)
-	in the <script> at the bottom of this file: profile-actions buttons, the retry
-	button, match-list rows, and the copy-id button. Astro's scoped styles only
-	attach their data-astro-cid attribute to markup present in this component's
-	template at build time, so a normal scoped <style> block silently fails to match
-	anything inserted later by JS (this was causing the profile action buttons to
-	render as unstyled native buttons). is:global is required here.
--->
 <style is:global>
 	.profile-actions { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; }
 	.button {
@@ -593,9 +775,48 @@ export const prerender = false;
 
 	let editMode = false;
 
+	// Tab switching logic (osu! × TETR.IO style)
+	function initProfileTabs() {
+		const tabBtns = document.querySelectorAll('.profile-tabs-nav .tab-btn');
+		const tabPanels = document.querySelectorAll('.tab-panels .tab-panel');
+
+		function activateTab(tabId) {
+			tabBtns.forEach((btn) => {
+				const isActive = btn.dataset.tab === tabId;
+				btn.classList.toggle('active', isActive);
+				btn.setAttribute('aria-selected', String(isActive));
+			});
+			tabPanels.forEach((panel) => {
+				const isMatch = panel.id === `tab-${tabId}`;
+				panel.hidden = !isMatch;
+				panel.classList.toggle('active', isMatch);
+			});
+
+			if (tabId === 'history') {
+				setupRankGraphHover();
+			}
+		}
+
+		tabBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const tabId = btn.dataset.tab;
+				if (!tabId) return;
+				activateTab(tabId);
+				try {
+					history.replaceState(null, '', `#${tabId}`);
+				} catch {}
+			});
+		});
+
+		const hash = window.location.hash.replace('#', '').toLowerCase();
+		const validTabs = ['overview', 'stats', 'history', 'matches', 'achievements'];
+		if (validTabs.includes(hash)) {
+			activateTab(hash);
+		}
+	}
+
 	// Rank tiers: rating 100 is the first rank. Each division spans 100 rating
 	// points, 3 divisions per tier, until Grandmaster (single open-ended tier).
-	// Ratings below 100 are shown as Unranked regardless of placement status.
 	const RANK_START = 100;
 	const RANK_STEP = 100;
 	const DIVISIONS_PER_TIER = 3;
@@ -609,14 +830,15 @@ export const prerender = false;
 		{ name: 'Grandmaster',glyph: 'GM', tier: 'grandmaster' },
 	];
 	const RANK_COLORS = {
-		bronze:     { border: 'rgba(205,127,50,.35)',  bg: 'rgba(205,127,50,.10)' },
-		silver:     { border: 'rgba(192,192,192,.35)', bg: 'rgba(192,192,192,.10)' },
-		gold:       { border: 'rgba(255,215,0,.35)',   bg: 'rgba(255,215,0,.10)' },
-		platinum:   { border: 'rgba(78,201,176,.35)',  bg: 'rgba(78,201,176,.10)' },
-		diamond:    { border: 'rgba(179,136,255,.35)', bg: 'rgba(179,136,255,.10)' },
-		master:     { border: 'rgba(255,107,139,.35)', bg: 'rgba(255,107,139,.10)' },
-		grandmaster:{ border: 'rgba(255,157,110,.35)', bg: 'rgba(255,157,110,.10)' },
+		bronze:     { border: 'rgba(205,127,50,.45)',  bg: 'rgba(205,127,50,.12)' },
+		silver:     { border: 'rgba(192,192,192,.45)', bg: 'rgba(192,192,192,.12)' },
+		gold:       { border: 'rgba(255,215,0,.45)',   bg: 'rgba(255,215,0,.12)' },
+		platinum:   { border: 'rgba(78,201,176,.45)',  bg: 'rgba(78,201,176,.12)' },
+		diamond:    { border: 'rgba(179,136,255,.45)', bg: 'rgba(179,136,255,.12)' },
+		master:     { border: 'rgba(255,107,139,.45)', bg: 'rgba(255,107,139,.12)' },
+		grandmaster:{ border: 'rgba(255,157,110,.45)', bg: 'rgba(255,157,110,.12)' },
 	};
+
 	function getRankForRating(rating) {
 		if (rating == null || rating < RANK_START) return null;
 		const stepsAboveStart = Math.floor((rating - RANK_START) / RANK_STEP);
@@ -626,14 +848,19 @@ export const prerender = false;
 		const division = isTopTier ? null : (stepsAboveStart % DIVISIONS_PER_TIER) + 1;
 		return { name: tier.name, glyph: tier.glyph, tier: tier.tier, division };
 	}
+
 	function applyRankTier(tier) {
 		const glyph = document.getElementById('rank-glyph');
 		const name = document.getElementById('rank-name');
-		[glyph, name].forEach((el) => {
+		const avatar = document.getElementById('avatar');
+		const allTiers = ['tier-bronze','tier-silver','tier-gold','tier-platinum','tier-diamond','tier-master','tier-grandmaster'];
+
+		[glyph, name, avatar].forEach((el) => {
 			if (!el) return;
-			el.classList.remove('tier-bronze','tier-silver','tier-gold','tier-platinum','tier-diamond','tier-master','tier-grandmaster');
+			allTiers.forEach((cls) => el.classList.remove(cls));
 			if (tier) el.classList.add('tier-' + tier);
 		});
+
 		if (tier && glyph && RANK_COLORS[tier]) {
 			const c = RANK_COLORS[tier];
 			glyph.style.borderColor = c.border;
@@ -646,7 +873,7 @@ export const prerender = false;
 
 	function setEditMode(on) {
 		editMode = on;
-		bioForm.hidden = !on;
+		if (bioForm) bioForm.hidden = !on;
 		const avatarControl = document.getElementById('avatar-control');
 		const bannerControl = document.getElementById('banner-control');
 		if (avatarControl) avatarControl.hidden = !on;
@@ -654,6 +881,7 @@ export const prerender = false;
 		const editBtn = document.getElementById('edit-button');
 		if (editBtn) editBtn.textContent = on ? 'Done' : 'Edit profile';
 	}
+
 	function hideEditableControls() {
 		const avatarControl = document.getElementById('avatar-control');
 		const bannerControl = document.getElementById('banner-control');
@@ -663,7 +891,10 @@ export const prerender = false;
 		if (profileActions) profileActions.innerHTML = '';
 	}
 
-	const text = (selector, value) => { document.querySelector(selector).textContent = value; };
+	const text = (selector, value) => {
+		const el = document.querySelector(selector);
+		if (el) el.textContent = value;
+	};
 	const formatDate = (value) => value ? new Intl.DateTimeFormat(undefined, { month: 'short', year: 'numeric' }).format(new Date(value)) : '';
 	const formatDuration = (value) => {
 		if (value === null || value === undefined) return '--';
@@ -673,11 +904,13 @@ export const prerender = false;
 		return `${m}:${String(s).padStart(2, '0')}`;
 	};
 	const setImage = (image, fallback, url, alt) => {
+		if (!image) return;
 		image.hidden = !url;
 		if (fallback) fallback.hidden = Boolean(url);
 		if (url) { image.src = url; image.alt = alt; }
 	};
 	const escapeHtml = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 	async function copyText(value, button, label) {
 		try {
 			await navigator.clipboard.writeText(value);
@@ -688,11 +921,13 @@ export const prerender = false;
 			window.prompt('Copy this value:', value);
 		}
 	}
+
 	function setAccountCardLabel(eyebrowText, titleText) {
 		const eyebrow = document.querySelector('#account-card .account-card-header .eyebrow');
 		if (eyebrow) eyebrow.textContent = eyebrowText;
-		accountCardTitle.textContent = titleText;
+		if (accountCardTitle) accountCardTitle.textContent = titleText;
 	}
+
 	function showRetry(message) {
 		status.innerHTML = '';
 		const copy = document.createElement('span');
@@ -704,6 +939,7 @@ export const prerender = false;
 		retry.addEventListener('click', loadProfile);
 		status.append(copy, retry);
 	}
+
 	async function request(path, options = {}, attempts = 3) {
 		const token = localStorage.getItem('teblocks_token');
 		const headers = new Headers(options.headers);
@@ -729,7 +965,9 @@ export const prerender = false;
 		}
 		throw new Error('Request failed');
 	}
+
 	function renderMatches(matches) {
+		if (!matchList) return;
 		if (!matches?.length) {
 			matchList.innerHTML = '<p class="activity-empty">No completed matches yet.</p>';
 			return;
@@ -746,6 +984,7 @@ export const prerender = false;
 			return item;
 		}));
 	}
+
 	async function loadMatches(targetUserId) {
 		try {
 			const endpoint = targetUserId ? `https://backend.teblocks.my.id/users/${encodeURIComponent(targetUserId)}/matches` : 'https://backend.teblocks.my.id/profile/me/matches?limit=8';
@@ -756,14 +995,11 @@ export const prerender = false;
 			renderMatches([]);
 		}
 	}
-	// Chart geometry is fixed to the SVG viewBox (600x200); padding leaves room
-	// for the y-axis rating labels on the left.
-	const GRAPH_W = 600, GRAPH_H = 200;
-	const GRAPH_PAD = { top: 16, right: 16, bottom: 16, left: 42 };
+
+	const GRAPH_W = 600, GRAPH_H = 220;
+	const GRAPH_PAD = { top: 16, right: 16, bottom: 20, left: 42 };
 	let graphPoints = [];
 
-	// Converts a series of [x, y] points into a smooth SVG path using
-	// Catmull-Rom-to-Bezier interpolation, instead of straight polyline segments.
 	function smoothPath(points) {
 		if (points.length < 2) {
 			const [p] = points;
@@ -779,7 +1015,7 @@ export const prerender = false;
 			const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
 			const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
 			const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
-			d += `C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2[0].toFixed(2)},${p2[1].toFixed(2)} `;
+			d += `C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2[0].toFixed(2)},${p2[0].toFixed(2)} `;
 		}
 		return d.trim();
 	}
@@ -799,7 +1035,7 @@ export const prerender = false;
 		empty.hidden = true;
 		svg.hidden = false;
 
-		const sorted = [...points].sort((a, b) => new Date(a.recorded_at) - new Date(b.recorded_at));
+		const sorted = [...points].sort((a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime());
 		const ratings = sorted.map((p) => Number(p.rating));
 		let min = Math.min(...ratings);
 		let max = Math.max(...ratings);
@@ -840,15 +1076,15 @@ export const prerender = false;
 		svg.innerHTML = `
 			<defs>
 				<linearGradient id="rank-graph-fill" x1="0" y1="0" x2="0" y2="1">
-					<stop offset="0%" stop-color="var(--i)" stop-opacity="0.35" />
+					<stop offset="0%" stop-color="var(--i)" stop-opacity="0.38" />
 					<stop offset="100%" stop-color="var(--i)" stop-opacity="0" />
 				</linearGradient>
 			</defs>
 			${gridSvg}
 			<path d="${areaPath}" fill="url(#rank-graph-fill)" stroke="none" />
-			<path d="${linePath}" fill="none" stroke="var(--i)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-			<line id="rank-graph-hover-line" x1="0" y1="${top}" x2="0" y2="${top + innerH}" stroke="var(--line)" stroke-width="1" opacity="0" />
-			<circle id="rank-graph-dot" cx="0" cy="0" r="4" fill="var(--i)" stroke="var(--board)" stroke-width="2" opacity="0" />
+			<path d="${linePath}" fill="none" stroke="var(--i)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+			<line id="rank-graph-hover-line" x1="0" y1="${top}" x2="0" y2="${top + innerH}" stroke="var(--border-bright)" stroke-width="1" stroke-dasharray="2 2" opacity="0" />
+			<circle id="rank-graph-dot" cx="0" cy="0" r="4.5" fill="var(--i)" stroke="var(--bg)" stroke-width="2" opacity="0" />
 		`;
 	}
 
@@ -861,6 +1097,7 @@ export const prerender = false;
 		function handleMove(event) {
 			if (!graphPoints.length) return;
 			const rect = svg.getBoundingClientRect();
+			if (!rect.width || !rect.height) return;
 			const scaleX = GRAPH_W / rect.width;
 			const scaleY = GRAPH_H / rect.height;
 			const localX = (event.clientX - rect.left) * scaleX;
@@ -887,6 +1124,7 @@ export const prerender = false;
 			tooltip.innerHTML = `<strong>${nearest.rating} rating</strong><span>${dateFmt.format(nearest.date)}</span>`;
 			tooltip.hidden = false;
 		}
+
 		function handleLeave() {
 			tooltip.hidden = true;
 			const dot = svg.querySelector('#rank-graph-dot');
@@ -894,9 +1132,13 @@ export const prerender = false;
 			if (dot) dot.setAttribute('opacity', '0');
 			if (hoverLine) hoverLine.setAttribute('opacity', '0');
 		}
+
+		svg.removeEventListener('pointermove', handleMove);
+		svg.removeEventListener('pointerleave', handleLeave);
 		svg.addEventListener('pointermove', handleMove);
 		svg.addEventListener('pointerleave', handleLeave);
 	}
+
 	async function loadRatingHistory(targetUserId) {
 		try {
 			const endpoint = targetUserId ? `https://backend.teblocks.my.id/users/${encodeURIComponent(targetUserId)}/rating-history?days=30` : 'https://backend.teblocks.my.id/profile/me/rating-history?days=30';
@@ -907,6 +1149,7 @@ export const prerender = false;
 			renderRankGraph([]);
 		}
 	}
+
 	async function uploadMedia(kind, input) {
 		const file = input.files?.[0];
 		if (!file) return;
@@ -932,19 +1175,18 @@ export const prerender = false;
 			}
 			const imageEl = document.querySelector(`#${kind}-image`);
 			const fallbackEl = document.querySelector(kind === 'avatar' ? '#avatar-initial' : '.banner-blocks');
-			setImage(imageEl, fallbackEl, url, kind === 'avatar' ? `${document.querySelector('#profile-name').textContent}'s avatar` : 'Profile banner');
+			setImage(imageEl, fallbackEl, url, kind === 'avatar' ? `${document.querySelector('#profile-name')?.textContent || 'Player'}'s avatar` : 'Profile banner');
 			bioStatus.textContent = `${kind[0].toUpperCase() + kind.slice(1)} updated.`;
 		} catch {
 			bioStatus.textContent = `The ${kind} upload timed out. Please try again.`;
 		}
 	}
+
 	async function loadProfile() {
 		const isOwnProfile = !userId;
 		const endpoint = isOwnProfile ? 'https://backend.teblocks.my.id/profile/me' : `https://backend.teblocks.my.id/users/${encodeURIComponent(userId)}`;
-		// Hide every editable control up front. They are only revealed once we have
-		// positive proof this profile belongs to the signed-in viewer, so a stale
-		// build, a failed request, or a misleading backend flag can never expose them.
 		hideEditableControls();
+
 		try {
 			const [response, meResponse] = await Promise.all([
 				request(endpoint),
@@ -960,8 +1202,7 @@ export const prerender = false;
 				}
 				return;
 			}
-			// Determine ownership from two independent sources: the backend flag and a
-			// client-side comparison of the signed-in user id against the profile id.
+
 			let viewerId = null;
 			if (meResponse.ok) {
 				const me = await meResponse.json().catch(() => ({}));
@@ -972,23 +1213,26 @@ export const prerender = false;
 				body.is_own ||
 				(viewerId && body.user_id && viewerId === body.user_id)
 			);
+
 			setImage(document.querySelector('#banner-image'), document.querySelector('.banner-blocks'), body.banner_url, 'Profile banner');
 			setImage(document.querySelector('#avatar-image'), document.querySelector('#avatar-initial'), body.avatar_url, `${body.username || 'Player'}'s avatar`);
-			text('#profile-name', body.username);
+			text('#profile-name', body.username || 'Player');
 			if (body.username) document.title = `${body.username} | TeBlocks`;
 			text('#avatar-initial', (body.username || '?').slice(0, 1).toUpperCase());
-			text('#profile-id', body.user_id);
+			text('#profile-id', body.user_id || '--');
 			text('#member-since', body.created_at ? `Joined ${formatDate(body.created_at)}` : 'TeBlocks player');
+
 			const badge = document.querySelector('#verification-badge');
-			badge.textContent = body.email_verified ? 'Verified account' : 'Email not verified';
-			badge.classList.toggle('verified', Boolean(body.email_verified));
+			if (badge) {
+				badge.textContent = body.email_verified ? 'Verified' : 'Unverified';
+				badge.classList.toggle('verified', Boolean(body.email_verified));
+			}
 			text('#player-bio', body.bio || 'No profile note yet.');
 
-			// Country banner display & setup
+			// Country banner
 			const countryBanner = document.querySelector('#country-banner');
 			const countryFlag = document.querySelector('#country-flag');
 			const countryName = document.querySelector('#country-name');
-
 			const savedCountry = body.country || localStorage.getItem('teblocks_user_country_' + body.user_id) || '';
 
 			if (savedCountry) {
@@ -1004,7 +1248,7 @@ export const prerender = false;
 			if (achContainer) {
 				const achData = evaluatePlayerAchievements(body);
 				achContainer.innerHTML = '';
-				const showcaseList = achData.achievements.slice(0, 8);
+				const showcaseList = achData.achievements.slice(0, 12);
 				showcaseList.forEach((ach) => {
 					const colors = getTierColor(ach.tier);
 					const card = document.createElement('div');
@@ -1024,8 +1268,10 @@ export const prerender = false;
 			}
 
 			if (isOwn) {
-				bioInput.value = body.bio || '';
-				profileActions.innerHTML = '<button id="edit-button" class="button-native" type="button">Edit profile</button><button id="share-button" class="button-native" type="button">Share</button><button id="logout-button" class="button-native danger" type="button">Log out</button>';
+				if (bioInput) bioInput.value = body.bio || '';
+				if (profileActions) {
+					profileActions.innerHTML = '<button id="edit-button" class="button-native" type="button">Edit profile</button><button id="share-button" class="button-native" type="button">Share</button><button id="logout-button" class="button-native danger" type="button">Log out</button>';
+				}
 				setEditMode(false);
 				const editBtn = document.getElementById('edit-button');
 				if (editBtn) editBtn.addEventListener('click', () => setEditMode(!editMode));
@@ -1037,21 +1283,27 @@ export const prerender = false;
 				const logoutBtn = document.getElementById('logout-button');
 				if (logoutBtn) logoutBtn.addEventListener('click', async () => { localStorage.removeItem('teblocks_token'); await fetch('/api/auth/logout', { method: 'POST' }); window.location.assign('/'); });
 			} else {
-				document.getElementById('avatar-control').hidden = true;
-				document.getElementById('banner-control').hidden = true;
-				bioForm.hidden = true;
-				profileActions.innerHTML = '';
+				const avatarControl = document.getElementById('avatar-control');
+				const bannerControl = document.getElementById('banner-control');
+				if (avatarControl) avatarControl.hidden = true;
+				if (bannerControl) bannerControl.hidden = true;
+				if (bioForm) bioForm.hidden = true;
+				if (profileActions) profileActions.innerHTML = '';
 				setAccountCardLabel('Public', 'Player info');
 			}
+
 			const ranked = body.ranked || {};
 			const stats = body.stats || {};
 			const placed = ranked.is_placed;
 			const tier = placed ? getRankForRating(ranked.rating) : null;
 			const rankLabel = tier ? [tier.name, tier.division].filter(Boolean).join(' ') : 'Unranked';
+
 			text('#rank-name', rankLabel);
 			text('#rank-glyph', tier ? tier.glyph : '?');
 			text('#rank-copy', placed ? `${ranked.rating} rating` : 'Play ranked matches to place.');
 			applyRankTier(tier ? tier.tier : null);
+
+			// Stats grid
 			text('#stat-rating', ranked.rating ?? '--');
 			text('#rating-detail', tier ? rankLabel : 'No rating yet');
 			text('#stat-matches', stats.matches_played || 0);
@@ -1061,46 +1313,62 @@ export const prerender = false;
 			text('#stat-streak', stats.best_win_streak || 0);
 			text('#streak-detail', stats.current_win_streak ? `${stats.current_win_streak} current` : 'Build a run');
 
+			// Quick glance stats (Overview tab)
+			text('#quick-stat-rating', ranked.rating ?? '--');
+			text('#quick-stat-winrate', stats.win_rate == null ? '--' : `${stats.win_rate}%`);
+			text('#quick-stat-matches', stats.matches_played || 0);
+
 			const casual = body.casual || {};
 			text('#casual-total', casual.total_plays || 0);
 			text('#casual-40l', formatDuration(casual.best_40l_time));
 			text('#casual-sprint', casual.best_sprint_score != null ? Number(casual.best_sprint_score).toLocaleString() : '--');
+			text('#quick-stat-40l', formatDuration(casual.best_40l_time));
 
-			status.hidden = true;
-			profileEl.hidden = false;
+			if (status) status.hidden = true;
+			if (profileEl) profileEl.hidden = false;
 			loadMatches(isOwn ? null : body.user_id);
 			loadRatingHistory(isOwn ? null : body.user_id);
 		} catch {
 			showRetry('Unable to load this profile.');
 		}
 	}
+
 	bioForm?.addEventListener('submit', async (event) => {
 		event.preventDefault();
 		const button = bioForm.querySelector('button');
-		button.disabled = true;
-		bioStatus.textContent = 'Saving...';
+		if (button) button.disabled = true;
+		if (bioStatus) bioStatus.textContent = 'Saving...';
 		try {
-			const response = await request('https://backend.teblocks.my.id/profile/me', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bio: bioInput.value.trim() || null }) }, 1);
+			const response = await request('https://backend.teblocks.my.id/profile/me', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ bio: bioInput.value.trim() || null })
+			}, 1);
 			const body = await response.json().catch(() => ({}));
 			if (!response.ok) {
-				bioStatus.textContent = body.error || 'Unable to save your profile note.';
+				if (bioStatus) bioStatus.textContent = body.error || 'Unable to save your profile note.';
 				return;
 			}
 			text('#player-bio', body.bio || 'No profile note yet.');
-			bioStatus.textContent = 'Profile note saved.';
+			if (bioStatus) bioStatus.textContent = 'Profile note saved.';
 		} catch {
-			bioStatus.textContent = 'The profile service timed out. Please try again.';
+			if (bioStatus) bioStatus.textContent = 'The profile service timed out. Please try again.';
 		} finally {
-			button.disabled = false;
+			if (button) button.disabled = false;
 		}
 	});
+
 	document.querySelector('#avatar-upload')?.addEventListener('change', (event) => uploadMedia('avatar', event.currentTarget));
+	document.querySelector('#banner-upload')?.addEventListener('change', (event) => uploadMedia('banner', event.currentTarget));
+
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', () => {
+			initProfileTabs();
 			setupRankGraphHover();
 			loadProfile();
 		});
 	} else {
+		initProfileTabs();
 		setupRankGraphHover();
 		loadProfile();
 	}

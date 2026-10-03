@@ -1,0 +1,213 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Terms of Service | ${SITE_TITLE}`} description="Terms of Service for TeBlocks" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="legal-container">
+				<div class="header">
+					<h1>Terms of Service</h1>
+					<p class="last-updated">Last updated: October 2026</p>
+				</div>
+				<div class="layout">
+					<aside class="sidebar">
+						<nav class="toc panel">
+							<div class="eyebrow">Table of Contents</div>
+							<ul>
+								<li><a href="#acceptance">Acceptance of Terms</a></li>
+								<li><a href="#account-rules">Account Rules</a></li>
+								<li><a href="#code-of-conduct">Code of Conduct</a></li>
+								<li><a href="#content-policy">Content Policy</a></li>
+								<li><a href="#fair-play">Fair Play & Anti-Cheat</a></li>
+								<li><a href="#intellectual-property">Intellectual Property</a></li>
+								<li><a href="#service-availability">Service Availability</a></li>
+								<li><a href="#account-restrictions">Account Restrictions</a></li>
+								<li><a href="#limitation">Limitation of Liability</a></li>
+								<li><a href="#changes">Changes to Terms</a></li>
+								<li><a href="#contact">Contact</a></li>
+							</ul>
+						</nav>
+					</aside>
+					
+					<div class="content panel">
+						<section id="acceptance" class="section">
+							<h2>1. Acceptance of Terms</h2>
+							<p>By creating an account or using the TeBlocks service, you agree to these terms of service. If you do not agree to these terms, please do not use our service.</p>
+						</section>
+
+						<section id="account-rules" class="section">
+							<h2>2. Account Rules</h2>
+							<ul>
+								<li><strong>One Account:</strong> You are allowed one account per person.</li>
+								<li><strong>No Sharing:</strong> Account sharing or selling is strictly prohibited.</li>
+								<li><strong>Security:</strong> You are responsible for maintaining the security of your account.</li>
+								<li><strong>Age Requirement:</strong> The minimum age to use TeBlocks is 13 years old.</li>
+							</ul>
+						</section>
+
+						<section id="code-of-conduct" class="section">
+							<h2>3. Code of Conduct</h2>
+							<p>While using TeBlocks, you agree not to engage in:</p>
+							<ul>
+								<li>Cheating, hacking, or exploiting game mechanics.</li>
+								<li>Harassment, toxic behavior, or abusive conduct towards others.</li>
+								<li>Impersonating other players, staff, or entities.</li>
+								<li>Spamming or disrupting gameplay and community spaces.</li>
+							</ul>
+						</section>
+
+						<section id="content-policy" class="section">
+							<h2>4. Content Policy</h2>
+							<p>User-generated content, including avatars, banners, and usernames, must not contain NSFW material, hate speech, or illegal content. We reserve the right to remove inappropriate content at our discretion without prior notice.</p>
+						</section>
+
+						<section id="fair-play" class="section">
+							<h2>5. Fair Play & Anti-Cheat</h2>
+							<p>Automated play (botting), the use of modified clients, or replay manipulation will result in immediate account restriction. We employ server-side replay verification to ensure the integrity of our leaderboards.</p>
+						</section>
+
+						<section id="intellectual-property" class="section">
+							<h2>6. Intellectual Property</h2>
+							<p>TeBlocks is built on Techmino (an open-source project using the LÖVE 11.5 engine). Game assets and server code remain the property of their respective owners. User-generated content (such as custom skins and replays) remains the property of their creators.</p>
+						</section>
+
+						<section id="service-availability" class="section">
+							<h2>7. Service Availability</h2>
+							<p>We provide no guaranteed uptime. We may modify, suspend, or discontinue features at any time. Maintenance windows may occur without prior notice.</p>
+						</section>
+
+						<section id="account-restrictions" class="section">
+							<h2>8. Account Restrictions & Termination</h2>
+							<p>We may restrict or permanently ban accounts that violate these terms. If you believe your account was restricted in error, appeals can be made via a support ticket in our Discord server.</p>
+						</section>
+
+						<section id="limitation" class="section">
+							<h2>9. Limitation of Liability</h2>
+							<p>The service is provided "as is" without warranties of any kind. We are not liable for any data loss, service interruptions, or other damages arising from your use of TeBlocks.</p>
+						</section>
+
+						<section id="changes" class="section">
+							<h2>10. Changes to Terms</h2>
+							<p>We may update these terms from time to time. Your continued use of the service following any changes constitutes your acceptance of the updated terms.</p>
+						</section>
+
+						<section id="contact" class="section">
+							<h2>11. Contact</h2>
+							<p>For support or questions regarding these terms, please contact us through our Discord server.</p>
+						</section>
+					</div>
+				</div>
+			</div>
+		</main>
+		<Footer />
+		<style>
+			.legal-container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 2rem 1rem;
+			}
+			.header {
+				margin-bottom: 2rem;
+				text-align: center;
+			}
+			h1 {
+				margin: 0;
+				font-size: 2.5rem;
+				color: var(--text);
+			}
+			.last-updated {
+				color: var(--text-muted);
+				font-size: 0.9rem;
+				margin-top: 0.5rem;
+			}
+			.layout {
+				display: flex;
+				gap: 2rem;
+				align-items: flex-start;
+			}
+			.sidebar {
+				flex: 0 0 220px;
+				position: sticky;
+				top: 2rem;
+			}
+			.toc {
+				padding: 1.5rem;
+			}
+			.toc ul {
+				list-style: none;
+				padding: 0;
+				margin: 1rem 0 0 0;
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+			}
+			.toc a {
+				color: var(--text-dim);
+				text-decoration: none;
+				font-size: 0.9rem;
+				transition: color 0.2s;
+			}
+			.toc a:hover {
+				color: var(--accent);
+			}
+			.content {
+				flex: 1;
+				padding: 2rem;
+				min-width: 0;
+			}
+			.section {
+				margin-bottom: 3rem;
+			}
+			.section:last-child {
+				margin-bottom: 0;
+			}
+			.section h2 {
+				color: var(--text);
+				font-size: 1.5rem;
+				margin-top: 0;
+				margin-bottom: 1rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 1px solid var(--border);
+			}
+			.section p {
+				color: var(--text-dim);
+				line-height: 1.6;
+				margin-bottom: 1rem;
+			}
+			.section ul {
+				color: var(--text-dim);
+				line-height: 1.6;
+				padding-left: 1.5rem;
+			}
+			.section li {
+				margin-bottom: 0.5rem;
+			}
+			.section strong {
+				color: var(--text);
+			}
+			
+			@media (max-width: 768px) {
+				.layout {
+					flex-direction: column;
+				}
+				.sidebar {
+					flex: none;
+					width: 100%;
+					position: static;
+				}
+				.content {
+					padding: 1.5rem;
+				}
+			}
+		</style>
+	</body>
+</html>

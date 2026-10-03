@@ -1,0 +1,215 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Privacy Policy | ${SITE_TITLE}`} description="Privacy Policy for TeBlocks" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="legal-container">
+				<div class="header">
+					<h1>Privacy Policy</h1>
+					<p class="last-updated">Last updated: October 2026</p>
+				</div>
+				<div class="layout">
+					<aside class="sidebar">
+						<nav class="toc panel">
+							<div class="eyebrow">Table of Contents</div>
+							<ul>
+								<li><a href="#information-we-collect">Information We Collect</a></li>
+								<li><a href="#how-we-use">How We Use Your Information</a></li>
+								<li><a href="#third-party">Third-Party Services</a></li>
+								<li><a href="#data-retention">Data Retention & Deletion</a></li>
+								<li><a href="#cookies">Cookies & Local Storage</a></li>
+								<li><a href="#childrens-privacy">Children's Privacy</a></li>
+								<li><a href="#changes">Changes to This Policy</a></li>
+								<li><a href="#contact">Contact</a></li>
+							</ul>
+						</nav>
+					</aside>
+					
+					<div class="content panel">
+						<section id="information-we-collect" class="section">
+							<h2>1. Information We Collect</h2>
+							<p>When you use TeBlocks, we may collect the following information:</p>
+							<ul>
+								<li><strong>Account Information:</strong> Username, email address.</li>
+								<li><strong>Network Information:</strong> IP address (used for automatic country detection on registration, inspired by osu!).</li>
+								<li><strong>Gameplay Statistics:</strong> Matches, scores, replays, and ratings.</li>
+								<li><strong>Uploaded Media:</strong> Avatars, banners, and custom skins.</li>
+							</ul>
+						</section>
+
+						<section id="how-we-use" class="section">
+							<h2>2. How We Use Your Information</h2>
+							<p>We use the collected information for the following purposes:</p>
+							<ul>
+								<li><strong>Account Management:</strong> To provide and maintain your account.</li>
+								<li><strong>Competitive Features:</strong> To power leaderboards and rankings.</li>
+								<li><strong>Integrity:</strong> Anti-cheat verification and maintaining fair play.</li>
+								<li><strong>Communication:</strong> Email verification via Resend transactional email service.</li>
+								<li><strong>Localization:</strong> Country flag assignment based on your network IP address.</li>
+							</ul>
+						</section>
+
+						<section id="third-party" class="section">
+							<h2>3. Third-Party Services</h2>
+							<p>We utilize the following third-party services to operate TeBlocks:</p>
+							<ul>
+								<li><strong>Cloudflare:</strong> For CDN, Workers, DNS, and tunnel services.</li>
+								<li><strong>Resend:</strong> For transactional emails.</li>
+								<li><strong>GeoIP Services:</strong> Such as api.country.is and ip-api.com for one-time country detection.</li>
+								<li><strong>Database Hosting:</strong> PostgreSQL database hosting for persistent data storage.</li>
+							</ul>
+						</section>
+
+						<section id="data-retention" class="section">
+							<h2>4. Data Retention & Deletion</h2>
+							<p>Your account data is retained for as long as your account is active. Gameplay statistics are aggregated for leaderboards. You may request account deletion by opening a support ticket in our Discord server or contacting us via email.</p>
+						</section>
+
+						<section id="cookies" class="section">
+							<h2>5. Cookies & Local Storage</h2>
+							<p>We do not use traditional cookies. Instead, we rely on standard web storage mechanisms:</p>
+							<ul>
+								<li><strong>localStorage:</strong> Used for storing auth tokens (<code>teblocks_session_token</code>) and theme preferences (<code>teblocks_theme</code>).</li>
+								<li><strong>sessionStorage:</strong> Used temporarily during the registration flow.</li>
+							</ul>
+						</section>
+
+						<section id="childrens-privacy" class="section">
+							<h2>6. Children's Privacy</h2>
+							<p>TeBlocks is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13.</p>
+						</section>
+
+						<section id="changes" class="section">
+							<h2>7. Changes to This Policy</h2>
+							<p>We may update this policy from time to time. Any changes will be reflected on this page with an updated "Last updated" date.</p>
+						</section>
+
+						<section id="contact" class="section">
+							<h2>8. Contact</h2>
+							<p>If you have any questions or concerns, please contact us via our Discord server or through email.</p>
+						</section>
+					</div>
+				</div>
+			</div>
+		</main>
+		<Footer />
+		<style>
+			.legal-container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 2rem 1rem;
+			}
+			.header {
+				margin-bottom: 2rem;
+				text-align: center;
+			}
+			h1 {
+				margin: 0;
+				font-size: 2.5rem;
+				color: var(--text);
+			}
+			.last-updated {
+				color: var(--text-muted);
+				font-size: 0.9rem;
+				margin-top: 0.5rem;
+			}
+			.layout {
+				display: flex;
+				gap: 2rem;
+				align-items: flex-start;
+			}
+			.sidebar {
+				flex: 0 0 220px;
+				position: sticky;
+				top: 2rem;
+			}
+			.toc {
+				padding: 1.5rem;
+			}
+			.toc ul {
+				list-style: none;
+				padding: 0;
+				margin: 1rem 0 0 0;
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+			}
+			.toc a {
+				color: var(--text-dim);
+				text-decoration: none;
+				font-size: 0.9rem;
+				transition: color 0.2s;
+			}
+			.toc a:hover {
+				color: var(--accent);
+			}
+			.content {
+				flex: 1;
+				padding: 2rem;
+				min-width: 0;
+			}
+			.section {
+				margin-bottom: 3rem;
+			}
+			.section:last-child {
+				margin-bottom: 0;
+			}
+			.section h2 {
+				color: var(--text);
+				font-size: 1.5rem;
+				margin-top: 0;
+				margin-bottom: 1rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 1px solid var(--border);
+			}
+			.section p {
+				color: var(--text-dim);
+				line-height: 1.6;
+				margin-bottom: 1rem;
+			}
+			.section ul {
+				color: var(--text-dim);
+				line-height: 1.6;
+				padding-left: 1.5rem;
+			}
+			.section li {
+				margin-bottom: 0.5rem;
+			}
+			.section strong {
+				color: var(--text);
+			}
+			code {
+				font-family: var(--font-mono);
+				background: var(--bg);
+				padding: 0.2em 0.4em;
+				border-radius: var(--radius);
+				font-size: 0.9em;
+				color: var(--accent-2);
+			}
+			
+			@media (max-width: 768px) {
+				.layout {
+					flex-direction: column;
+				}
+				.sidebar {
+					flex: none;
+					width: 100%;
+					position: static;
+				}
+				.content {
+					padding: 1.5rem;
+				}
+			}
+		</style>
+	</body>
+</html>
