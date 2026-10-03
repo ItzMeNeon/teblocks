@@ -182,7 +182,10 @@ import { COUNTRIES } from '../lib/countries';
 								<label for="verification-code">Verification code</label>
 								<input id="verification-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required />
 							</div>
-							<button type="submit">Verify account</button>
+							<div style="display: flex; gap: 0.8rem; margin-top: 1rem;">
+								<button type="submit" style="flex: 2;">Verify account</button>
+								<button type="button" id="resend-code-btn" style="flex: 1; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main);">Resend</button>
+							</div>
 						</form>
 					</section>
 				</section>
@@ -265,6 +268,26 @@ import { COUNTRIES } from '../lib/countries';
 					setStatus(error instanceof Error ? error.message : 'Unable to verify the code.');
 				} finally {
 					if (submitButton) submitButton.disabled = false;
+				}
+			});
+
+			const resendBtn = document.querySelector('#resend-code-btn');
+			resendBtn?.addEventListener('click', async () => {
+				if (!userId) {
+					setStatus('No pending verification found. Please register first.');
+					return;
+				}
+				if (resendBtn) resendBtn.disabled = true;
+				setStatus('Sending new verification code…');
+				try {
+					await post('/api/auth/send-verification', { user_id: userId });
+					setStatus('A new verification code has been sent to your email!');
+				} catch (error) {
+					setStatus(error instanceof Error ? error.message : 'Failed to resend code.');
+				} finally {
+					setTimeout(() => {
+						if (resendBtn) resendBtn.disabled = false;
+					}, 5000);
 				}
 			});
 		</script>
