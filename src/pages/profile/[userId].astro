@@ -3,7 +3,6 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import { SITE_TITLE } from '../../consts';
-import { COUNTRIES } from '../../lib/countries';
 
 export const prerender = false;
 ---
@@ -58,26 +57,6 @@ export const prerender = false;
 					<div class="profile-actions" id="profile-actions"></div>
 				</div>
 
-				<!-- Set Country Banner Callout (One-time setup for profile owner) -->
-				<div id="set-country-box" class="country-setup-card" hidden>
-					<div class="country-setup-header">
-						<span class="country-setup-icon">🌍</span>
-						<div>
-							<strong>Choose Your Country / Region Banner</strong>
-							<p>Lock in your official country banner for your profile and leaderboards. <em>Note: Once set, your region cannot be changed without emailing or opening a Discord support ticket.</em></p>
-						</div>
-					</div>
-					<form id="set-country-form" class="country-setup-form">
-						<select id="set-country-select" required>
-							<option value="" disabled selected>Select country / region…</option>
-							{COUNTRIES.map((c) => (
-								<option value={c.code}>{c.flag} {c.name}</option>
-							))}
-						</select>
-						<button type="submit" class="button compact">Confirm & Lock Region</button>
-					</form>
-					<p id="country-setup-status" class="form-status" role="status"></p>
-				</div>
 					<div class="profile-grid">
 						<section class="about-card" aria-labelledby="about-title">
 							<div class="section-heading">
@@ -359,52 +338,6 @@ export const prerender = false;
 		padding: 1px 6px;
 		border-radius: 4px;
 		cursor: help;
-	}
-	.country-setup-card {
-		margin: 1.2rem 1.8rem 0;
-		padding: 1.2rem 1.4rem;
-		border-radius: var(--radius);
-		background: rgba(62, 166, 195, 0.08);
-		border: 1px dashed rgba(62, 166, 195, 0.35);
-		display: flex;
-		flex-direction: column;
-		gap: 0.8rem;
-	}
-	.country-setup-header {
-		display: flex;
-		gap: 0.8rem;
-		align-items: flex-start;
-	}
-	.country-setup-icon {
-		font-size: 1.5rem;
-		flex-shrink: 0;
-	}
-	.country-setup-header strong {
-		display: block;
-		font-size: 0.95rem;
-		color: var(--text);
-		margin-bottom: 0.2rem;
-	}
-	.country-setup-header p {
-		margin: 0;
-		font-size: 0.82rem;
-		color: var(--text-dim);
-		line-height: 1.4;
-	}
-	.country-setup-form {
-		display: flex;
-		gap: 0.6rem;
-		flex-wrap: wrap;
-	}
-	.country-setup-form select {
-		min-width: 220px;
-		padding: 0.5rem 0.8rem;
-		border: 1px solid var(--border);
-		border-radius: var(--radius-sm);
-		background: var(--bg-elevated);
-		color: var(--text);
-		font: inherit;
-		font-size: 0.88rem;
 	}
 	.profile-achievements-showcase {
 		display: grid;
@@ -1055,10 +988,6 @@ export const prerender = false;
 			const countryBanner = document.querySelector('#country-banner');
 			const countryFlag = document.querySelector('#country-flag');
 			const countryName = document.querySelector('#country-name');
-			const setCountryBox = document.querySelector('#set-country-box');
-			const setCountryForm = document.querySelector('#set-country-form');
-			const setCountrySelect = document.querySelector('#set-country-select') as HTMLSelectElement | null;
-			const countrySetupStatus = document.querySelector('#country-setup-status');
 
 			const savedCountry = body.country || localStorage.getItem('teblocks_user_country_' + body.user_id) || '';
 
@@ -1066,45 +995,8 @@ export const prerender = false;
 				if (countryBanner) countryBanner.hidden = false;
 				if (countryFlag) countryFlag.textContent = getCountryFlag(savedCountry);
 				if (countryName) countryName.textContent = formatCountryName(savedCountry);
-				if (setCountryBox) setCountryBox.hidden = true;
 			} else {
 				if (countryBanner) countryBanner.hidden = true;
-				if (isOwn && setCountryBox) {
-					setCountryBox.hidden = false;
-				}
-			}
-
-			// Handle locking in country if submitted by owner
-			if (setCountryForm && !setCountryForm.dataset.bound) {
-				setCountryForm.dataset.bound = 'true';
-				setCountryForm.addEventListener('submit', async (e) => {
-					e.preventDefault();
-					if (!setCountrySelect) return;
-					const selectedCode = setCountrySelect.value;
-					if (!selectedCode) return;
-					if (countrySetupStatus) countrySetupStatus.textContent = 'Locking in your region…';
-
-					try {
-						const patchRes = await request('https://backend.teblocks.my.id/profile/me', {
-							method: 'PATCH',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({ country: selectedCode }),
-						}, 1);
-						const patchBody = await patchRes.json().catch(() => ({}));
-						if (!patchRes.ok) {
-							if (countrySetupStatus) countrySetupStatus.textContent = patchBody.error || 'Failed to lock country.';
-							return;
-						}
-						localStorage.setItem('teblocks_user_country_' + body.user_id, selectedCode);
-						if (setCountryBox) setCountryBox.hidden = true;
-						if (countryBanner) countryBanner.hidden = false;
-						if (countryFlag) countryFlag.textContent = getCountryFlag(selectedCode);
-						if (countryName) countryName.textContent = formatCountryName(selectedCode);
-						if (countrySetupStatus) countrySetupStatus.textContent = 'Region locked successfully!';
-					} catch {
-						if (countrySetupStatus) countrySetupStatus.textContent = 'Request timed out. Please try again.';
-					}
-				});
 			}
 
 			// Achievements Showcase
