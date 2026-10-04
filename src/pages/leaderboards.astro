@@ -12,90 +12,95 @@ import { SITE_TITLE } from '../consts';
 		<style>
 			.leaderboard-panel {
 				max-width: 980px;
-				margin: 3.5rem auto 0;
+				margin: 2.5rem auto 0;
 			}
 			.leaderboard-header {
 				display: flex;
 				align-items: flex-end;
 				justify-content: space-between;
 				gap: 1.5rem;
-				margin-bottom: 2rem;
+				margin-bottom: 1.5rem;
 				flex-wrap: wrap;
 			}
 			.leaderboard-header h1 {
 				margin: 0;
-				font-size: clamp(2rem, 4.5vw, 2.8rem);
+				font-size: clamp(1.8rem, 4vw, 2.5rem);
+				font-weight: 800;
+				text-transform: uppercase;
+				letter-spacing: 0.02em;
 			}
 			.leaderboard-header p {
-				margin: 0.4rem 0 0;
+				margin: 0.2rem 0 0;
 				color: var(--text-muted);
-				font-size: 1.05rem;
+				font-size: 0.95rem;
 			}
 			.mode-tabs {
 				display: flex;
-				gap: 0.4rem;
-				padding: 0.35rem;
-				border-radius: 999px;
-				background: rgba(255, 255, 255, 0.04);
+				gap: 0.35rem;
+				padding: 0.3rem;
+				border-radius: var(--radius);
+				background: var(--bg-elevated);
 				border: 1px solid var(--border);
 				flex-wrap: wrap;
 			}
 			.mode-tab {
-				padding: 0.55rem 1.15rem;
-				border-radius: 999px;
-				border: 0;
+				padding: 0.45rem 1rem;
+				border-radius: var(--radius-sm);
+				border: 1px solid transparent;
 				background: transparent;
 				color: var(--text-dim);
 				font-family: var(--font-ui);
 				font-weight: 700;
-				font-size: 0.85rem;
+				font-size: 0.82rem;
 				cursor: pointer;
 				transition: all var(--transition-fast);
+				text-transform: uppercase;
+				letter-spacing: 0.04em;
 			}
 			.mode-tab:hover {
-				color: var(--text);
+				color: #ffffff;
+				background: rgba(255, 255, 255, 0.04);
 			}
 			.mode-tab[aria-selected="true"] {
-				background: linear-gradient(135deg, var(--accent), var(--accent-2));
-				color: #001a1c;
-				box-shadow: 0 4px 16px var(--accent-glow);
+				background: var(--accent);
+				color: #ffffff;
+				border-color: var(--accent);
 			}
 			.table-card {
 				border: 1px solid var(--border);
 				border-radius: var(--radius);
-				background: var(--panel);
-				backdrop-filter: blur(14px);
-				-webkit-backdrop-filter: blur(14px);
+				background: #14141e;
 				overflow: hidden;
 				box-shadow: var(--shadow);
 			}
 			@media (max-width: 680px) {
-				.leaderboard-panel { margin-top: 2rem; }
-				.leaderboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+				.leaderboard-panel { margin-top: 1.5rem; }
+				.leaderboard-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
 				.mode-tabs { width: 100%; }
-				.mode-tab { flex: 1; text-align: center; padding: 0.5rem 0.75rem; font-size: 0.8rem; }
+				.mode-tab { flex: 1; text-align: center; padding: 0.4rem 0.6rem; font-size: 0.76rem; }
 			}
 		</style>
 		<style is:global>
 			.leaderboard-table {
 				width: 100%;
 				border-collapse: collapse;
-				font-size: 0.94rem;
+				font-size: 0.92rem;
 			}
 			.leaderboard-table thead th {
 				text-align: left;
-				padding: 0.95rem 1.25rem;
-				border-bottom: 1px solid var(--border-bright);
+				padding: 0.75rem 1.1rem;
+				border-bottom: 1px solid var(--border);
 				color: var(--text-muted);
 				font-size: 0.72rem;
 				font-weight: 700;
 				letter-spacing: 0.08em;
 				text-transform: uppercase;
-				background: rgba(255, 255, 255, 0.02);
+				background: #0f0f16;
+				font-family: var(--font-mono);
 			}
 			.leaderboard-table tbody tr {
 				border-bottom: 1px solid var(--border);
-				transition: background 0.15s ease;
+				transition: background 0.12s ease;
 			}
 			.leaderboard-table tbody tr:hover {
 				background: var(--panel-hover);
@@ -104,40 +109,40 @@ import { SITE_TITLE } from '../consts';
 				border-bottom: 0;
 			}
 			.leaderboard-table td {
-				padding: 0.85rem 1.25rem;
+				padding: 0.75rem 1.1rem;
 				vertical-align: middle;
 			}
 			.rank-cell {
 				font-family: var(--font-mono);
 				font-weight: 800;
-				font-size: 0.98rem;
+				font-size: 0.92rem;
 				color: var(--text-muted);
 				width: 3.5rem;
 			}
-			.rank-cell.rank-1 { color: #ffd166; font-weight: 900; }
-			.rank-cell.rank-2 { color: #dbe4ee; font-weight: 900; }
-			.rank-cell.rank-3 { color: #ffaa75; font-weight: 900; }
+			.rank-cell.rank-1 { color: #ffd700; font-weight: 900; }
+			.rank-cell.rank-2 { color: #e0e0e0; font-weight: 900; }
+			.rank-cell.rank-3 { color: #ff9f73; font-weight: 900; }
 			.player-cell {
 				display: flex;
 				align-items: center;
-				gap: 0.85em;
+				gap: 0.75em;
 				min-width: 0;
 			}
 			.player-avatar {
-				width: 38px;
-				height: 38px;
-				border-radius: 10px;
-				background: linear-gradient(135deg, var(--accent), var(--accent-2));
+				width: 32px;
+				height: 32px;
+				border-radius: var(--radius-sm);
+				background: var(--bg-elevated);
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				color: #001a12;
+				color: var(--accent);
 				font-family: var(--font-display);
 				font-weight: 800;
-				font-size: 0.92rem;
+				font-size: 0.85rem;
 				flex-shrink: 0;
 				overflow: hidden;
-				border: 1px solid rgba(255, 255, 255, 0.12);
+				border: 1px solid var(--border);
 			}
 			.player-avatar img {
 				width: 100%;
@@ -147,57 +152,59 @@ import { SITE_TITLE } from '../consts';
 			}
 			.player-name {
 				font-weight: 700;
-				color: var(--text);
+				color: #ffffff;
 				min-width: 0;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				text-decoration: none;
-				transition: color 0.15s ease;
+				transition: color 0.12s ease;
 			}
 			.player-name:hover { color: var(--accent); }
 			.rank-badge {
 				display: inline-block;
-				padding: 0.25em 0.65em;
-				border-radius: 6px;
-				background: rgba(255, 255, 255, 0.05);
+				padding: 0.2em 0.55em;
+				border-radius: var(--radius-sm);
+				background: rgba(255, 255, 255, 0.04);
 				border: 1px solid var(--border);
-				font-size: 0.74rem;
+				font-size: 0.72rem;
 				font-weight: 700;
 				color: var(--text-dim);
 				letter-spacing: 0.03em;
+				font-family: var(--font-mono);
 			}
 			.stat-cell {
 				font-family: var(--font-mono);
-				font-size: 0.92rem;
-				color: var(--text);
+				font-size: 0.9rem;
+				color: #ffffff;
 				font-weight: 700;
+				font-variant-numeric: tabular-nums;
 			}
 			.stat-cell.dim { color: var(--text-dim); font-weight: 500; }
-			.win-rate { font-size: 0.84rem; color: var(--text-muted); font-family: var(--font-mono); }
+			.win-rate { font-size: 0.82rem; color: var(--text-muted); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 			.state {
 				text-align: center;
-				padding: 3.5rem 1.5rem;
+				padding: 3rem 1.5rem;
 				color: var(--text-muted);
-				font-size: 1rem;
+				font-size: 0.95rem;
 			}
 			.state.error { color: var(--danger); }
 			.retry-btn {
-				margin-top: 1rem;
-				padding: 0.65rem 1.3rem;
+				margin-top: 0.8rem;
+				padding: 0.5rem 1.2rem;
 				border: 1px solid var(--border);
-				border-radius: 999px;
-				background: rgba(255, 255, 255, 0.05);
+				border-radius: var(--radius);
+				background: var(--bg-elevated);
 				color: var(--text);
 				font: inherit;
 				font-weight: 700;
 				cursor: pointer;
-				transition: all 0.15s ease;
+				transition: background 0.12s ease;
 			}
 			.retry-btn:hover { background: var(--panel-hover); border-color: var(--border-bright); }
 			@media (max-width: 640px) {
 				.leaderboard-table thead th,
-				.leaderboard-table td { padding: 0.75rem 0.8rem; }
+				.leaderboard-table td { padding: 0.65rem 0.75rem; }
 			}
 		</style>
 	</head>
@@ -208,13 +215,13 @@ import { SITE_TITLE } from '../consts';
 				<div class="leaderboard-header">
 					<div>
 						<h1 id="leaderboard-title">Leaderboards</h1>
-						<p>Top players across competitive ranked and minigame speedruns.</p>
+						<p>Global rankings across ranked 1v1 and speedrun categories</p>
 					</div>
 					<div class="mode-tabs" role="tablist" aria-label="Leaderboard category">
 						<button class="mode-tab" role="tab" aria-selected="true" data-category="ranked">Ranked Elo</button>
-						<button class="mode-tab" role="tab" aria-selected="false" data-category="daily">📅 Daily Challenge</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-category="daily">Daily Challenge</button>
 						<button class="mode-tab" role="tab" aria-selected="false" data-category="lines40">40 Lines</button>
-						<button class="mode-tab" role="tab" aria-selected="false" data-category="sprint">Sprint (100L)</button>
+						<button class="mode-tab" role="tab" aria-selected="false" data-category="sprint">Sprint 100L</button>
 					</div>
 				</div>
 				<div class="table-card">
@@ -230,20 +237,20 @@ import { SITE_TITLE } from '../consts';
 			const content = document.getElementById('leaderboard-content');
 			const tabs = document.querySelectorAll('.mode-tab');
 
-			const categories = {
+			const categories: Record<string, { kind: string; url: string }> = {
 				ranked: { kind: 'ranked', url: '/api/leaderboards?mode=ranked_1v1' },
 				daily: { kind: 'daily', url: '/api/daily/leaderboard' },
 				lines40: { kind: 'score', url: '/api/score/sprint_40l' },
 				sprint: { kind: 'score', url: '/api/score/sprint_100l' },
 			};
 
-			function escapeHtml(str) {
+			function escapeHtml(str: string) {
 				return String(str).replace(/[&<>"']/g, (c) => ({
 					'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-				}[c]));
+				}[c as keyof { '&': string; '<': string; '>': string; '"': string; "'": string }]));
 			}
 
-			function avatarMarkup(entry) {
+			function avatarMarkup(entry: any) {
 				const letter = escapeHtml((entry.username || '?').slice(0, 1).toUpperCase());
 				const img = entry.avatar_url
 					? `<img src="${encodeURI(entry.avatar_url)}" alt="">`
@@ -251,7 +258,7 @@ import { SITE_TITLE } from '../consts';
 				return `<div class="player-avatar">${img}</div>`;
 			}
 
-			function playerName(entry) {
+			function playerName(entry: any) {
 				const id = entry.id || entry.user_id;
 				const name = escapeHtml(entry.username || 'Unknown');
 				return id
@@ -259,7 +266,7 @@ import { SITE_TITLE } from '../consts';
 					: `<span class="player-name">${name}</span>`;
 			}
 
-			function renderRankedRow(entry, index) {
+			function renderRankedRow(entry: any, index: number) {
 				const rank = index + 1;
 				const rankClass = rank <= 3 ? `rank-${rank}` : '';
 				const rankDisplay = entry.rank || entry.rank_name;
@@ -276,7 +283,7 @@ import { SITE_TITLE } from '../consts';
 					</tr>`;
 			}
 
-			function formatTimeMs(ms) {
+			function formatTimeMs(ms: number) {
 				if (!ms) return '--';
 				const totalSec = ms / 1000;
 				const m = Math.floor(totalSec / 60);
@@ -284,7 +291,7 @@ import { SITE_TITLE } from '../consts';
 				return `${m}:${s}`;
 			}
 
-			function renderDailyRow(entry, index) {
+			function renderDailyRow(entry: any, index: number) {
 				const rank = entry.rank || index + 1;
 				const rankClass = rank <= 3 ? `rank-${rank}` : '';
 				const timeStr = formatTimeMs(entry.timeMs);
@@ -298,7 +305,7 @@ import { SITE_TITLE } from '../consts';
 					</tr>`;
 			}
 
-			function renderScoreRow(entry, index) {
+			function renderScoreRow(entry: any, index: number) {
 				const rank = index + 1;
 				const rankClass = rank <= 3 ? `rank-${rank}` : '';
 				const score = entry.score != null ? Number(entry.score).toLocaleString() : '--';
@@ -310,7 +317,7 @@ import { SITE_TITLE } from '../consts';
 					</tr>`;
 			}
 
-			function renderTable(kind, rows) {
+			function renderTable(kind: string, rows: any[]) {
 				const head =
 					kind === 'ranked'
 						? `<th>Rank</th><th>Player</th><th>Tier</th><th>Rating</th><th>Matches</th><th>Win rate</th>`
@@ -331,9 +338,9 @@ import { SITE_TITLE } from '../consts';
 					</table>`;
 			}
 
-			async function loadLeaderboard(category, attempts = 2) {
+			async function loadLeaderboard(category: string, attempts = 2) {
 				const cfg = categories[category];
-				if (!cfg) return;
+				if (!cfg || !content) return;
 				content.innerHTML = '<div class="state" role="status">Loading leaderboard...</div>';
 				for (let attempt = 0; attempt < attempts; attempt += 1) {
 					try {
@@ -378,7 +385,7 @@ import { SITE_TITLE } from '../consts';
 			let current = 'ranked';
 			tabs.forEach((tab) => {
 				tab.addEventListener('click', () => {
-					const category = tab.dataset.category;
+					const category = (tab as HTMLElement).dataset.category;
 					if (!category || category === current) return;
 					current = category;
 					tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));

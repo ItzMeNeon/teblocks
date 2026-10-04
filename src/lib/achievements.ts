@@ -413,10 +413,10 @@ export function getTierColor(tier: AchievementTier): { border: string; bg: strin
 			};
 		case 'platinum':
 			return {
-				border: '#3ea6c3',
-				bg: 'rgba(62, 166, 195, 0.14)',
-				text: '#5ce1e6',
-				glow: 'rgba(62, 166, 195, 0.35)',
+				border: '#4ec9b0',
+				bg: 'rgba(78, 201, 176, 0.14)',
+				text: '#4ec9b0',
+				glow: 'rgba(78, 201, 176, 0.35)',
 			};
 		case 'diamond':
 			return {

@@ -11,57 +11,58 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 		<BaseHead title={`Skins | ${SITE_TITLE}`} description="Browse, upload, and download community block skins for TeBlocks." />
 		<style>
 			/* ── Layout ── */
-			.skins-panel { max-width: 1200px; margin: 3em auto 0; padding: 0 1rem 4rem; }
-			.page-header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1em; margin-bottom: 1.6em; }
-			.page-header h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); }
-			.page-header > p { margin: .3rem 0 0; color: var(--text-muted); font-size: .93rem; }
+			.skins-panel { max-width: 1200px; margin: 2.5em auto 0; padding: 0 1rem 4rem; }
+			.page-header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1em; margin-bottom: 1.5em; }
+			.page-header h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; }
+			.page-header > p { margin: .2rem 0 0; color: var(--text-muted); font-size: .93rem; }
 
 			/* ── Toolbar ── */
-			.toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: .75em; margin-bottom: 1.6em; }
-			.toolbar-left { display: flex; gap: .5em; flex-wrap: wrap; flex: 1; }
+			.toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: .75em; margin-bottom: 1.5em; }
+			.toolbar-left { display: flex; gap: .4em; flex-wrap: wrap; flex: 1; }
 			.tag-btn {
-				padding: .3em .85em; border: 1px solid var(--border); border-radius: 20px;
-				background: var(--panel); color: var(--text-muted); font-size: .82rem;
-				cursor: pointer; transition: all .15s;
+				padding: .35em .85em; border: 1px solid var(--border); border-radius: var(--radius-sm);
+				background: var(--bg-elevated); color: var(--text-dim); font-size: .8rem;
+				font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+				cursor: pointer; transition: all .12s ease;
 			}
 			.tag-btn:hover, .tag-btn.active {
-				border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent);
+				border-color: var(--accent); color: #ffffff; background: var(--accent);
 			}
 			.upload-btn {
-				padding: .45em 1.1em; border: 1px solid var(--border-bright);
-				border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--accent-2));
-				color: #001a12; font-weight: 700; font-size: .86rem; cursor: pointer;
-				white-space: nowrap; transition: filter .15s;
+				padding: .5em 1.1em; border: 0;
+				border-radius: var(--radius); background: var(--accent);
+				color: #ffffff; font-weight: 700; font-size: .85rem; cursor: pointer;
+				white-space: nowrap; transition: background-color .12s;
+				text-transform: uppercase; letter-spacing: 0.04em;
 			}
-			.upload-btn:hover { filter: brightness(1.1); }
+			.upload-btn:hover { background: #ff88be; }
 			.upload-btn:disabled { opacity: .5; cursor: default; }
 
 			/* ── Grid ── */
 			.skins-grid {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-				gap: 1.1em;
+				gap: 1em;
 			}
 
 			/* ── Card ── */
 			.skin-card {
 				border: 1px solid var(--border); border-radius: var(--radius);
-				background: var(--panel); overflow: hidden;
+				background: #14141e; overflow: hidden;
 				display: flex; flex-direction: column;
-				transition: border-color .15s ease, transform .1s ease;
+				transition: border-color .12s ease;
 			}
-			.skin-card:hover { border-color: var(--border-bright); transform: translateY(-2px); }
-			.skin-card.featured { border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+			.skin-card:hover { border-color: var(--border-bright); }
+			.skin-card.featured { border-color: var(--gold); }
 			.featured-badge {
-				font-size: .7rem; font-weight: 700; letter-spacing: .06em;
-				background: linear-gradient(135deg, var(--accent), var(--accent-2));
-				color: #001a12; padding: .18em .55em; border-radius: 4px;
-				text-transform: uppercase;
+				font-size: .68rem; font-weight: 800; letter-spacing: .06em;
+				background: var(--gold); color: #000000; padding: .15em .5em; border-radius: var(--radius-sm);
+				text-transform: uppercase; font-family: var(--font-mono);
 			}
 
 			.skin-preview {
 				width: 100%; aspect-ratio: 1 / 1; position: relative;
-				background: repeating-conic-gradient(#1a1a1a 0% 25%, #111 0% 50%) 0 0 / 20px 20px;
+				background: repeating-conic-gradient(#161622 0% 25%, #0f0f18 0% 50%) 0 0 / 20px 20px;
 				display: flex; align-items: center; justify-content: center;
 				overflow: hidden; border-bottom: 1px solid var(--border);
 			}
@@ -70,96 +71,99 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 				image-rendering: pixelated; display: block;
 			}
 			.skin-preview-placeholder {
-				font: 800 1.6rem var(--font-display); color: var(--text-muted);
+				font: 800 1.5rem var(--font-mono); color: var(--text-muted);
 				opacity: .4; user-select: none;
 			}
 
-			.skin-meta { padding: .9em 1em; display: flex; flex-direction: column; gap: .35em; flex: 1; }
-			.skin-name { font-weight: 700; color: var(--text); line-height: 1.3; font-size: .97rem; }
-			.skin-author { font-size: .8rem; color: var(--text-muted); }
+			.skin-meta { padding: .85em 1em; display: flex; flex-direction: column; gap: .3em; flex: 1; }
+			.skin-name { font-weight: 700; color: var(--text); line-height: 1.3; font-size: .95rem; }
+			.skin-author { font-size: .78rem; color: var(--text-muted); }
 			.skin-tags { display: flex; flex-wrap: wrap; gap: .3em; margin-top: .1em; }
 			.skin-tag {
-				font-size: .73rem; padding: .15em .5em;
-				border: 1px solid var(--border); border-radius: 12px;
-				color: var(--text-muted);
+				font-size: .7rem; padding: .12em .45em;
+				border: 1px solid var(--border); border-radius: var(--radius-sm);
+				color: var(--text-muted); font-family: var(--font-mono);
 			}
 
-			.skin-actions { display: flex; gap: .5em; padding: .7em 1em 1em; margin-top: auto; }
+			.skin-actions { display: flex; gap: .45em; padding: .6em 1em .9em; margin-top: auto; }
 			.skin-actions a, .skin-actions button {
-				flex: 1; padding: .45em .6em; border-radius: 7px;
-				font: inherit; font-size: .83rem; font-weight: 700;
-				text-align: center; cursor: pointer; transition: filter .15s, opacity .15s;
+				flex: 1; padding: .45em .6em; border-radius: var(--radius-sm);
+				font: inherit; font-size: .8rem; font-weight: 700;
+				text-align: center; cursor: pointer; transition: background-color .12s, border-color .12s;
 				text-decoration: none;
 			}
 			.btn-download {
-				border: 1px solid var(--border-bright);
-				background: linear-gradient(135deg, var(--accent), var(--accent-2));
-				color: #001a12;
+				border: 0;
+				background: var(--accent);
+				color: #ffffff;
+				text-transform: uppercase; letter-spacing: 0.04em;
 			}
-			.btn-download:hover { filter: brightness(1.1); }
+			.btn-download:hover { background: #ff88be; }
 			.btn-like {
-				border: 1px solid var(--border); background: var(--panel-hover);
+				border: 1px solid var(--border); background: var(--bg-elevated);
 				color: var(--text-muted); display: flex; align-items: center;
-				justify-content: center; gap: .3em;
+				justify-content: center; gap: .3em; font-family: var(--font-mono);
 			}
-			.btn-like.liked { color: #e8385a; border-color: #e8385a; }
-			.btn-like:hover { opacity: .8; }
+			.btn-like.liked { color: #ff4466; border-color: rgba(255, 68, 102, 0.4); }
+			.btn-like:hover { border-color: var(--border-bright); }
 
 			/* ── State messages ── */
 			.state { padding: 3em 0; color: var(--text-muted); text-align: center; }
-			.state.error { color: var(--danger, #f66); }
+			.state.error { color: var(--danger); }
 			.load-more-wrap { text-align: center; margin-top: 1.5em; }
 			.load-more-btn {
-				padding: .6em 2em; border: 1px solid var(--border-bright); border-radius: 8px;
-				background: var(--panel); color: var(--text); font: inherit; font-size: .9rem;
-				cursor: pointer; transition: background .15s;
+				padding: .55em 1.8em; border: 1px solid var(--border); border-radius: var(--radius);
+				background: var(--bg-elevated); color: var(--text); font: inherit; font-size: .88rem;
+				font-weight: 700; cursor: pointer; transition: background-color .12s;
 			}
-			.load-more-btn:hover { background: var(--panel-hover); }
+			.load-more-btn:hover { background: var(--panel-hover); border-color: var(--border-bright); }
 
 			/* ── Upload modal ── */
 			.modal-overlay {
-				position: fixed; inset: 0; background: rgba(0,0,0,.7);
+				position: fixed; inset: 0; background: rgba(0,0,0,.75);
 				display: flex; align-items: center; justify-content: center;
 				z-index: 1000; padding: 1rem;
 			}
 			.modal-overlay[hidden] { display: none; }
 			.modal {
-				background: var(--panel); border: 1px solid var(--border-bright);
-				border-radius: var(--radius); padding: 2em; max-width: 480px; width: 100%;
-				max-height: 90vh; overflow-y: auto;
+				background: #14141e; border: 1px solid var(--border-bright);
+				border-radius: var(--radius-lg); padding: 1.8em; max-width: 480px; width: 100%;
+				max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
 			}
-			.modal h2 { margin: 0 0 1.2em; font-size: 1.35rem; }
-			.modal label { display: block; font-size: .88rem; font-weight: 600; margin-bottom: .3em; color: var(--text); }
+			.modal h2 { margin: 0 0 1em; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; }
+			.modal label { display: block; font-size: .82rem; font-weight: 700; margin-bottom: .3em; color: var(--text-dim); text-transform: uppercase; font-family: var(--font-mono); }
 			.modal input[type="text"], .modal textarea, .modal input[type="file"] {
 				width: 100%; box-sizing: border-box; margin-bottom: 1em;
 				padding: .65em .8em; border: 1px solid var(--border);
-				border-radius: 6px; background: var(--board); color: var(--text); font: inherit;
+				border-radius: var(--radius); background: var(--bg-elevated); color: var(--text); font: inherit;
 			}
 			.modal textarea { resize: vertical; min-height: 70px; }
-			.modal .hint { font-size: .78rem; color: var(--text-muted); margin: -.7em 0 1em; }
-			.modal-actions { display: flex; gap: .75em; justify-content: flex-end; margin-top: .5em; }
+			.modal .hint { font-size: .75rem; color: var(--text-muted); margin: -.7em 0 1em; }
+			.modal-actions { display: flex; gap: .6em; justify-content: flex-end; margin-top: .5em; }
 			.btn-cancel {
-				padding: .6em 1.2em; border: 1px solid var(--border); border-radius: 7px;
-				background: transparent; color: var(--text); font: inherit; cursor: pointer;
+				padding: .55em 1.2em; border: 1px solid var(--border); border-radius: var(--radius);
+				background: transparent; color: var(--text); font: inherit; font-weight: 700; cursor: pointer;
 			}
 			.btn-submit {
-				padding: .6em 1.4em; border: 0; border-radius: 7px;
-				background: linear-gradient(135deg, var(--accent), var(--accent-2));
-				color: #001a12; font: inherit; font-weight: 700; cursor: pointer;
+				padding: .55em 1.4em; border: 0; border-radius: var(--radius);
+				background: var(--accent);
+				color: #ffffff; font: inherit; font-weight: 700; cursor: pointer;
+				text-transform: uppercase; letter-spacing: 0.04em;
 			}
 			.btn-submit:disabled { opacity: .5; cursor: default; }
-			.upload-status { font-size: .87rem; color: var(--text-muted); margin-top: .6em; min-height: 1.4em; }
-			.upload-status.err { color: var(--danger, #f66); }
+			.upload-status { font-size: .85rem; color: var(--text-muted); margin-top: .6em; min-height: 1.4em; }
+			.upload-status.err { color: var(--danger); }
 
 			/* ── Drop zone ── */
 			.drop-zone {
-				border: 2px dashed var(--border); border-radius: 8px;
-				padding: 1.5em; text-align: center; cursor: pointer;
-				color: var(--text-muted); font-size: .87rem; margin-bottom: 1em;
-				transition: border-color .15s, background .15s;
+				border: 2px dashed var(--border); border-radius: var(--radius);
+				padding: 1.4em; text-align: center; cursor: pointer;
+				color: var(--text-muted); font-size: .85rem; margin-bottom: 1em;
+				background: var(--bg-elevated);
+				transition: border-color .15s;
 			}
-			.drop-zone.drag-over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
-			.drop-zone .drop-icon { font-size: 1.6rem; margin-bottom: .4em; display: block; }
+			.drop-zone.drag-over { border-color: var(--accent); }
+			.drop-zone .drop-icon { font-size: 1.5rem; margin-bottom: .3em; display: block; }
 			.drop-zone input[type="file"] { display: none; }
 			.file-selected { font-size: .8rem; color: var(--accent); margin-top: .3em; }
 
@@ -176,9 +180,9 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 				<div class="page-header">
 					<div>
 						<h1 id="skins-title">Skins</h1>
-						<p>Community PNG skins for the TeBlocks client — browse, like, and share.</p>
+						<p>Community PNG skins for the TeBlocks client — browse, download, and create.</p>
 					</div>
-					<button class="upload-btn" id="open-upload" aria-haspopup="dialog">⬆ Upload Skin</button>
+					<button class="upload-btn" id="open-upload" aria-haspopup="dialog">Upload Skin</button>
 				</div>
 
 				<!-- Tag filter toolbar -->
@@ -210,7 +214,7 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 				<div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Click or drag to select a skin PNG file">
 					<span class="drop-icon">🎨</span>
 					<div>Drag &amp; drop a PNG skin file here, or <strong>click to browse</strong></div>
-					<div style="font-size:.75rem;margin-top:.4em;color:var(--text-muted)">Must be exactly <strong>240×90 px</strong> — an 8-column × 3-row grid of 30×30 tiles</div>
+					<div style="font-size:.74rem;margin-top:.4em;color:var(--text-muted)">Must be exactly <strong>240×90 px</strong> — 8 columns × 3 rows of 30×30 tiles</div>
 					<input type="file" id="skin-file-input" accept=".png,image/png" />
 					<div class="file-selected" id="file-label" hidden></div>
 				</div>
@@ -249,7 +253,6 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 
 		/* ── Auth check ── */
 		async function checkAuth() {
-			// Try to get session from cookie (or localStorage as fallback, matching existing login flow)
 			const cookie = document.cookie.split('; ').find(c => c.startsWith('teblocks_session='));
 			if (cookie) sessionToken = cookie.split('=')[1];
 			if (!sessionToken) sessionToken = localStorage.getItem('teblocks_token');
@@ -298,7 +301,7 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 						</div>
 						<span class="skin-author">by ${escHtml(skin.username)}</span>
 						${renderTags(skin.tags)}
-						${skin.description ? `<span style="font-size:.79rem;color:var(--text-muted);margin-top:.15em">${escHtml(skin.description)}</span>` : ''}
+						${skin.description ? `<span style="font-size:.78rem;color:var(--text-muted);margin-top:.15em">${escHtml(skin.description)}</span>` : ''}
 					</div>
 					<div class="skin-actions">
 						<a class="btn-download" href="${escHtml(skin.skin_url || '#')}" download="${escHtml(skin.name)}.png"
@@ -339,7 +342,6 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 				const { skins, total } = await res.json();
 				totalSkins = total || 0;
 
-				// Collect liked info
 				if (skins && skins.length) {
 					skins.forEach(s => { if (s.liked) likedSkins.add(s.id); });
 				}
@@ -410,7 +412,6 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 				});
 				if (!res.ok) throw new Error();
 				if (liked) likedSkins.delete(skinId); else likedSkins.add(skinId);
-				// Update all like buttons for this skin
 				document.querySelectorAll(`.btn-like[data-skin-id="${skinId}"]`).forEach(b => {
 					const currentCount = parseInt(b.textContent.replace(/\D/g,''), 10) || 0;
 					const newCount = Math.max(0, liked ? currentCount - 1 : currentCount + 1);
@@ -429,7 +430,6 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 			const link = e.target.closest('a.btn-download[data-skin-id]');
 			if (!link) return;
 			const skinId = link.dataset.skinId;
-			// Fire-and-forget: tell server a download happened
 			fetch(`${API}/skins/${skinId}/download`, { method: 'GET' }).catch(() => {});
 		});
 

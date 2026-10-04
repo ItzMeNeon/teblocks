@@ -11,46 +11,50 @@ import { SITE_TITLE } from '../consts';
 		<BaseHead title={`Log in | ${SITE_TITLE}`} description="Log in to your TeBlocks account." />
 		<style>
 			.login-container {
-				max-width: 440px;
-				margin: 4.5rem auto 0;
+				max-width: 420px;
+				margin: 3.5rem auto 0;
 			}
 			.login-panel {
-				padding: 2.4rem;
+				padding: 2.2rem;
 				border: 1px solid var(--border);
 				border-radius: var(--radius-lg);
-				background: var(--panel);
+				background: #14141e;
 				box-shadow: var(--shadow);
-				backdrop-filter: blur(14px);
-				-webkit-backdrop-filter: blur(14px);
 			}
 			.login-panel h1 {
-				margin: 0 0 1.5rem;
-				font-size: 2rem;
+				margin: 0 0 1.2rem;
+				font-size: 1.8rem;
+				font-weight: 800;
+				text-transform: uppercase;
+				letter-spacing: 0.02em;
 			}
 			form {
 				display: grid;
-				gap: 1.1rem;
+				gap: 1rem;
 			}
 			.form-field {
 				display: flex;
 				flex-direction: column;
-				gap: 0.4rem;
+				gap: 0.35rem;
 			}
 			label {
-				color: var(--text);
-				font-size: 0.9rem;
-				font-weight: 600;
+				color: var(--text-dim);
+				font-size: 0.82rem;
+				font-weight: 700;
+				font-family: var(--font-mono);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
 			}
 			input {
 				width: 100%;
-				padding: 0.8rem 1rem;
-				border: 1px solid var(--border);
+				padding: 0.7rem 0.9rem;
+				border: 1px solid var(--border-bright);
 				border-radius: var(--radius);
 				background: var(--bg-elevated);
 				color: var(--text);
 				font-family: var(--font-ui);
-				font-size: 0.95rem;
-				transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+				font-size: 0.92rem;
+				transition: border-color var(--transition-fast);
 			}
 			input:focus {
 				outline: none;
@@ -59,23 +63,22 @@ import { SITE_TITLE } from '../consts';
 			}
 			button[type="submit"] {
 				width: 100%;
-				margin-top: 0.5rem;
-				padding: 0.85rem 1.4rem;
+				margin-top: 0.4rem;
+				padding: 0.75rem 1.2rem;
 				border: 0;
-				border-radius: 999px;
-				background: linear-gradient(135deg, var(--accent), var(--accent-2));
-				color: #001a1c;
+				border-radius: var(--radius);
+				background: var(--accent);
+				color: #ffffff;
 				font-family: var(--font-ui);
-				font-size: 0.95rem;
+				font-size: 0.92rem;
 				font-weight: 700;
 				cursor: pointer;
-				box-shadow: 0 4px 18px var(--accent-glow);
-				transition: all var(--transition-fast);
+				transition: background-color var(--transition-fast);
+				text-transform: uppercase;
+				letter-spacing: 0.04em;
 			}
 			button[type="submit"]:hover:not(:disabled) {
-				filter: brightness(1.08);
-				box-shadow: 0 6px 24px var(--accent-glow-strong);
-				transform: translateY(-1px);
+				background: #ff88be;
 			}
 			button[type="submit"]:disabled {
 				cursor: wait;
@@ -85,18 +88,18 @@ import { SITE_TITLE } from '../consts';
 				min-height: 1.5em;
 				margin: 0.8rem 0 0;
 				color: var(--text-dim);
-				font-size: 0.88rem;
+				font-size: 0.85rem;
 				text-align: center;
 			}
 			.footer-hint {
-				margin: 1.4rem 0 0;
+				margin: 1.2rem 0 0;
 				text-align: center;
 				color: var(--text-muted);
-				font-size: 0.92rem;
+				font-size: 0.88rem;
 			}
 			@media (max-width: 600px) {
-				.login-container { margin-top: 2.5rem; }
-				.login-panel { padding: 1.8rem; }
+				.login-container { margin-top: 2rem; }
+				.login-panel { padding: 1.5rem; }
 			}
 		</style>
 	</head>
@@ -105,8 +108,7 @@ import { SITE_TITLE } from '../consts';
 		<main>
 			<div class="login-container">
 				<section class="login-panel" aria-labelledby="login-title">
-					<p class="eyebrow" style="--accent-color: var(--i)">Player account</p>
-					<h1 id="login-title">Log in</h1>
+					<h1 id="login-title">Player Log In</h1>
 					<form id="login-form">
 						<div class="form-field">
 							<label for="username">Username</label>
@@ -119,7 +121,7 @@ import { SITE_TITLE } from '../consts';
 						<button type="submit">Log in</button>
 					</form>
 					<p id="form-status" role="status" aria-live="polite"></p>
-					<p class="footer-hint">New to TeBlocks? <a href="/account/">Create an account</a>.</p>
+					<p class="footer-hint">Need an account? <a href="/account/">Register here</a>.</p>
 				</section>
 			</div>
 		</main>
@@ -131,7 +133,7 @@ import { SITE_TITLE } from '../consts';
 
 			form?.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				if (!form.reportValidity()) return;
+				if (!(form as HTMLFormElement).reportValidity()) return;
 
 				const submitButton = form.querySelector('button');
 				if (submitButton) submitButton.disabled = true;
@@ -140,14 +142,14 @@ import { SITE_TITLE } from '../consts';
 					const response = await fetch('/api/auth/login', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify(Object.fromEntries(new FormData(form))),
+						body: JSON.stringify(Object.fromEntries(new FormData(form as HTMLFormElement))),
 					});
 					const body = await response.json().catch(() => ({}));
 					if (!response.ok) throw new Error(body.message || body.error || 'Unable to log in.');
 					if (body.token) localStorage.setItem('teblocks_token', body.token);
 					if (body.user_id) localStorage.setItem('teblocks_user_id', body.user_id);
 					if (body.username) localStorage.setItem('teblocks_username', body.username);
-					form.reset();
+					(form as HTMLFormElement).reset();
 					window.location.assign(body.user_id ? `/profile/${body.user_id}` : '/profile/');
 				} catch (error) {
 					if (status) status.textContent = error instanceof Error ? error.message : 'Unable to log in.';

@@ -20,14 +20,10 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta name="generator" content={Astro.generator} />
 
-<!-- Theme script to prevent FOUC -->
-<script is:inline>
-	(function() {
-		const saved = localStorage.getItem('teblocks_theme');
-		const theme = saved || 'dark';
-		document.documentElement.setAttribute('data-theme', theme);
-	})();
-</script>
+<!-- Fonts: Exo 2 (gaming font) & JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />

@@ -12,57 +12,62 @@ import { SITE_TITLE } from '../consts';
 		<style>
 			.about-container {
 				max-width: 860px;
-				margin: 3.5rem auto 0;
+				margin: 2.5rem auto 0;
 			}
 			.about-header {
-				margin-bottom: 2.5rem;
+				margin-bottom: 2rem;
 			}
 			.about-header h1 {
-				margin: 0 0 0.5rem;
-				font-size: clamp(2.2rem, 5vw, 3rem);
+				margin: 0 0 0.4rem;
+				font-size: clamp(2rem, 4.5vw, 2.8rem);
+				font-weight: 800;
+				text-transform: uppercase;
+				letter-spacing: 0.02em;
 			}
 			.about-header p {
 				color: var(--text-dim);
-				font-size: 1.15rem;
-				line-height: 1.6;
+				font-size: 1.05rem;
+				line-height: 1.5;
 			}
 			.about-card {
-				padding: 2.5rem;
+				padding: 2.2rem;
 				border-radius: var(--radius-lg);
 				border: 1px solid var(--border);
-				background: var(--panel);
+				background: #14141e;
 				box-shadow: var(--shadow);
 				margin-bottom: 2rem;
 			}
 			.about-card h2 {
-				font-size: 1.5rem;
-				margin: 2rem 0 1rem;
+				font-size: 1.35rem;
+				margin: 1.8rem 0 0.8rem;
 				color: var(--text);
+				text-transform: uppercase;
+				letter-spacing: 0.03em;
 			}
 			.about-card h2:first-of-type {
 				margin-top: 0;
 			}
 			.about-card p {
 				color: var(--text-dim);
-				line-height: 1.75;
-				font-size: 1.02rem;
-				margin-bottom: 1.2rem;
+				line-height: 1.65;
+				font-size: 0.96rem;
+				margin-bottom: 1rem;
 			}
 			.feature-list {
 				list-style: none;
 				padding: 0;
-				margin: 1.5rem 0 2rem;
+				margin: 1.2rem 0 1.6rem;
 				display: grid;
 				grid-template-columns: 1fr;
-				gap: 1rem;
+				gap: 0.75rem;
 			}
 			.feature-item {
 				display: flex;
 				align-items: flex-start;
-				gap: 0.85rem;
-				padding: 1rem 1.2rem;
-				border-radius: var(--radius-sm);
-				background: rgba(255, 255, 255, 0.03);
+				gap: 0.8rem;
+				padding: 0.9rem 1.1rem;
+				border-radius: var(--radius);
+				background: var(--bg-elevated);
 				border: 1px solid var(--border);
 			}
 			.feature-icon {
@@ -70,32 +75,32 @@ import { SITE_TITLE } from '../consts';
 				place-items: center;
 				width: 32px;
 				height: 32px;
-				border-radius: 8px;
-				background: rgba(62, 166, 195, 0.15);
+				border-radius: var(--radius-sm);
+				background: #1f1f2e;
 				color: var(--accent);
+				font-size: 1rem;
 				flex-shrink: 0;
-				margin-top: 0.1rem;
 			}
 			.feature-text strong {
 				display: block;
 				color: var(--text);
-				font-size: 0.98rem;
-				margin-bottom: 0.2rem;
+				font-size: 0.92rem;
+				margin-bottom: 0.15rem;
 			}
 			.feature-text span {
 				color: var(--text-dim);
-				font-size: 0.88rem;
-				line-height: 1.5;
+				font-size: 0.84rem;
+				line-height: 1.45;
 			}
 			.actions-row {
 				display: flex;
-				gap: 1rem;
+				gap: 0.8rem;
 				flex-wrap: wrap;
-				margin-top: 2rem;
+				margin-top: 1.5rem;
 			}
 			@media (max-width: 680px) {
-				.about-container { margin-top: 2rem; }
-				.about-card { padding: 1.5rem; }
+				.about-container { margin-top: 1.5rem; }
+				.about-card { padding: 1.4rem; }
 			}
 		</style>
 	</head>
@@ -104,7 +109,6 @@ import { SITE_TITLE } from '../consts';
 		<main>
 			<div class="about-container">
 				<header class="about-header">
-					<p class="eyebrow" style="--accent-color: var(--accent)">Project & Mission</p>
 					<h1>About TeBlocks</h1>
 					<p>A competitive, open source block stacking game engineered for responsive gameplay, fair multiplayer, and community competition.</p>
 				</header>

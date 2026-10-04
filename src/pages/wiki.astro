@@ -12,74 +12,79 @@ import { SITE_TITLE } from '../consts';
 		<style>
 			.wiki-container {
 				max-width: 960px;
-				margin: 3.5rem auto 0;
+				margin: 2.5rem auto 0;
 			}
 			.wiki-header {
-				margin-bottom: 2.5rem;
+				margin-bottom: 2rem;
 			}
 			.wiki-header h1 {
-				margin: 0 0 0.5rem;
-				font-size: clamp(2.2rem, 5vw, 3rem);
+				margin: 0 0 0.4rem;
+				font-size: clamp(2rem, 4.5vw, 2.8rem);
+				font-weight: 800;
+				text-transform: uppercase;
+				letter-spacing: 0.02em;
 			}
 			.wiki-header p {
 				color: var(--text-dim);
-				font-size: 1.1rem;
+				font-size: 1.05rem;
 				max-width: 60ch;
-				line-height: 1.6;
+				line-height: 1.5;
 			}
 
 			.wiki-nav {
 				display: flex;
-				gap: 0.5rem;
+				gap: 0.4rem;
 				flex-wrap: wrap;
-				margin-bottom: 2.5rem;
-				padding: 0.6rem;
+				margin-bottom: 2rem;
+				padding: 0.5rem;
 				border-radius: var(--radius);
-				background: var(--panel);
+				background: #14141e;
 				border: 1px solid var(--border);
 			}
 			.wiki-nav a {
-				padding: 0.45rem 0.95rem;
-				border-radius: 8px;
-				font-size: 0.85rem;
+				padding: 0.4rem 0.85rem;
+				border-radius: var(--radius-sm);
+				font-size: 0.82rem;
 				font-weight: 700;
 				color: var(--text-dim);
-				transition: all var(--transition-fast);
+				transition: color var(--transition-fast), background-color var(--transition-fast);
 				text-decoration: none;
+				text-transform: uppercase;
+				letter-spacing: 0.04em;
 			}
 			.wiki-nav a:hover {
-				color: var(--accent);
-				background: rgba(62, 166, 195, 0.1);
+				color: #ffffff;
+				background: rgba(255, 255, 255, 0.05);
 			}
 
 			.wiki-section {
-				margin-bottom: 3rem;
-				padding: 2.2rem;
+				margin-bottom: 2.5rem;
+				padding: 2rem;
 				border-radius: var(--radius-lg);
 				border: 1px solid var(--border);
-				background: var(--panel);
+				background: #14141e;
 				box-shadow: var(--shadow);
 			}
 			.wiki-section h2 {
-				margin: 0 0 1.2rem;
-				font-size: 1.55rem;
-				display: flex;
-				align-items: center;
-				gap: 0.6rem;
+				margin: 0 0 1rem;
+				font-size: 1.45rem;
+				text-transform: uppercase;
+				letter-spacing: 0.02em;
 			}
 			.wiki-section p {
 				color: var(--text-dim);
-				line-height: 1.7;
-				margin-bottom: 1.1rem;
+				line-height: 1.65;
+				margin-bottom: 1rem;
+				font-size: 0.95rem;
 			}
 			.wiki-section ul {
-				margin: 0.8rem 0 1.2rem;
-				padding-left: 1.4rem;
+				margin: 0.6rem 0 1rem;
+				padding-left: 1.3rem;
 				color: var(--text-dim);
-				line-height: 1.7;
+				line-height: 1.65;
 			}
 			.wiki-section li {
-				margin-bottom: 0.5rem;
+				margin-bottom: 0.4rem;
 			}
 			.wiki-section strong {
 				color: var(--text);
@@ -87,43 +92,43 @@ import { SITE_TITLE } from '../consts';
 
 			.info-grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-				gap: 1.2rem;
-				margin: 1.5rem 0;
+				grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+				gap: 1rem;
+				margin: 1.2rem 0;
 			}
 			.info-card {
-				padding: 1.2rem;
-				border-radius: var(--radius-sm);
-				background: rgba(255, 255, 255, 0.03);
+				padding: 1.1rem;
+				border-radius: var(--radius);
+				background: var(--bg-elevated);
 				border: 1px solid var(--border);
 			}
 			.info-card h4 {
-				margin: 0 0 0.4rem;
-				font-size: 1.05rem;
+				margin: 0 0 0.35rem;
+				font-size: 0.98rem;
 				color: var(--accent);
 			}
 			.info-card p {
 				margin: 0;
-				font-size: 0.88rem;
-				line-height: 1.55;
+				font-size: 0.85rem;
+				line-height: 1.5;
 			}
 
 			.wiki-table {
 				width: 100%;
 				border-collapse: collapse;
 				margin: 1.2rem 0;
-				font-size: 0.92rem;
+				font-size: 0.9rem;
 				border: 1px solid var(--border);
-				border-radius: var(--radius-sm);
+				border-radius: var(--radius);
 				overflow: hidden;
 			}
 			.wiki-table th, .wiki-table td {
-				padding: 0.8rem 1rem;
+				padding: 0.75rem 0.9rem;
 				text-align: left;
 				border-bottom: 1px solid var(--border);
 			}
 			.wiki-table th {
-				background: rgba(255, 255, 255, 0.04);
+				background: #0f0f16;
 				color: var(--text-muted);
 				font-family: var(--font-mono);
 				font-size: 0.72rem;
@@ -139,30 +144,30 @@ import { SITE_TITLE } from '../consts';
 
 			.badge {
 				display: inline-block;
-				padding: 0.2em 0.6em;
-				border-radius: 4px;
+				padding: 0.15em 0.5em;
+				border-radius: var(--radius-sm);
 				font-family: var(--font-mono);
-				font-size: 0.76rem;
+				font-size: 0.74rem;
 				font-weight: 700;
-				background: rgba(62, 166, 195, 0.12);
+				background: rgba(255, 102, 171, 0.12);
 				color: var(--accent);
-				border: 1px solid rgba(62, 166, 195, 0.25);
+				border: 1px solid rgba(255, 102, 171, 0.25);
 			}
 			.badge-gold {
-				background: rgba(255, 209, 102, 0.15);
-				color: var(--o);
-				border-color: rgba(255, 209, 102, 0.3);
+				background: rgba(255, 204, 34, 0.12);
+				color: var(--gold);
+				border-color: rgba(255, 204, 34, 0.25);
 			}
 			.badge-green {
-				background: rgba(91, 250, 128, 0.15);
-				color: var(--s);
-				border-color: rgba(91, 250, 128, 0.3);
+				background: rgba(68, 221, 136, 0.12);
+				color: var(--success);
+				border-color: rgba(68, 221, 136, 0.25);
 			}
 
 			@media (max-width: 720px) {
-				.wiki-container { margin-top: 2rem; }
-				.wiki-section { padding: 1.5rem; }
-				.wiki-table th, .wiki-table td { padding: 0.6rem 0.7rem; font-size: 0.85rem; }
+				.wiki-container { margin-top: 1.5rem; }
+				.wiki-section { padding: 1.4rem; }
+				.wiki-table th, .wiki-table td { padding: 0.55rem 0.65rem; font-size: 0.82rem; }
 			}
 		</style>
 	</head>
@@ -171,26 +176,24 @@ import { SITE_TITLE } from '../consts';
 		<main>
 			<div class="wiki-container">
 				<header class="wiki-header">
-					<p class="eyebrow" style="--accent-color: var(--accent)">Documentation & Handbook</p>
 					<h1>TeBlocks Wiki</h1>
-					<p>Everything you need to know about the engine, rotation physics, attack mechanics, and competitive systems.</p>
+					<p>Engine mechanics, Super Rotation System (SRS), attack calculations, and networking guide.</p>
 				</header>
 
 				<nav class="wiki-nav" aria-label="Wiki table of contents">
-					<a href="#how-to-play">Core Mechanics</a>
-					<a href="#controls">Controls & Handling</a>
+					<a href="#how-to-play">Mechanics</a>
+					<a href="#controls">Controls</a>
 					<a href="#attacks">Attacks & Garbage</a>
-					<a href="#modes">Game Modes</a>
-					<a href="#networking">Network Model</a>
-					<a href="#upstream">Techmino Heritage</a>
+					<a href="#modes">Modes</a>
+					<a href="#networking">Networking</a>
+					<a href="#upstream">Heritage</a>
 				</nav>
 
 				<!-- CORE MECHANICS -->
 				<section class="wiki-section" id="how-to-play" aria-labelledby="mech-title">
-					<p class="eyebrow" style="--accent-color: var(--i)">Physics & Rules</p>
 					<h2 id="mech-title">Core Gameplay Mechanics</h2>
 					<p>
-						TeBlocks is a modern, fast-paced tetromino game built for competitive parity. It adheres to standard guideline-compatible rotation and piece generation, ensuring that all competitive skills translate seamlessly.
+						TeBlocks is built for competitive parity. It adheres to standard guideline-compatible rotation and piece generation, ensuring that all competitive skills translate seamlessly.
 					</p>
 
 					<div class="info-grid">
@@ -215,7 +218,6 @@ import { SITE_TITLE } from '../consts';
 
 				<!-- CONTROLS & HANDLING -->
 				<section class="wiki-section" id="controls" aria-labelledby="controls-title">
-					<p class="eyebrow" style="--accent-color: var(--o)">Input & Customization</p>
 					<h2 id="controls-title">Controls & Handling Configuration</h2>
 					<p>
 						High-level stacking requires sub-frame input responsiveness. TeBlocks features fully rebindable controls and customizable keyboard handling values.
@@ -273,7 +275,7 @@ import { SITE_TITLE } from '../consts';
 						</tbody>
 					</table>
 
-					<h3 style="margin-top: 1.8rem; font-size: 1.2rem;">Handling Parameters (DAS / ARR / SDF)</h3>
+					<h3 style="margin-top: 1.5rem; font-size: 1.15rem;">Handling Parameters (DAS / ARR / SDF)</h3>
 					<ul>
 						<li><strong>DAS (Delayed Auto Shift):</strong> The initial delay (typically 80ms – 160ms) before the piece auto-repeats across the matrix when a directional key is held.</li>
 						<li><strong>ARR (Auto Repeat Rate):</strong> The repetition speed (typically 0ms – 30ms) between piece steps after DAS activates. 0ms ARR produces instant wall teleportation.</li>
@@ -283,7 +285,6 @@ import { SITE_TITLE } from '../consts';
 
 				<!-- ATTACKS & GARBAGE -->
 				<section class="wiki-section" id="attacks" aria-labelledby="attacks-title">
-					<p class="eyebrow" style="--accent-color: var(--z)">Combat & Garbage</p>
 					<h2 id="attacks-title">Attack Table & Garbage Mechanics</h2>
 					<p>
 						In multiplayer modes (Ranked 1v1 and Casual MP), clearing lines sends garbage lines to your opponent's board with a single random hole. Incoming attacks enter a red warning buffer and can be cancelled out by clearing lines defensively.
@@ -340,14 +341,13 @@ import { SITE_TITLE } from '../consts';
 							</tr>
 						</tbody>
 					</table>
-					<p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.8rem;">
+					<p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.8rem;">
 						<strong>Combos:</strong> Consecutive line clears ramp attack exponentially. A 2-combo sends +1 line, a 4-combo sends +2 lines, an 8-combo sends +4 lines, and combos exceeding 11 scale aggressively.
 					</p>
 				</section>
 
 				<!-- GAME MODES -->
 				<section class="wiki-section" id="modes" aria-labelledby="modes-wiki-title">
-					<p class="eyebrow" style="--accent-color: var(--s)">Modes Guide</p>
 					<h2 id="modes-wiki-title">Game Modes Overview</h2>
 
 					<div class="info-grid">
@@ -372,7 +372,6 @@ import { SITE_TITLE } from '../consts';
 
 				<!-- NETWORKING -->
 				<section class="wiki-section" id="networking" aria-labelledby="networking-title">
-					<p class="eyebrow" style="--accent-color: var(--i)">Architecture</p>
 					<h2 id="networking-title">Network Model & Ranked Verification</h2>
 					<p>
 						TeBlocks uses a <strong>client-simulated</strong> networking model. Rather than forcing players through a high-latency server-authoritative loop that delays every keypress, all piece movement, rotation, and drops are handled instantaneously on the local client (zero perceived input lag).
@@ -384,7 +383,6 @@ import { SITE_TITLE } from '../consts';
 
 				<!-- TECHMINO UPSTREAM -->
 				<section class="wiki-section" id="upstream" aria-labelledby="upstream-title">
-					<p class="eyebrow" style="--accent-color: var(--t)">Heritage</p>
 					<h2 id="upstream-title">About Techmino & TeBlocks</h2>
 					<p>
 						TeBlocks is an open source project proudly forked and evolved from <a href="https://github.com/26f-studio/Techmino" target="_blank" rel="noopener noreferrer">Techmino</a> by 26f-studio. Powered by Lua and LÖVE 11.5, TeBlocks extends Techmino with competitive real-time multiplayer servers, matchmaking ladders, dedicated replay verifiers, and an expansive web platform for profiles and skins.

@@ -16,44 +16,29 @@ const { size = 30, class: className = '' } = Astro.props;
 	aria-hidden="true"
 >
 	<defs>
-		<linearGradient id="tb-grad" x1="0" y1="0" x2="1" y2="1">
-			<stop offset="0" stop-color="#3ea6c3" />
-			<stop offset="1" stop-color="#5bfa80" />
+		<linearGradient id="tb-block-top" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0%" stop-color="#ff88be" />
+			<stop offset="100%" stop-color="#ff66ab" />
 		</linearGradient>
-		<filter id="logo-glow" x="-30%" y="-30%" width="160%" height="160%">
-			<feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#3ea6c3" flood-opacity="0.45" />
-		</filter>
 	</defs>
-	<g class="logo-wave" filter="url(#logo-glow)">
-		<rect x="2" y="7" width="8" height="8" rx="2" fill="url(#tb-grad)" />
-		<rect x="12" y="7" width="8" height="8" rx="2" fill="url(#tb-grad)" />
-		<rect x="22" y="7" width="8" height="8" rx="2" fill="url(#tb-grad)" />
-		<rect x="12" y="17" width="8" height="8" rx="2" fill="url(#tb-grad)" />
+	<g class="logo-blocks">
+		<!-- T-tetromino with clean arcade borders -->
+		<rect x="3" y="6" width="8" height="8" rx="1.5" fill="url(#tb-block-top)" stroke="#cc4488" stroke-width="1" />
+		<rect x="12" y="6" width="8" height="8" rx="1.5" fill="url(#tb-block-top)" stroke="#cc4488" stroke-width="1" />
+		<rect x="21" y="6" width="8" height="8" rx="1.5" fill="url(#tb-block-top)" stroke="#cc4488" stroke-width="1" />
+		<rect x="12" y="15" width="8" height="8" rx="1.5" fill="url(#tb-block-top)" stroke="#cc4488" stroke-width="1" />
 	</g>
 </svg>
 
 <style>
 	.logo-mark {
 		display: block;
-		overflow: visible;
+		flex-shrink: 0;
 	}
-	.logo-wave {
-		transform-box: fill-box;
-		transform-origin: 50% 100%;
-		animation: logo-wave 3.2s ease-in-out infinite;
+	.logo-blocks {
+		transition: transform 0.15s ease;
 	}
-	@keyframes logo-wave {
-		0%,
-		100% {
-			transform: rotate(-2deg) translateY(0);
-		}
-		50% {
-			transform: rotate(2deg) translateY(-1px);
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.logo-wave {
-			animation: none;
-		}
+	.logo-mark:hover .logo-blocks {
+		transform: scale(1.05);
 	}
 </style>

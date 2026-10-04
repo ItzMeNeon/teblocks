@@ -17,71 +17,70 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 		/>
 		<style>
 			.achievements-hero {
-				padding: 3.5rem 0 2rem;
+				padding: 2.5rem 0 1.8rem;
 				text-align: center;
 				border-bottom: 1px solid var(--border);
-				margin-bottom: 2.5rem;
+				margin-bottom: 2rem;
 			}
 			.achievements-hero h1 {
-				font-size: 2.6rem;
+				font-size: 2.2rem;
 				font-weight: 800;
-				margin: 0.4rem 0 0.8rem;
-				letter-spacing: -0.02em;
+				margin: 0 0 0.5rem;
+				text-transform: uppercase;
+				letter-spacing: 0.02em;
 			}
 			.achievements-hero p {
 				color: var(--text-dim);
-				max-width: 620px;
+				max-width: 600px;
 				margin: 0 auto;
-				font-size: 1.05rem;
-				line-height: 1.6;
+				font-size: 0.95rem;
+				line-height: 1.5;
 			}
 
-			/* Player Summary Card (Active when logged in) */
+			/* Player Summary Card */
 			.player-progress-card {
-				background: var(--panel);
+				background: #14141e;
 				border: 1px solid var(--border);
 				border-radius: var(--radius-lg);
-				padding: 1.6rem 2rem;
-				margin-bottom: 2.5rem;
+				padding: 1.4rem 1.8rem;
+				margin-bottom: 2rem;
 				box-shadow: var(--shadow);
-				backdrop-filter: blur(14px);
-				-webkit-backdrop-filter: blur(14px);
 			}
 			.progress-header {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				margin-bottom: 1rem;
+				margin-bottom: 0.8rem;
 				flex-wrap: wrap;
 				gap: 1rem;
 			}
 			.progress-header h2 {
-				font-size: 1.3rem;
+				font-size: 1.2rem;
 				margin: 0;
 			}
 			.progress-stats {
 				display: flex;
 				gap: 1.5rem;
-				font-size: 0.95rem;
+				font-size: 0.88rem;
 			}
 			.progress-stat strong {
 				color: var(--accent);
-				font-size: 1.15rem;
+				font-size: 1.05rem;
+				font-family: var(--font-mono);
 			}
 			.progress-bar-bg {
 				width: 100%;
-				height: 10px;
+				height: 8px;
 				background: var(--bg-elevated);
-				border-radius: 999px;
+				border-radius: var(--radius-sm);
 				overflow: hidden;
 				border: 1px solid var(--border);
 			}
 			.progress-bar-fill {
 				height: 100%;
 				width: 0%;
-				background: linear-gradient(90deg, var(--accent), var(--accent-2));
-				box-shadow: 0 0 12px var(--accent-glow);
-				transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+				background: var(--accent);
+				transition: width 0.6s ease;
 			}
 
 			/* Category Filters */
@@ -90,87 +89,81 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 				justify-content: space-between;
 				align-items: center;
 				gap: 1rem;
-				margin-bottom: 2rem;
+				margin-bottom: 1.8rem;
 				flex-wrap: wrap;
 			}
 			.filter-tabs {
 				display: flex;
-				gap: 0.5rem;
+				gap: 0.4rem;
 				flex-wrap: wrap;
 			}
 			.filter-btn {
-				background: var(--panel);
+				background: var(--bg-elevated);
 				border: 1px solid var(--border);
 				color: var(--text-dim);
-				padding: 0.5rem 1rem;
-				border-radius: 999px;
+				padding: 0.4rem 0.9rem;
+				border-radius: var(--radius-sm);
 				font-family: var(--font-ui);
-				font-size: 0.85rem;
-				font-weight: 600;
+				font-size: 0.82rem;
+				font-weight: 700;
 				cursor: pointer;
 				transition: all var(--transition-fast);
+				text-transform: uppercase;
+				letter-spacing: 0.03em;
 			}
 			.filter-btn:hover {
-				color: var(--text);
-				border-color: var(--accent);
+				color: #ffffff;
+				border-color: var(--border-bright);
 			}
 			.filter-btn.active {
 				background: var(--accent);
-				color: #001a1c;
+				color: #ffffff;
 				border-color: var(--accent);
-				font-weight: 700;
-				box-shadow: 0 0 14px var(--accent-glow);
 			}
 
 			/* Achievements Grid */
 			.achievements-grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-				gap: 1.2rem;
-				margin-bottom: 4rem;
+				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+				gap: 1rem;
+				margin-bottom: 3.5rem;
 			}
 			.achievement-card {
-				background: var(--panel);
+				background: #14141e;
 				border: 1px solid var(--border);
-				border-radius: var(--radius-lg);
-				padding: 1.4rem;
+				border-radius: var(--radius);
+				padding: 1.2rem;
 				display: flex;
-				gap: 1.1rem;
+				gap: 1rem;
 				position: relative;
 				overflow: hidden;
 				box-shadow: var(--shadow);
-				backdrop-filter: blur(12px);
-				-webkit-backdrop-filter: blur(12px);
-				transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+				transition: border-color var(--transition-fast);
 			}
 			.achievement-card:hover {
-				transform: translateY(-2px);
-				box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+				border-color: var(--border-bright);
 			}
 			.achievement-card.unlocked {
 				border-color: var(--card-border, var(--border));
-				background: linear-gradient(135deg, var(--card-bg, rgba(10, 20, 30, 0.65)), var(--panel));
-				box-shadow: 0 4px 20px var(--card-glow, transparent);
+				background: #171724;
 			}
 			.achievement-card.locked {
-				opacity: 0.65;
-				filter: grayscale(0.25);
+				opacity: 0.6;
 			}
 			.achievement-icon-wrap {
-				width: 52px;
-				height: 52px;
-				border-radius: var(--radius);
+				width: 44px;
+				height: 44px;
+				border-radius: var(--radius-sm);
 				background: var(--bg-elevated);
 				border: 1px solid var(--border);
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				font-size: 1.7rem;
+				font-size: 1.5rem;
 				flex-shrink: 0;
 			}
 			.achievement-card.unlocked .achievement-icon-wrap {
 				border-color: var(--card-border);
-				box-shadow: 0 0 12px var(--card-glow);
 			}
 			.achievement-body {
 				flex: 1;
@@ -180,36 +173,38 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 				display: flex;
 				justify-content: space-between;
 				align-items: flex-start;
-				margin-bottom: 0.3rem;
-				gap: 0.5rem;
+				margin-bottom: 0.25rem;
+				gap: 0.4rem;
 			}
 			.achievement-title {
 				margin: 0;
-				font-size: 1.05rem;
+				font-size: 0.98rem;
 				font-weight: 700;
-				color: var(--text);
+				color: #ffffff;
 			}
 			.tier-badge {
-				font-size: 0.68rem;
+				font-size: 0.65rem;
 				font-weight: 800;
 				text-transform: uppercase;
-				letter-spacing: 0.06em;
-				padding: 2px 7px;
-				border-radius: 999px;
+				letter-spacing: 0.05em;
+				padding: 2px 6px;
+				border-radius: var(--radius-sm);
 				border: 1px solid currentColor;
+				font-family: var(--font-mono);
 			}
 			.achievement-desc {
 				color: var(--text-dim);
-				font-size: 0.86rem;
-				line-height: 1.45;
-				margin: 0 0 0.8rem;
+				font-size: 0.84rem;
+				line-height: 1.4;
+				margin: 0 0 0.6rem;
 			}
 			.achievement-progress-info {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				font-size: 0.78rem;
+				font-size: 0.76rem;
 				color: var(--text-muted);
+				font-family: var(--font-mono);
 			}
 			.achievement-pts {
 				font-weight: 700;
@@ -219,12 +214,12 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 				font-weight: 600;
 			}
 			.achievement-card.unlocked .achievement-status-tag {
-				color: #5bfa80;
+				color: var(--success);
 			}
 
 			@media (max-width: 600px) {
-				.achievements-hero h1 { font-size: 2rem; }
-				.player-progress-card { padding: 1.2rem; }
+				.achievements-hero h1 { font-size: 1.8rem; }
+				.player-progress-card { padding: 1.1rem; }
 				.progress-header { flex-direction: column; align-items: flex-start; }
 			}
 		</style>
@@ -233,8 +228,7 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 		<Header />
 		<main>
 			<section class="achievements-hero">
-				<p class="eyebrow" style="--accent-color: var(--z)">Player Progression</p>
-				<h1>TeBlocks Achievements</h1>
+				<h1>TeBlocks Badges</h1>
 				<p>
 					Unlock badges across speed, competitive duels, milestones, and community participation. Earn points and showcase your legacy.
 				</p>
@@ -245,7 +239,7 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 				<div class="progress-header">
 					<div>
 						<h2 id="player-greeting">Your Achievements</h2>
-						<span id="player-rank-sub" style="font-size: 0.85rem; color: var(--text-dim);">Tracking live profile stats</span>
+						<span id="player-rank-sub" style="font-size: 0.8rem; color: var(--text-dim);">Live profile tracker</span>
 					</div>
 					<div class="progress-stats">
 						<div class="progress-stat">
@@ -272,7 +266,7 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 					<button class="filter-btn" data-filter="dedication">Dedication</button>
 					<button class="filter-btn" data-filter="identity">Identity & Region</button>
 				</div>
-				<span style="font-size: 0.85rem; color: var(--text-muted);">{totalPoints} Total Points Available</span>
+				<span style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">{totalPoints} Total Points Available</span>
 			</div>
 
 			<!-- Achievements Grid -->
@@ -286,7 +280,7 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 							data-category={ach.category}
 							data-id={ach.id}
 							data-tier={ach.tier}
-							style={`--card-border: ${colors.border}; --card-bg: ${colors.bg}; --card-text: ${colors.text}; --card-glow: ${colors.glow};`}
+							style={`--card-border: ${colors.border}; --card-bg: ${colors.bg}; --card-text: ${colors.text};`}
 						>
 							<div class="achievement-icon-wrap" aria-hidden="true">
 								{ach.icon}
@@ -314,7 +308,7 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 		<Footer />
 
 		<script>
-			import { ACHIEVEMENTS, evaluatePlayerAchievements } from '../lib/achievements';
+			import { evaluatePlayerAchievements } from '../lib/achievements';
 
 			const progressSection = document.getElementById('player-progress-section');
 			const unlockedCountEl = document.getElementById('unlocked-count');

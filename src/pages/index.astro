@@ -13,250 +13,272 @@ const posts = (await getCollection('blog'))
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`${SITE_TITLE} — competitive block stacking`} description={SITE_DESCRIPTION} />
+		<BaseHead title={`${SITE_TITLE} — Competitive Block Stacking`} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
 		<Header />
 		<main>
-			<!-- HERO -->
-			<section class="hero" id="play" aria-labelledby="hero-title">
-				<div class="tetromino-particles" aria-hidden="true">
-					<i style="--c: var(--i); left: 10%; animation-duration: 15s; animation-delay: -2s;"></i>
-					<i style="--c: var(--o); left: 25%; animation-duration: 22s; animation-delay: -5s;"></i>
-					<i style="--c: var(--t); left: 40%; animation-duration: 18s; animation-delay: -1s;"></i>
-					<i style="--c: var(--s); left: 55%; animation-duration: 25s; animation-delay: -8s;"></i>
-					<i style="--c: var(--z); left: 70%; animation-duration: 19s; animation-delay: -4s;"></i>
-					<i style="--c: var(--j); left: 85%; animation-duration: 21s; animation-delay: -10s;"></i>
-					<i style="--c: var(--l); left: 95%; animation-duration: 16s; animation-delay: -6s;"></i>
-				</div>
-				<div class="hero-content">
-					<p class="eyebrow" style="--accent-color: var(--accent)">Built on Techmino · Real-Time SRS · 7-Bag</p>
-					<h1 id="hero-title">Stack fast.<br />Play fair.</h1>
-					<p class="lede">
-						A competitive block-stacking game built on Techmino — real SRS rotation and wall kicks,
-						a fair 7-bag randomizer, and fast responsive multiplayer. Climb the ranked
-						ladder, drop into casual rooms, take on the Daily Challenge, or chase personal records in minigames.
+			<!-- GAME HERO / PORTAL HEADER -->
+			<section class="game-hero" id="play" aria-labelledby="hero-title">
+				<div class="hero-left">
+					<div class="game-badge-strip">
+						<span class="badge-tech">Techmino Engine</span>
+						<span class="badge-srs">SRS Rotation</span>
+						<span class="badge-bag">7-Bag System</span>
+					</div>
+					<h1 id="hero-title">Te<span class="text-accent">blocks</span></h1>
+					<p class="hero-desc">
+						Fast, cheat-resistant, multiplayer block-stacking. Ranked 1v1 duels with server replay verification, 40-line speedruns, daily challenges, and custom lobbies.
 					</p>
-					<div class="hero-cta">
-						<a class="btn btn-primary btn-lg" href="#download">Download client</a>
-						<a class="btn btn-secondary btn-lg" href="/leaderboards/">View leaderboards</a>
+					<div class="hero-actions">
+						<a class="btn btn-primary btn-lg" href="#download">
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="7 10 12 15 17 10"></polyline>
+								<line x1="12" y1="15" x2="12" y2="3"></line>
+							</svg>
+							Download Client
+						</a>
+						<a class="btn btn-secondary btn-lg" href="/leaderboards/">
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+								<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+								<path d="M4 22h16"/>
+								<path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1 .45-1 1v3h12v-3c0-.55-.45-1-1-1h-2c-.55 0-1-.45-1-1v-2.34"/>
+								<path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
+							</svg>
+							Leaderboards
+						</a>
 					</div>
 				</div>
-				<div class="hero-board">
-					<div class="hero-glow"></div>
-					<div class="hero-video-frame">
-						<video
-							id="hero-video"
-							class="hero-video"
-							autoplay
-							loop
-							muted
-							playsinline
-							preload="metadata"
-							aria-label="TeBlocks gameplay preview"
-						>
-							<source src="/media/teblockspreview.webm" type="video/webm" />
-						</video>
-					</div>
-				</div>
-			</section>
 
-			<!-- COMMUNITY STATS -->
-			<section class="section stats-banner">
-				<div class="stats-panel panel">
-					<div class="stat-item">
-						<span class="stat-icon">🎮</span>
-						<div class="stat-text">
-							<span class="stat-value" id="stat-registered">—</span>
-							<span class="stat-label">Players Registered</span>
+				<div class="hero-right">
+					<div class="preview-cabinet">
+						<div class="cabinet-header">
+							<span class="cabinet-dot red"></span>
+							<span class="cabinet-dot yellow"></span>
+							<span class="cabinet-dot green"></span>
+							<span class="cabinet-title">LIVE PREVIEW</span>
 						</div>
-					</div>
-					<div class="stat-item">
-						<span class="stat-icon">⚔️</span>
-						<div class="stat-text">
-							<span class="stat-value" id="stat-matches">—</span>
-							<span class="stat-label">Matches Played</span>
-						</div>
-					</div>
-					<div class="stat-item">
-						<span class="stat-icon">📊</span>
-						<div class="stat-text">
-							<span class="stat-value" id="stat-online">—</span>
-							<span class="stat-label">Online Now</span>
+						<div class="cabinet-video-wrap">
+							<video
+								id="hero-video"
+								class="hero-video"
+								autoplay
+								loop
+								muted
+								playsinline
+								preload="metadata"
+								aria-label="TeBlocks gameplay preview"
+							>
+								<source src="/media/teblockspreview.webm" type="video/webm" />
+							</video>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			<!-- PLAYERS ONLINE NOW -->
-			<section class="section online" id="online" aria-labelledby="online-title">
-				<div class="section-header">
-					<p class="eyebrow" style="--accent-color: var(--accent)">Live</p>
-					<h2 id="online-title">Players online now</h2>
-					<p>Who's stacking right this second — updated in real time.</p>
+			<!-- COMMUNITY STATS RACK (TETR.IO / osu! style) -->
+			<section class="stats-bar">
+				<div class="stat-rack panel">
+					<div class="stat-item">
+						<span class="stat-num" id="stat-online">—</span>
+						<span class="stat-label"><span class="pulse-dot"></span> Online Now</span>
+					</div>
+					<div class="stat-divider"></div>
+					<div class="stat-item">
+						<span class="stat-num" id="stat-matches">—</span>
+						<span class="stat-label">Matches Played</span>
+					</div>
+					<div class="stat-divider"></div>
+					<div class="stat-item">
+						<span class="stat-num" id="stat-registered">—</span>
+						<span class="stat-label">Registered Players</span>
+					</div>
 				</div>
-				<div class="online-grid">
-					<div class="online-stat panel">
-						<div class="online-stat-top">
-							<div>
-								<div class="online-count" id="online-count">—</div>
-								<div class="online-count-label">players playing</div>
+			</section>
+
+			<!-- LIVE PLAYERS ONLINE MONITOR -->
+			<section class="section" id="online" aria-labelledby="online-title">
+				<div class="section-title-row">
+					<div>
+						<h2 id="online-title">Server Activity</h2>
+						<p>Real-time player traffic and current lobby occupants</p>
+					</div>
+					<div class="live-indicator-tag">
+						<span class="live-pulse"></span>
+						<span>LIVE SERVER</span>
+					</div>
+				</div>
+
+				<div class="online-monitor-grid">
+					<div class="graph-card panel">
+						<div class="graph-meta">
+							<div class="online-stat-val">
+								<span class="count-big" id="online-count">—</span>
+								<span class="count-sub">active stackers</span>
 							</div>
-							<div class="online-live-badge">
-								<span class="live-pulse"></span>
-								<span>LIVE</span>
-							</div>
+							<span class="graph-legend">Activity graph (last 30m)</span>
 						</div>
-						<div class="online-graph-frame">
+						<div class="graph-svg-container">
 							<svg id="online-graph" viewBox="0 0 600 160" preserveAspectRatio="none" role="img" aria-label="Players online over time">
 								<defs>
 									<linearGradient id="graph-fill" x1="0" y1="0" x2="0" y2="1">
-										<stop offset="0%" stop-color="var(--accent)" stop-opacity="0.35" />
-										<stop offset="100%" stop-color="var(--accent)" stop-opacity="0.0" />
+										<stop offset="0%" stop-color="#ff66ab" stop-opacity="0.3" />
+										<stop offset="100%" stop-color="#ff66ab" stop-opacity="0.0" />
 									</linearGradient>
 								</defs>
 								<path id="online-area" fill="url(#graph-fill)" stroke="none" d="" />
-								<polyline id="online-line" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="" />
-								<circle id="online-dot" r="4.5" fill="var(--accent-2)" stroke="var(--bg)" stroke-width="2" cx="0" cy="0" />
+								<polyline id="online-line" fill="none" stroke="#ff66ab" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="" />
+								<circle id="online-dot" r="4" fill="#ffffff" stroke="#ff66ab" stroke-width="2" cx="0" cy="0" />
 							</svg>
 						</div>
 					</div>
-					<div class="online-list panel" aria-label="Online players">
-						<div class="online-list-head">
-							<span>In the lobby</span>
-							<span class="online-badge-count" id="online-lobby-count">0</span>
+
+					<div class="lobby-card panel">
+						<div class="lobby-header">
+							<span>In Lobby</span>
+							<span class="badge-count" id="online-lobby-count">0</span>
 						</div>
-						<ul id="online-players" class="online-players">
+						<ul id="online-players" class="online-players-list">
 							<li class="online-empty">No one online right now — be the first to jump in.</li>
 						</ul>
 					</div>
 				</div>
 			</section>
 
-			<!-- MODES -->
+			<!-- GAME MODES -->
 			<section class="section" id="modes" aria-labelledby="modes-title">
-				<div class="section-header">
-					<p class="eyebrow" style="--accent-color: var(--accent-2)">Modes</p>
-					<h2 id="modes-title">Ways to play</h2>
-					<p>Engineered for casual speedruns and high-stakes 1v1 duels alike.</p>
+				<div class="section-title-row">
+					<div>
+						<h2 id="modes-title">Game Modes</h2>
+						<p>Built for precision competitive duels, casual practice, and global speedruns</p>
+					</div>
 				</div>
-				<div class="mode-grid">
-					<article class="mode-card panel">
-						<div class="mode-accent-bar" style="--card-color: var(--z)"></div>
-						<div class="mode-icon" style="--mode-color: var(--z)">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-							</svg>
+
+				<div class="modes-grid">
+					<article class="mode-slab" style="--mode-color: var(--z);">
+						<div class="mode-top-bar"></div>
+						<div class="mode-header-row">
+							<h3>Ranked 1v1</h3>
+							<span class="mode-badge">ELO Competitive</span>
 						</div>
-						<h3>Ranked 1v1</h3>
-						<p>Strict 1v1 matchmaking with rating stakes. Climb the competitive ladder with promotion, demotion, and an ELO leaderboard that rewards mastery.</p>
-						<span class="mode-tag" style="--tag-color: var(--z)">Competitive · ELO</span>
+						<p>Strict 1v1 matchmaking with server-side replay verification. Climb the tiers from Bronze to Grandmaster.</p>
+						<div class="mode-footer">
+							<span class="mode-meta">Client-side physics · Zero lag</span>
+						</div>
 					</article>
-					<article class="mode-card panel">
-						<div class="mode-accent-bar" style="--card-color: var(--i)"></div>
-						<div class="mode-icon" style="--mode-color: var(--i)">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-								<circle cx="9" cy="7" r="4"></circle>
-								<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-								<path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-							</svg>
+
+					<article class="mode-slab" style="--mode-color: var(--i);">
+						<div class="mode-top-bar"></div>
+						<div class="mode-header-row">
+							<h3>Casual MP</h3>
+							<span class="mode-badge">Custom Rooms</span>
 						</div>
-						<h3>Casual MP</h3>
-						<p>Host custom rooms or drop into an open lobby. Play with friends without rating pressure, test out custom rulesets, or practice together.</p>
-						<span class="mode-tag" style="--tag-color: var(--i)">Multiplayer · Free</span>
+						<p>Open lobbies and password-protected rooms. Play with friends, customize garbage mechanics, or spectate.</p>
+						<div class="mode-footer">
+							<span class="mode-meta">Free-for-all · Spectator mode</span>
+						</div>
 					</article>
-					<article class="mode-card panel">
-						<div class="mode-accent-bar" style="--card-color: var(--s)"></div>
-						<div class="mode-icon" style="--mode-color: var(--s)">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-								<line x1="16" y1="2" x2="16" y2="6"></line>
-								<line x1="8" y1="2" x2="8" y2="6"></line>
-								<line x1="3" y1="10" x2="21" y2="10"></line>
-							</svg>
+
+					<article class="mode-slab" style="--mode-color: var(--s);">
+						<div class="mode-top-bar"></div>
+						<div class="mode-header-row">
+							<h3>Daily Challenge</h3>
+							<span class="mode-badge">Global Seed</span>
 						</div>
-						<h3>Daily Challenge</h3>
-						<p>A fresh seeded puzzle challenge every single day. Everyone plays the exact same seed on global daily leaderboards to test their optimal stacking.</p>
-						<span class="mode-tag" style="--tag-color: var(--s)">Daily · Global Seed</span>
+						<p>A fresh synchronized puzzle challenge every 24 hours. Everyone stacks the identical seed to find optimal routing.</p>
+						<div class="mode-footer">
+							<span class="mode-meta">Daily reset · Leaderboard</span>
+						</div>
 					</article>
-					<article class="mode-card panel">
-						<div class="mode-accent-bar" style="--card-color: var(--o)"></div>
-						<div class="mode-icon" style="--mode-color: var(--o)">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<circle cx="12" cy="12" r="10"></circle>
-								<polyline points="12 6 12 12 16 14"></polyline>
-							</svg>
+
+					<article class="mode-slab" style="--mode-color: var(--o);">
+						<div class="mode-top-bar"></div>
+						<div class="mode-header-row">
+							<h3>Sprint & Solo</h3>
+							<span class="mode-badge">Speedrun</span>
 						</div>
-						<h3>Minigames</h3>
-						<p>Speedrun modes to hone your mechanics: Sprint 40 Lines, Sprint 100L, Ultra 2-minute score attack, and custom handling practice rooms.</p>
-						<span class="mode-tag" style="--tag-color: var(--o)">Single-player · Sprint</span>
+						<p>Precision single-player speedruns: 40 Lines, 100 Lines sprint, and 2-minute Ultra score attack with millisecond timers.</p>
+						<div class="mode-footer">
+							<span class="mode-meta">40L Sprint · Ultra · Handling practice</span>
+						</div>
 					</article>
 				</div>
 			</section>
 
-			<!-- LATEST NEWS -->
-			<section class="section news" id="news" aria-labelledby="news-title">
-				<div class="section-header">
-					<p class="eyebrow" style="--accent-color: var(--accent)">Updates</p>
-					<h2 id="news-title">Latest news</h2>
+			<!-- COMMUNITY NEWS / CHANGELOG -->
+			<section class="section" id="news" aria-labelledby="news-title">
+				<div class="section-title-row">
+					<div>
+						<h2 id="news-title">News & Updates</h2>
+						<p>Recent client updates, balance notes, and community announcements</p>
+					</div>
+					<a href="/blog/" class="view-all-link">Browse all news &rarr;</a>
 				</div>
-				<div class="news-strip">
+
+				<div class="news-list">
 					{posts.map((post) => (
-						<a href={`/blog/${post.slug}/`} class="news-card panel">
-							<div class="news-card-content">
-								<h3>{post.data.title}</h3>
-								<time datetime={post.data.pubDate.toISOString()}>
+						<a href={`/blog/${post.slug}/`} class="news-item panel">
+							<div class="news-info">
+								<span class="news-tag">Announcement</span>
+								<h3 class="news-headline">{post.data.title}</h3>
+							</div>
+							<div class="news-right">
+								<time class="news-date" datetime={post.data.pubDate.toISOString()}>
 									{post.data.pubDate.toLocaleDateString('en-US', {
 										year: 'numeric',
 										month: 'short',
 										day: 'numeric'
 									})}
 								</time>
+								<span class="news-arrow">&rarr;</span>
 							</div>
-							<span class="news-read-more">Read more &rarr;</span>
 						</a>
 					))}
 				</div>
 			</section>
 
-			<!-- DOWNLOAD -->
-			<section class="section download" id="download" aria-labelledby="download-title">
-				<div class="download-card panel">
-					<div class="download-copy">
-						<p class="eyebrow" style="--accent-color: var(--accent)">Get the client</p>
-						<h2 id="download-title">Ready to play?</h2>
-						<p>Free, lightweight, and cross-platform. Download TeBlocks for your system and start stacking in seconds.</p>
+			<!-- DOWNLOAD STATION -->
+			<section class="section download-section" id="download" aria-labelledby="download-title">
+				<div class="download-container panel">
+					<div class="download-text">
+						<h2 id="download-title">Download Client</h2>
+						<p>Free, lightweight, and cross-platform. No ads, no telemetry, no pay-to-win.</p>
 						<a class="btn btn-primary btn-lg" href="https://github.com/ItzMeNeon/teblocks/releases" rel="noopener" target="_blank">
-							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 								<polyline points="7 10 12 15 17 10"></polyline>
 								<line x1="12" y1="15" x2="12" y2="3"></line>
 							</svg>
-							Download for free
+							Latest Release on GitHub
 						</a>
 					</div>
-					<div class="download-platforms">
-						<a class="platform" href="https://github.com/ItzMeNeon/teblocks/releases" rel="noopener" target="_blank">
-							<div class="platform-info">
-								<span class="platform-name">Windows</span>
-								<span class="platform-meta">64-bit installer & portable (.exe)</span>
+
+					<div class="download-cards">
+						<a class="platform-card" href="https://github.com/ItzMeNeon/teblocks/releases" rel="noopener" target="_blank">
+							<div class="platform-icon">🪟</div>
+							<div class="platform-details">
+								<span class="platform-title">Windows</span>
+								<span class="platform-sub">Installer & Portable .exe</span>
 							</div>
-							<span class="platform-arrow">→</span>
+							<span class="platform-link-tag">Download</span>
 						</a>
-						<a class="platform" href="https://github.com/ItzMeNeon/teblocks/releases" rel="noopener" target="_blank">
-							<div class="platform-info">
-								<span class="platform-name">Android</span>
-								<span class="platform-meta">APK package & mobile build (.apk)</span>
+						<a class="platform-card" href="https://github.com/ItzMeNeon/teblocks/releases" rel="noopener" target="_blank">
+							<div class="platform-icon">🤖</div>
+							<div class="platform-details">
+								<span class="platform-title">Android</span>
+								<span class="platform-sub">Touch-optimized .apk</span>
 							</div>
-							<span class="platform-arrow">→</span>
+							<span class="platform-link-tag">Download</span>
 						</a>
-						<a class="platform" href="https://github.com/ItzMeNeon/teblocks/releases" rel="noopener" target="_blank">
-							<div class="platform-info">
-								<span class="platform-name">Linux</span>
-								<span class="platform-meta">AppImage & tarball (x86_64)</span>
+						<a class="platform-card" href="https://github.com/ItzMeNeon/teblocks/releases" rel="noopener" target="_blank">
+							<div class="platform-icon">🐧</div>
+							<div class="platform-details">
+								<span class="platform-title">Linux</span>
+								<span class="platform-sub">AppImage & Tarball x86_64</span>
 							</div>
-							<span class="platform-arrow">→</span>
+							<span class="platform-link-tag">Download</span>
 						</a>
 					</div>
 				</div>
@@ -277,16 +299,16 @@ const posts = (await getCollection('blog'))
 			const GRAPH_H = 160;
 			const GRAPH_PAD = 12;
 			const GRAPH_MAX_POINTS = 120;
-			let graphHistory = [];
+			let graphHistory: number[] = [];
 
-			function renderGraph(series) {
+			function renderGraph(series: number[]) {
 				if (!onlineLine || !onlineArea || !onlineDot) return;
 				const data = series && series.length ? series : [0];
 				const max = Math.max(5, ...data);
 				const min = Math.min(...data, 0);
 				const n = data.length;
-				const x = (i) => GRAPH_PAD + (n === 1 ? (GRAPH_W - 2 * GRAPH_PAD) / 2 : (i / (n - 1)) * (GRAPH_W - 2 * GRAPH_PAD));
-				const y = (v) => GRAPH_H - GRAPH_PAD - ((v - min) / ((max - min) || 1)) * (GRAPH_H - 2 * GRAPH_PAD);
+				const x = (i: number) => GRAPH_PAD + (n === 1 ? (GRAPH_W - 2 * GRAPH_PAD) / 2 : (i / (n - 1)) * (GRAPH_W - 2 * GRAPH_PAD));
+				const y = (v: number) => GRAPH_H - GRAPH_PAD - ((v - min) / ((max - min) || 1)) * (GRAPH_H - 2 * GRAPH_PAD);
 				const pts = data.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
 				if (n === 1) {
 					const yy = y(data[0]).toFixed(1);
@@ -302,7 +324,7 @@ const posts = (await getCollection('blog'))
 				}
 			}
 
-			function renderList(players) {
+			function renderList(players: any[]) {
 				if (!onlineList) return;
 				if (!players || !players.length) {
 					onlineList.innerHTML = '<li class="online-empty">No one online right now — be the first to jump in.</li>';
@@ -310,22 +332,15 @@ const posts = (await getCollection('blog'))
 					return;
 				}
 				if (onlineLobbyCount) onlineLobbyCount.textContent = String(players.length);
-				const hue = (s) => {
-					let h = 0;
-					for (let i = 0; i < s.length; i += 1) h = (h * 31 + s.charCodeAt(i)) % 360;
-					return h;
-				};
 				onlineList.replaceChildren(
 					...players.slice(0, 12).map((p) => {
 						const li = document.createElement('li');
-						li.className = 'online-player';
-						const h = hue(p.username || p.id || 'x');
+						li.className = 'online-player-row';
+						const initial = (p.username || '?').slice(0, 1).toUpperCase();
 						li.innerHTML = `
-							<span class="online-avatar" style="background:linear-gradient(135deg,hsl(${h} 80% 60%),hsl(${(h + 40) % 360} 80% 55%))">
-								${(p.username || '?').slice(0, 1).toUpperCase()}
-							</span>
-							<span class="online-name">${p.username || 'Unknown'}</span>
-							<span class="online-rating">${p.rating || 0}</span>
+							<span class="player-avatar-mini">${initial}</span>
+							<span class="player-name-mini">${p.username || 'Unknown'}</span>
+							<span class="player-rating-mini">${p.rating || 0}</span>
 						`;
 						return li;
 					})
@@ -362,12 +377,12 @@ const posts = (await getCollection('blog'))
 				setInterval(loadOnline, 15000);
 			}
 
-			function animateValue(id, start, end, duration) {
+			function animateValue(id: string, start: number, end: number, duration: number) {
 				if (start === end) return;
 				const obj = document.getElementById(id);
 				if (!obj) return;
-				let startTimestamp = null;
-				const step = (timestamp) => {
+				let startTimestamp: number | null = null;
+				const step = (timestamp: number) => {
 					if (!startTimestamp) startTimestamp = timestamp;
 					const progress = Math.min((timestamp - startTimestamp) / duration, 1);
 					obj.textContent = Math.floor(progress * (end - start) + start).toLocaleString();
@@ -403,13 +418,13 @@ const posts = (await getCollection('blog'))
 					}
 
 					if (document.getElementById('stat-registered') && registeredCount > 0) {
-						animateValue('stat-registered', 0, registeredCount, 2000);
+						animateValue('stat-registered', 0, registeredCount, 1500);
 					}
 					if (document.getElementById('stat-matches') && matchesCount > 0) {
-						animateValue('stat-matches', 0, matchesCount, 2000);
+						animateValue('stat-matches', 0, matchesCount, 1500);
 					}
 					if (document.getElementById('stat-online') && onlineCount >= 0) {
-						animateValue('stat-online', 0, onlineCount, 2000);
+						animateValue('stat-online', 0, onlineCount, 1500);
 					}
 				} catch (e) {}
 			}
@@ -422,55 +437,103 @@ const posts = (await getCollection('blog'))
 		</script>
 
 		<style>
-			/* ---------- HERO ---------- */
-			.hero {
+			/* ---------- GAME HERO / PORTAL HEADER ---------- */
+			.game-hero {
 				display: grid;
-				grid-template-columns: 1.05fr 0.95fr;
+				grid-template-columns: 1.15fr 0.85fr;
 				align-items: center;
-				gap: 3.5rem;
-				padding: 5rem 0 4.5rem;
-				min-height: 64vh;
+				gap: 3rem;
+				padding: 3rem 0 2rem;
 			}
-			.hero-content { max-width: 60ch; }
-			.hero-content .lede {
-				font-size: 1.12rem;
-				color: var(--text-dim);
-				line-height: 1.7;
-				margin: 1.5rem 0 2.2rem;
-			}
-			.hero-cta {
+			.game-badge-strip {
 				display: flex;
-				gap: 1.1rem;
+				gap: 0.5rem;
+				flex-wrap: wrap;
+				margin-bottom: 0.8rem;
+			}
+			.game-badge-strip span {
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				padding: 0.2em 0.6em;
+				border-radius: var(--radius-sm);
+				background: var(--bg-elevated);
+				border: 1px solid var(--border);
+				color: var(--text-dim);
+			}
+			.badge-tech {
+				border-color: rgba(255, 102, 171, 0.4) !important;
+				color: var(--accent) !important;
+			}
+			.badge-srs {
+				border-color: rgba(85, 204, 221, 0.4) !important;
+				color: var(--i) !important;
+			}
+			.badge-bag {
+				border-color: rgba(255, 204, 34, 0.4) !important;
+				color: var(--gold) !important;
+			}
+			.game-hero h1 {
+				font-size: clamp(2.6rem, 6vw, 4.4rem);
+				font-weight: 900;
+				text-transform: uppercase;
+				letter-spacing: 0.02em;
+				margin: 0 0 0.8rem;
+				line-height: 1;
+			}
+			.text-accent {
+				color: var(--accent);
+			}
+			.hero-desc {
+				font-size: 1.05rem;
+				line-height: 1.6;
+				color: var(--text-dim);
+				max-width: 52ch;
+				margin: 0 0 1.8rem;
+			}
+			.hero-actions {
+				display: flex;
+				gap: 0.8rem;
 				flex-wrap: wrap;
 			}
-			.hero-board {
-				position: relative;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			}
-			.hero-glow {
-				position: absolute;
-				inset: -15% -10% -10% -15%;
-				background: radial-gradient(closest-side, rgba(62, 166, 195, 0.22), transparent 75%);
-				filter: blur(35px);
-				z-index: 0;
-				pointer-events: none;
-			}
-			.hero-video-frame {
-				position: relative;
-				z-index: 1;
-				width: 100%;
-				max-width: 520px;
-				border-radius: 20px;
-				overflow: hidden;
+
+			/* Preview Cabinet */
+			.preview-cabinet {
+				background: #14141e;
 				border: 1px solid var(--border-bright);
-				background: var(--bg-elevated);
-				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), 0 0 35px var(--accent-glow);
-				aspect-ratio: 4 / 3;
+				border-radius: var(--radius-lg);
+				overflow: hidden;
+				box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+			}
+			.cabinet-header {
 				display: flex;
 				align-items: center;
-				justify-content: center;
+				gap: 6px;
+				padding: 0.6rem 0.9rem;
+				background: #0d0d14;
+				border-bottom: 1px solid var(--border);
+			}
+			.cabinet-dot {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+			}
+			.cabinet-dot.red { background: #ff5555; }
+			.cabinet-dot.yellow { background: #ffcc22; }
+			.cabinet-dot.green { background: #44dd88; }
+			.cabinet-title {
+				font-family: var(--font-mono);
+				font-size: 0.68rem;
+				font-weight: 700;
+				letter-spacing: 0.12em;
+				color: var(--text-muted);
+				margin-left: 0.4rem;
+			}
+			.cabinet-video-wrap {
+				aspect-ratio: 4 / 3;
+				background: #000000;
 			}
 			.hero-video {
 				display: block;
@@ -478,73 +541,106 @@ const posts = (await getCollection('blog'))
 				height: 100%;
 				object-fit: cover;
 			}
+
 			@media (max-width: 860px) {
-				.hero {
+				.game-hero {
 					grid-template-columns: 1fr;
-					padding: 3rem 0 2.5rem;
-					min-height: auto;
-					text-align: center;
-					gap: 2.5rem;
+					gap: 2rem;
+					padding: 2rem 0 1rem;
 				}
-				.hero-content { max-width: 100%; }
-				.hero-cta { justify-content: center; }
-				.hero-board { order: -1; }
-				.hero-video-frame { max-width: 440px; margin: 0 auto; }
+				.hero-right {
+					order: -1;
+					max-width: 460px;
+				}
 			}
 
-			/* ---------- SECTION HEADER ---------- */
-			.section-header { text-align: center; max-width: 62ch; margin: 0 auto 3rem; }
-			.section-header .eyebrow { justify-content: center; }
-			.section-header h2 { margin-bottom: 0.5rem; }
-			.section-header p { color: var(--text-muted); font-size: 1.05rem; }
-
-			/* ---------- PLAYERS ONLINE ---------- */
-			.online-grid {
-				display: grid;
-				grid-template-columns: 1.15fr 0.85fr;
-				gap: 1.8rem;
-				align-items: stretch;
+			/* ---------- STATS BAR ---------- */
+			.stats-bar {
+				margin: 1.5rem 0 2.5rem;
 			}
-			.online-stat {
-				padding: 2.2rem;
+			.stat-rack {
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
+				padding: 1.2rem 1.8rem;
+				background: #14141e;
+				border: 1px solid var(--border);
+			}
+			.stat-item {
 				display: flex;
 				flex-direction: column;
-				gap: 0.8rem;
-				border-radius: var(--radius-lg);
-				position: relative;
-				overflow: hidden;
+				align-items: center;
+				gap: 0.2rem;
 			}
-			.online-stat-top {
-				display: flex;
-				align-items: flex-start;
-				justify-content: space-between;
-			}
-			.online-count {
-				font-family: var(--font-display);
-				font-weight: 800;
-				font-size: clamp(3rem, 7vw, 4.8rem);
-				line-height: 1;
-				background: linear-gradient(120deg, var(--h1-grad-start), var(--accent));
-				-webkit-background-clip: text;
-				background-clip: text;
-				-webkit-text-fill-color: transparent;
-			}
-			.online-count-label {
-				color: var(--text-muted);
+			.stat-num {
 				font-family: var(--font-mono);
-				font-size: 0.78rem;
-				letter-spacing: 0.12em;
-				text-transform: uppercase;
-				margin-top: 0.4rem;
+				font-size: 1.8rem;
+				font-weight: 700;
+				color: #ffffff;
+				line-height: 1;
 			}
-			.online-live-badge {
+			.stat-label {
+				font-size: 0.78rem;
+				color: var(--text-muted);
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				display: flex;
+				align-items: center;
+				gap: 0.4rem;
+			}
+			.stat-divider {
+				width: 1px;
+				height: 36px;
+				background: var(--border);
+			}
+			.pulse-dot {
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: var(--success);
+				box-shadow: 0 0 6px var(--success);
+				animation: pulse 1.5s infinite;
+			}
+			@keyframes pulse {
+				0%, 100% { opacity: 1; transform: scale(1); }
+				50% { opacity: 0.4; transform: scale(1.2); }
+			}
+
+			@media (max-width: 640px) {
+				.stat-rack {
+					flex-direction: column;
+					gap: 1.2rem;
+					align-items: stretch;
+				}
+				.stat-divider { display: none; }
+			}
+
+			/* ---------- SECTION TITLE ROW ---------- */
+			.section-title-row {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-end;
+				margin-bottom: 1.5rem;
+				flex-wrap: wrap;
+				gap: 1rem;
+			}
+			.section-title-row h2 {
+				margin: 0 0 0.2rem;
+				font-size: 1.5rem;
+			}
+			.section-title-row p {
+				margin: 0;
+				font-size: 0.88rem;
+				color: var(--text-muted);
+			}
+			.live-indicator-tag {
 				display: inline-flex;
 				align-items: center;
-				gap: 0.45rem;
-				padding: 0.3em 0.75em;
-				border-radius: 999px;
-				background: rgba(91, 250, 128, 0.1);
-				border: 1px solid rgba(91, 250, 128, 0.3);
+				gap: 0.4rem;
+				padding: 0.3em 0.7em;
+				border-radius: var(--radius-sm);
+				background: rgba(68, 221, 136, 0.1);
+				border: 1px solid rgba(68, 221, 136, 0.25);
 				color: var(--success);
 				font-family: var(--font-mono);
 				font-size: 0.72rem;
@@ -552,362 +648,377 @@ const posts = (await getCollection('blog'))
 				letter-spacing: 0.08em;
 			}
 			.live-pulse {
-				width: 7px;
-				height: 7px;
+				width: 6px;
+				height: 6px;
 				border-radius: 50%;
 				background: var(--success);
-				box-shadow: 0 0 0 3px var(--success-glow);
-				animation: pulse 2s infinite;
 			}
-			@keyframes pulse {
-				0% { transform: scale(0.95); opacity: 0.8; }
-				50% { transform: scale(1.15); opacity: 1; }
-				100% { transform: scale(0.95); opacity: 0.8; }
+
+			/* ---------- ONLINE MONITOR ---------- */
+			.online-monitor-grid {
+				display: grid;
+				grid-template-columns: 1.3fr 0.7fr;
+				gap: 1.2rem;
 			}
-			.online-graph-frame {
-				width: 100%;
-				height: 160px;
-				margin-top: auto;
-				border-radius: 12px;
-				background: rgba(0, 0, 0, 0.25);
-				border: 1px solid var(--border);
-				padding: 10px;
+			.graph-card {
+				padding: 1.4rem;
 				display: flex;
-				align-items: center;
+				flex-direction: column;
+				gap: 1rem;
+			}
+			.graph-meta {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-end;
+			}
+			.online-stat-val {
+				display: flex;
+				align-items: baseline;
+				gap: 0.5rem;
+			}
+			.count-big {
+				font-family: var(--font-mono);
+				font-size: 2.6rem;
+				font-weight: 800;
+				color: var(--accent);
+				line-height: 1;
+			}
+			.count-sub {
+				color: var(--text-muted);
+				font-size: 0.85rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+			.graph-legend {
+				font-family: var(--font-mono);
+				font-size: 0.72rem;
+				color: var(--text-muted);
+			}
+			.graph-svg-container {
+				width: 100%;
+				height: 130px;
+				background: #111118;
+				border: 1px solid var(--border);
+				border-radius: var(--radius-sm);
+				padding: 6px;
 			}
 			#online-graph {
 				width: 100%;
 				height: 100%;
-				display: block;
 			}
-			.online-list {
-				padding: 1.8rem;
+
+			.lobby-card {
+				padding: 1.2rem;
 				display: flex;
 				flex-direction: column;
-				border-radius: var(--radius-lg);
 			}
-			.online-list-head {
+			.lobby-header {
 				display: flex;
-				align-items: center;
 				justify-content: space-between;
-				font-size: 0.75rem;
-				letter-spacing: 0.12em;
-				text-transform: uppercase;
-				color: var(--text-muted);
+				align-items: center;
 				font-family: var(--font-mono);
-				margin-bottom: 1.1rem;
-			}
-			.online-badge-count {
-				background: rgba(62, 166, 195, 0.12);
-				color: var(--accent);
-				padding: 0.15em 0.55em;
-				border-radius: 999px;
+				font-size: 0.78rem;
 				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				color: var(--text-muted);
+				margin-bottom: 0.8rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 1px solid var(--border);
 			}
-			.online-players {
+			.badge-count {
+				background: rgba(255, 102, 171, 0.15);
+				color: var(--accent);
+				padding: 0.1em 0.5em;
+				border-radius: var(--radius-sm);
+			}
+			.online-players-list {
 				list-style: none;
 				margin: 0;
 				padding: 0;
 				display: flex;
 				flex-direction: column;
-				gap: 0.5rem;
+				gap: 0.4rem;
 				overflow-y: auto;
-				max-height: 250px;
+				max-height: 160px;
 			}
-			.online-player {
+			.online-player-row {
 				display: flex;
 				align-items: center;
-				gap: 0.75rem;
-				padding: 0.55rem 0.85rem;
-				border-radius: 10px;
-				background: rgba(255, 255, 255, 0.03);
+				gap: 0.6rem;
+				padding: 0.4rem 0.6rem;
+				background: var(--bg-elevated);
 				border: 1px solid var(--border);
-				transition: all var(--transition-fast);
+				border-radius: var(--radius-sm);
+				font-size: 0.86rem;
 			}
-			.online-player:hover {
+			.player-avatar-mini {
+				width: 22px;
+				height: 22px;
+				border-radius: 3px;
 				background: var(--panel-hover);
-				border-color: var(--border-bright);
-				transform: translateX(2px);
-			}
-			.online-avatar {
-				width: 32px;
-				height: 32px;
-				border-radius: 8px;
+				color: var(--accent);
+				font-weight: 800;
+				font-size: 0.72rem;
 				display: grid;
 				place-items: center;
-				font-weight: 800;
-				color: #000000;
-				font-size: 0.82rem;
-				flex-shrink: 0;
 			}
-			.online-name {
+			.player-name-mini {
 				flex: 1;
-				min-width: 0;
+				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
-				white-space: nowrap;
 				font-weight: 600;
-				font-size: 0.92rem;
 			}
-			.online-rating {
+			.player-rating-mini {
 				font-family: var(--font-mono);
+				font-size: 0.78rem;
 				font-weight: 700;
-				font-size: 0.82rem;
-				color: var(--accent);
+				color: var(--text-muted);
 			}
 			.online-empty {
 				color: var(--text-muted);
-				font-size: 0.9rem;
+				font-size: 0.82rem;
 				padding: 1.5rem 0.5rem;
 				text-align: center;
 			}
+
 			@media (max-width: 820px) {
-				.online-grid { grid-template-columns: 1fr; }
+				.online-monitor-grid { grid-template-columns: 1fr; }
 			}
 
-			/* ---------- MODES ---------- */
-			.mode-grid {
+			/* ---------- GAME MODES GRID ---------- */
+			.modes-grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-				gap: 1.6rem;
+				grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+				gap: 1rem;
 			}
-			.mode-card {
+			.mode-slab {
 				position: relative;
+				background: #161622;
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				padding: 1.4rem;
 				display: flex;
 				flex-direction: column;
-				padding: 2.2rem 1.8rem;
-				gap: 1.1rem;
-				border-radius: var(--radius-lg);
-				transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
-				overflow: hidden;
+				gap: 0.8rem;
+				transition: border-color var(--transition-fast);
 			}
-			.mode-accent-bar {
+			.mode-slab:hover {
+				border-color: var(--border-bright);
+			}
+			.mode-top-bar {
 				position: absolute;
 				top: 0;
 				left: 0;
 				right: 0;
 				height: 3px;
-				background: var(--card-color);
-				opacity: 0.8;
+				background: var(--mode-color);
+				border-radius: var(--radius) var(--radius) 0 0;
 			}
-			.mode-card:hover {
-				transform: translateY(-4px);
-				border-color: var(--border-bright);
-				box-shadow: var(--shadow-lg);
+			.mode-header-row {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				gap: 0.5rem;
 			}
-			.mode-icon {
-				width: 48px;
-				height: 48px;
-				border-radius: 12px;
-				background: linear-gradient(135deg, var(--mode-color), color-mix(in srgb, var(--mode-color) 40%, #000));
-				display: grid;
-				place-items: center;
-				color: #000000;
-				box-shadow: 0 4px 18px color-mix(in srgb, var(--mode-color) 40%, transparent);
-				flex-shrink: 0;
-			}
-			.mode-card h3 { font-size: 1.28rem; margin: 0.2rem 0 0; }
-			.mode-card p {
+			.mode-header-row h3 {
 				margin: 0;
-				font-size: 0.93rem;
+				font-size: 1.15rem;
+			}
+			.mode-badge {
+				font-family: var(--font-mono);
+				font-size: 0.65rem;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				padding: 0.2em 0.5em;
+				border-radius: 3px;
+				background: rgba(255, 255, 255, 0.05);
+				color: var(--mode-color);
+				border: 1px solid var(--border);
+				white-space: nowrap;
+			}
+			.mode-slab p {
+				margin: 0;
+				font-size: 0.88rem;
+				line-height: 1.5;
 				color: var(--text-dim);
-				line-height: 1.65;
 				flex: 1;
 			}
-			.mode-tag {
-				align-self: flex-start;
-				padding: 0.3em 0.8em;
-				border-radius: 999px;
-				background: rgba(255, 255, 255, 0.04);
-				border: 1px solid var(--border);
+			.mode-footer {
+				padding-top: 0.6rem;
+				border-top: 1px solid var(--border);
+			}
+			.mode-meta {
+				font-family: var(--font-mono);
+				font-size: 0.72rem;
+				color: var(--text-muted);
+			}
+
+			/* ---------- NEWS LIST (osu! style) ---------- */
+			.news-list {
+				display: flex;
+				flex-direction: column;
+				gap: 0.6rem;
+			}
+			.news-item {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 1rem 1.4rem;
+				text-decoration: none;
+				gap: 1rem;
+				transition: border-color var(--transition-fast), background-color var(--transition-fast);
+			}
+			.news-item:hover {
+				border-color: var(--border-bright);
+				background: var(--panel-hover);
+			}
+			.news-info {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				min-width: 0;
+			}
+			.news-tag {
 				font-family: var(--font-mono);
 				font-size: 0.68rem;
 				font-weight: 700;
-				letter-spacing: 0.05em;
 				text-transform: uppercase;
-				color: var(--tag-color, var(--accent));
+				letter-spacing: 0.08em;
+				background: rgba(255, 102, 171, 0.12);
+				color: var(--accent);
+				padding: 0.2em 0.6em;
+				border-radius: var(--radius-sm);
+				flex-shrink: 0;
 			}
-
-			/* ---------- DOWNLOAD ---------- */
-			.download-card {
-				display: grid;
-				grid-template-columns: 1.1fr 0.9fr;
-				gap: 2.8rem;
-				padding: 3.2rem;
-				align-items: center;
-				border-radius: var(--radius-xl);
-				position: relative;
+			.news-headline {
+				margin: 0;
+				font-size: 1rem;
+				color: #ffffff;
+				white-space: nowrap;
 				overflow: hidden;
-				background:
-					radial-gradient(600px 300px at 100% 0%, rgba(62, 166, 195, 0.12), transparent 70%),
-					var(--panel);
+				text-overflow: ellipsis;
 			}
-			.download-copy h2 { margin-bottom: 0.6rem; font-size: 2.2rem; }
-			.download-copy p { color: var(--text-dim); margin: 0 0 1.8rem; max-width: 44ch; font-size: 1.05rem; }
-			.download-platforms {
-				display: flex;
-				flex-direction: column;
-				gap: 0.85rem;
-			}
-			.platform {
+			.news-right {
 				display: flex;
 				align-items: center;
-				justify-content: space-between;
-				padding: 1.1rem 1.4rem;
-				border-radius: var(--radius);
-				background: rgba(255, 255, 255, 0.03);
-				border: 1px solid var(--border);
-				transition: all var(--transition-fast);
+				gap: 1rem;
+				flex-shrink: 0;
+			}
+			.news-date {
+				font-family: var(--font-mono);
+				font-size: 0.78rem;
+				color: var(--text-muted);
+			}
+			.news-arrow {
+				color: var(--accent);
+				font-weight: 700;
+			}
+			.view-all-link {
+				font-size: 0.85rem;
+				font-weight: 600;
+				color: var(--accent);
 				text-decoration: none;
 			}
-			.platform:hover {
-				border-color: var(--border-bright);
-				background: var(--panel-hover);
-				transform: translateX(4px);
-				box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-			}
-			.platform-info {
-				display: flex;
-				flex-direction: column;
-				gap: 0.15rem;
-			}
-			.platform-name { font-weight: 700; font-size: 1.05rem; color: var(--text); }
-			.platform-meta { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-mono); }
-			.platform-arrow {
-				font-size: 1.2rem;
-				color: var(--accent);
-				transition: transform var(--transition-fast);
-			}
-			.platform:hover .platform-arrow {
-				transform: translateX(3px);
-			}
-			@media (max-width: 860px) {
-				.download-card { grid-template-columns: 1fr; padding: 2.2rem; }
+			.view-all-link:hover {
+				text-decoration: underline;
 			}
 
-			/* ---------- PARTICLES ---------- */
-			.hero {
-				position: relative;
-				overflow: hidden;
-			}
-			.hero-content, .hero-board {
-				position: relative;
-				z-index: 1;
-			}
-			.tetromino-particles {
-				position: absolute;
-				inset: 0;
-				z-index: 0;
-				pointer-events: none;
-			}
-			.tetromino-particles i {
-				position: absolute;
-				top: -50px;
-				width: 20px;
-				height: 20px;
-				background: var(--c);
-				opacity: 0.06;
-				animation: fall linear infinite;
-			}
-			.tetromino-particles i:nth-child(1) { box-shadow: 0 20px 0 var(--c), 0 40px 0 var(--c), 0 60px 0 var(--c); height: 20px; }
-			.tetromino-particles i:nth-child(2) { box-shadow: 20px 0 0 var(--c), 0 20px 0 var(--c), 20px 20px 0 var(--c); }
-			.tetromino-particles i:nth-child(3) { box-shadow: -20px 20px 0 var(--c), 0 20px 0 var(--c), 20px 20px 0 var(--c); }
-			.tetromino-particles i:nth-child(4) { box-shadow: 20px 0 0 var(--c), 0 20px 0 var(--c), -20px 20px 0 var(--c); }
-			.tetromino-particles i:nth-child(5) { box-shadow: -20px 0 0 var(--c), 0 20px 0 var(--c), 20px 20px 0 var(--c); }
-			.tetromino-particles i:nth-child(6) { box-shadow: 0 20px 0 var(--c), 0 40px 0 var(--c), -20px 40px 0 var(--c); }
-			.tetromino-particles i:nth-child(7) { box-shadow: 0 20px 0 var(--c), 0 40px 0 var(--c), 20px 40px 0 var(--c); }
-			
-			@keyframes fall {
-				0% { transform: translateY(-100px) rotate(0deg); }
-				100% { transform: translateY(120vh) rotate(360deg); }
-			}
-
-			/* ---------- COMMUNITY STATS ---------- */
-			.stats-banner {
-				padding: 0 0 2rem;
-			}
-			.stats-panel {
-				display: flex;
-				justify-content: space-around;
-				align-items: center;
-				padding: 2rem;
-				border-radius: var(--radius-lg);
-				background: rgba(255, 255, 255, 0.02);
-				backdrop-filter: blur(10px);
-				border: 1px solid var(--border);
-			}
-			.stat-item {
-				display: flex;
-				align-items: center;
-				gap: 1.2rem;
-			}
-			.stat-icon {
-				font-size: 2.5rem;
-			}
-			.stat-text {
-				display: flex;
-				flex-direction: column;
-			}
-			.stat-value {
-				font-size: 2.2rem;
-				font-weight: 800;
-				font-family: var(--font-display);
-				line-height: 1.1;
-				color: var(--text);
-			}
-			.stat-label {
-				font-size: 0.85rem;
-				color: var(--text-muted);
-				text-transform: uppercase;
-				letter-spacing: 0.05em;
-				font-family: var(--font-mono);
-				margin-top: 0.2rem;
-			}
-			@media (max-width: 768px) {
-				.stats-panel {
+			@media (max-width: 640px) {
+				.news-item {
 					flex-direction: column;
-					gap: 2rem;
 					align-items: flex-start;
+					gap: 0.5rem;
+				}
+				.news-info {
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 0.4rem;
+				}
+				.news-headline {
+					white-space: normal;
 				}
 			}
 
-			/* ---------- NEWS STRIP ---------- */
-			.news-strip {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-				gap: 1.5rem;
+			/* ---------- DOWNLOAD STATION ---------- */
+			.download-section {
+				margin-top: 1rem;
 			}
-			.news-card {
+			.download-container {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 2.5rem;
+				padding: 2.2rem;
+				align-items: center;
+				background: #14141e;
+			}
+			.download-text h2 {
+				margin: 0 0 0.5rem;
+				font-size: 1.8rem;
+			}
+			.download-text p {
+				color: var(--text-dim);
+				margin: 0 0 1.5rem;
+				max-width: 40ch;
+				font-size: 0.95rem;
+			}
+			.download-cards {
 				display: flex;
 				flex-direction: column;
-				justify-content: space-between;
-				padding: 1.5rem;
-				border-radius: var(--radius-lg);
-				text-decoration: none;
-				transition: all var(--transition-fast);
-				background: rgba(255, 255, 255, 0.02);
-				border: 1px solid var(--border);
-				gap: 1rem;
+				gap: 0.6rem;
 			}
-			.news-card:hover {
-				transform: translateY(-2px);
+			.platform-card {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				padding: 0.85rem 1.1rem;
+				background: var(--bg-elevated);
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				text-decoration: none;
+				transition: border-color var(--transition-fast), background-color var(--transition-fast);
+			}
+			.platform-card:hover {
 				border-color: var(--border-bright);
 				background: var(--panel-hover);
 			}
-			.news-card-content h3 {
-				font-size: 1.1rem;
-				margin: 0 0 0.5rem;
-				color: var(--text);
+			.platform-icon {
+				font-size: 1.5rem;
+				flex-shrink: 0;
 			}
-			.news-card-content time {
-				font-size: 0.85rem;
-				color: var(--text-muted);
+			.platform-details {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+			}
+			.platform-title {
+				font-weight: 700;
+				color: #ffffff;
+				font-size: 0.95rem;
+			}
+			.platform-sub {
 				font-family: var(--font-mono);
+				font-size: 0.74rem;
+				color: var(--text-muted);
 			}
-			.news-read-more {
-				font-size: 0.9rem;
+			.platform-link-tag {
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				font-weight: 700;
 				color: var(--accent);
-				font-weight: 600;
+				padding: 0.2em 0.6em;
+				border-radius: var(--radius-sm);
+				background: rgba(255, 102, 171, 0.1);
+			}
+
+			@media (max-width: 760px) {
+				.download-container {
+					grid-template-columns: 1fr;
+					gap: 1.8rem;
+					padding: 1.5rem;
+				}
 			}
 		</style>
 	</body>
