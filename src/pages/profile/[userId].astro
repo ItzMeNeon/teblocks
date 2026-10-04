@@ -53,7 +53,6 @@ export const prerender = false;
 								<span id="country-banner" class="country-banner" hidden>
 									<span id="country-flag" class="country-flag"><i class="fa-solid fa-globe"></i></span>
 									<span id="country-name" class="country-name">Global</span>
-									<span class="country-locked-tag" title="Region is permanently detected and locked."><i class="fa-solid fa-lock"></i> Locked</span>
 								</span>
 								<span id="verification-badge" class="verification-badge">Unverified</span>
 								<span id="member-since" class="member-since"></span>
@@ -389,7 +388,7 @@ export const prerender = false;
 		background: var(--success);
 		box-shadow: 0 0 6px var(--success);
 	}
-	.identity h1 { margin: 0; font-size: clamp(1.8rem, 4.5vw, 2.6rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; overflow-wrap: anywhere; }
+	.identity h1 { margin: 0; font-size: clamp(1.8rem, 4.5vw, 2.6rem); font-weight: 800; letter-spacing: -0.01em; overflow-wrap: anywhere; }
 	.player-meta { display: flex; gap: .6em; align-items: center; margin: .35em 0 0; font-size: .85rem; flex-wrap: wrap; }
 	.verification-badge {
 		padding: .15em .55em;
@@ -420,14 +419,6 @@ export const prerender = false;
 		font-family: var(--font-mono);
 	}
 	.country-flag { font-size: 1rem; }
-	.country-locked-tag {
-		font-size: 0.7rem;
-		color: var(--text-muted);
-		background: #111118;
-		padding: 1px 4px;
-		border-radius: 3px;
-		cursor: help;
-	}
 
 	/* ---------- osu! × TETR.IO SUB-NAV TABS ---------- */
 	.profile-tabs-nav {
