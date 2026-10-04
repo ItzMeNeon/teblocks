@@ -51,9 +51,9 @@ export const prerender = false;
 							<h1 id="profile-name">Player</h1>
 							<div class="player-meta">
 								<span id="country-banner" class="country-banner" hidden>
-									<span id="country-flag" class="country-flag">🌐</span>
+									<span id="country-flag" class="country-flag"><i class="fa-solid fa-globe"></i></span>
 									<span id="country-name" class="country-name">Global</span>
-									<span class="country-locked-tag" title="Region is permanently detected and locked.">🔒 Locked</span>
+									<span class="country-locked-tag" title="Region is permanently detected and locked."><i class="fa-solid fa-lock"></i> Locked</span>
 								</span>
 								<span id="verification-badge" class="verification-badge">Unverified</span>
 								<span id="member-since" class="member-since"></span>
@@ -65,19 +65,19 @@ export const prerender = false;
 					<!-- osu! × TETR.IO Style Sticky Sub-Nav Tabs -->
 					<nav class="profile-tabs-nav" role="tablist" aria-label="Profile navigation">
 						<button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="overview">
-							<span class="tab-icon">👤</span> Overview
+							<span class="tab-icon"><i class="fa-solid fa-user"></i></span> Overview
 						</button>
 						<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="stats">
-							<span class="tab-icon">📊</span> Statistics
+							<span class="tab-icon"><i class="fa-solid fa-chart-column"></i></span> Statistics
 						</button>
 						<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="history">
-							<span class="tab-icon">📈</span> Rating Chart
+							<span class="tab-icon"><i class="fa-solid fa-chart-line"></i></span> Rating Chart
 						</button>
 						<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="matches">
-							<span class="tab-icon">⚔️</span> Matches
+							<span class="tab-icon"><i class="fa-solid fa-gamepad"></i></span> Matches
 						</button>
 						<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="achievements">
-							<span class="tab-icon">🏆</span> Badges
+							<span class="tab-icon"><i class="fa-solid fa-award"></i></span> Badges
 						</button>
 					</nav>
 
@@ -1253,7 +1253,7 @@ export const prerender = false;
 					card.style.setProperty('--ach-bg', colors.bg);
 					card.style.setProperty('--ach-glow', colors.glow);
 					card.innerHTML = `
-						<span class="profile-ach-icon">${ach.icon}</span>
+						<span class="profile-ach-icon"><i class="${ach.icon}"></i></span>
 						<div>
 							<div class="profile-ach-title">${escapeHtml(ach.title)}</div>
 							<div class="profile-ach-status">${ach.unlocked ? '✓ Unlocked' : escapeHtml(ach.progressText || 'In Progress')}</div>

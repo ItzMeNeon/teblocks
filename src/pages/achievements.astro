@@ -283,7 +283,7 @@ const totalPoints = ACHIEVEMENTS.reduce((sum, a) => sum + a.points, 0);
 							style={`--card-border: ${colors.border}; --card-bg: ${colors.bg}; --card-text: ${colors.text};`}
 						>
 							<div class="achievement-icon-wrap" aria-hidden="true">
-								{ach.icon}
+								<i class={ach.icon}></i>
 							</div>
 							<div class="achievement-body">
 								<div class="achievement-top">

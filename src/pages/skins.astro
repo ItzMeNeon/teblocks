@@ -212,7 +212,7 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 				<h2 id="modal-title">Upload a Skin</h2>
 
 				<div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Click or drag to select a skin PNG file">
-					<span class="drop-icon">🎨</span>
+					<span class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
 					<div>Drag &amp; drop a PNG skin file here, or <strong>click to browse</strong></div>
 					<div style="font-size:.74rem;margin-top:.4em;color:var(--text-muted)">Must be exactly <strong>240×90 px</strong> — 8 columns × 3 rows of 30×30 tiles</div>
 					<input type="file" id="skin-file-input" accept=".png,image/png" />
@@ -283,7 +283,7 @@ import { SITE_TITLE, API_BASE_URL } from '../consts';
 		}
 
 		function heartIcon(liked) {
-			return liked ? '❤️' : '🤍';
+			return liked ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
 		}
 
 		function renderCard(skin) {

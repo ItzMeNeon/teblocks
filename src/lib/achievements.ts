@@ -57,7 +57,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Complete your first 40L Sprint run.',
 		category: 'sprint',
 		tier: 'bronze',
-		icon: '⏱️',
+		icon: 'fa-solid fa-stopwatch',
 		points: 10,
 		check: (p) => {
 			const t = p.casual?.best_40l_time;
@@ -77,7 +77,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Clear 40 Lines in under 60.00 seconds.',
 		category: 'sprint',
 		tier: 'silver',
-		icon: '⚡',
+		icon: 'fa-solid fa-bolt',
 		points: 25,
 		check: (p) => {
 			const raw = p.casual?.best_40l_time;
@@ -98,7 +98,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Clear 40 Lines in under 45.00 seconds.',
 		category: 'sprint',
 		tier: 'gold',
-		icon: '🚀',
+		icon: 'fa-solid fa-rocket',
 		points: 50,
 		check: (p) => {
 			const raw = p.casual?.best_40l_time;
@@ -118,7 +118,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Clear 40 Lines in under 30.00 seconds.',
 		category: 'sprint',
 		tier: 'diamond',
-		icon: '💥',
+		icon: 'fa-solid fa-fire-flame-curved',
 		points: 100,
 		check: (p) => {
 			const raw = p.casual?.best_40l_time;
@@ -140,7 +140,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Finish calibration and receive your first competitive rank.',
 		category: 'ranked',
 		tier: 'bronze',
-		icon: '⚔️',
+		icon: 'fa-solid fa-crosshairs',
 		points: 15,
 		check: (p) => {
 			const isPlaced = !!p.ranked?.is_placed;
@@ -159,7 +159,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Attain a competitive rating of 700+ ELO in Season 0.',
 		category: 'ranked',
 		tier: 'silver',
-		icon: '🏅',
+		icon: 'fa-solid fa-medal',
 		points: 30,
 		check: (p) => {
 			const rating = p.ranked?.rating ?? 100;
@@ -178,7 +178,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Attain a competitive rating of 1,000+ ELO in Season 0.',
 		category: 'ranked',
 		tier: 'gold',
-		icon: '🏆',
+		icon: 'fa-solid fa-trophy',
 		points: 60,
 		check: (p) => {
 			const rating = p.ranked?.rating ?? 100;
@@ -197,7 +197,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Reach 1,900+ competitive rating among the Season 0 stacking elite.',
 		category: 'ranked',
 		tier: 'diamond',
-		icon: '👑',
+		icon: 'fa-solid fa-crown',
 		points: 100,
 		check: (p) => {
 			const rating = p.ranked?.rating ?? 100;
@@ -216,7 +216,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Achieve a winning streak of 5 consecutive ranked matches.',
 		category: 'ranked',
 		tier: 'silver',
-		icon: '🔥',
+		icon: 'fa-solid fa-fire',
 		points: 25,
 		check: (p) => {
 			const streak = p.stats?.best_win_streak ?? 0;
@@ -235,7 +235,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Achieve a winning streak of 10 consecutive ranked matches.',
 		category: 'ranked',
 		tier: 'gold',
-		icon: '🌟',
+		icon: 'fa-solid fa-star',
 		points: 75,
 		check: (p) => {
 			const streak = p.stats?.best_win_streak ?? 0;
@@ -256,7 +256,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Clear a total of 1,000 lines across all matches.',
 		category: 'dedication',
 		tier: 'bronze',
-		icon: '🧱',
+		icon: 'fa-solid fa-cubes',
 		points: 15,
 		check: (p) => {
 			const lines = p.stats?.lines_cleared ?? 0;
@@ -275,7 +275,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Clear a total of 10,000 lines across all matches.',
 		category: 'dedication',
 		tier: 'silver',
-		icon: '🏛️',
+		icon: 'fa-solid fa-landmark',
 		points: 40,
 		check: (p) => {
 			const lines = p.stats?.lines_cleared ?? 0;
@@ -294,7 +294,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Clear a total of 50,000 lines across all matches.',
 		category: 'dedication',
 		tier: 'diamond',
-		icon: '🌌',
+		icon: 'fa-solid fa-meteor',
 		points: 100,
 		check: (p) => {
 			const lines = p.stats?.lines_cleared ?? 0;
@@ -313,7 +313,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Participate in 50 competitive duel matches.',
 		category: 'dedication',
 		tier: 'silver',
-		icon: '🛡️',
+		icon: 'fa-solid fa-shield-halved',
 		points: 30,
 		check: (p) => {
 			const matches = p.stats?.matches_played ?? 0;
@@ -332,7 +332,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Spend 10 or more hours in active matches.',
 		category: 'dedication',
 		tier: 'gold',
-		icon: '⏳',
+		icon: 'fa-solid fa-hourglass-half',
 		points: 50,
 		check: (p) => {
 			const secs = p.stats?.play_time_seconds ?? 0;
@@ -354,7 +354,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Lock in your official country/region banner.',
 		category: 'identity',
 		tier: 'bronze',
-		icon: '🚩',
+		icon: 'fa-solid fa-flag',
 		points: 10,
 		check: (p) => {
 			const hasCountry = !!(p.country && p.country.trim().length >= 2);
@@ -372,7 +372,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		description: 'Customize your profile with a personalized bio or avatar.',
 		category: 'identity',
 		tier: 'bronze',
-		icon: '🎨',
+		icon: 'fa-solid fa-palette',
 		points: 10,
 		check: (p) => {
 			const hasBio = !!(p.bio && p.bio.trim().length > 0);
