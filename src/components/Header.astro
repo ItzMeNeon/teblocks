@@ -8,7 +8,7 @@ import { SITE_TITLE } from '../consts';
 	<nav>
 		<a href="/" class="brand" aria-label={SITE_TITLE}>
 			<Logo size={28} />
-			<span class="brand-name">Te<span class="brand-accent">blocks</span></span>
+			<span class="brand-name">Te<span class="brand-accent">Blocks</span></span>
 		</a>
 
 		<div class="nav-links" id="nav-links">
@@ -64,12 +64,13 @@ import { SITE_TITLE } from '../consts';
 	.brand-name {
 		color: #ffffff;
 		font-family: var(--font-display);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		font-size: 1.1rem;
+		font-weight: 800;
+		letter-spacing: -0.01em;
+		font-size: 1.25rem;
 	}
 	.brand-accent {
 		color: var(--accent);
+		text-shadow: 0 0 16px var(--accent-glow-strong);
 	}
 
 	.nav-links {
@@ -91,6 +92,11 @@ import { SITE_TITLE } from '../consts';
 		background: rgba(255, 255, 255, 0.05);
 	}
 
+	.nav-links a.active {
+		color: var(--accent) !important;
+		background: var(--accent-glow) !important;
+	}
+
 	.nav-divider {
 		width: 1px;
 		height: 1.2em;
@@ -107,7 +113,7 @@ import { SITE_TITLE } from '../consts';
 		transition: background-color var(--transition-fast) !important;
 	}
 	.nav-account-btn:hover {
-		background: #ff88be !important;
+		background: var(--accent-hover) !important;
 	}
 
 	.nav-pill {
@@ -213,6 +219,14 @@ import { SITE_TITLE } from '../consts';
 		menuToggle.setAttribute('aria-expanded', String(!expanded));
 		navLinks?.classList.toggle('open', !expanded);
 	});
+	const currentPath = window.location.pathname;
+	navLinks?.querySelectorAll('a:not(.nav-account-btn):not(.nav-pill)').forEach((link) => {
+		const href = link.getAttribute('href');
+		if (href && href !== '/' && currentPath.startsWith(href)) {
+			link.classList.add('active');
+		}
+	});
+
 	navLinks?.querySelectorAll('a').forEach((link) =>
 		link.addEventListener('click', () => {
 			menuToggle?.setAttribute('aria-expanded', 'false');

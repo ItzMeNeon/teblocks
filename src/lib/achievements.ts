@@ -347,25 +347,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 		},
 	},
 
-	// --- IDENTITY & REGION ---
-	{
-		id: 'identity_country',
-		title: 'Flag Bearer',
-		description: 'Lock in your official country/region banner.',
-		category: 'identity',
-		tier: 'bronze',
-		icon: 'fa-solid fa-flag',
-		points: 10,
-		check: (p) => {
-			const hasCountry = !!(p.country && p.country.trim().length >= 2);
-			return {
-				unlocked: hasCountry,
-				progress: hasCountry ? 1 : 0,
-				maxProgress: 1,
-				progressText: hasCountry ? 'Region set' : 'Not set',
-			};
-		},
-	},
+	// --- IDENTITY & CUSTOMIZATION ---
 	{
 		id: 'identity_customized',
 		title: 'Signature Style',

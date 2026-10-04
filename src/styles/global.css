@@ -17,11 +17,12 @@
   --text-dim: #aaaaaa;
   --text-muted: #555555;
 
-  /* Accent — hot pink (osu!-inspired) */
-  --accent: #ff66ab;
-  --accent-dim: #cc5289;
-  --accent-glow: rgba(255, 102, 171, 0.15);
-  --accent-glow-strong: rgba(255, 102, 171, 0.3);
+  /* Accent — electric blue-cyan (stacking arcade & esports) */
+  --accent: #00c2ff;
+  --accent-hover: #38d3ff;
+  --accent-dim: #0099cc;
+  --accent-glow: rgba(0, 194, 255, 0.15);
+  --accent-glow-strong: rgba(0, 194, 255, 0.3);
 
   /* Secondary accents */
   --gold: #ffcc22;
@@ -55,7 +56,7 @@
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-glow: 0 0 16px var(--accent-glow);
-  --focus-ring: 0 0 0 2px rgba(255, 102, 171, 0.3);
+  --focus-ring: 0 0 0 2px rgba(0, 194, 255, 0.35);
 
   /* Scrollbar variables */
   --scrollbar-track: transparent;
@@ -100,7 +101,7 @@ body {
 
 /* Selection */
 ::selection {
-  background: rgba(255, 102, 171, 0.3);
+  background: rgba(0, 194, 255, 0.3);
   color: #ffffff;
 }
 
@@ -151,7 +152,7 @@ a {
   text-decoration: none;
   transition: color var(--transition-fast);
 }
-a:hover { color: #ff88be; }
+a:hover { color: var(--accent-hover); }
 
 strong, b { font-weight: 700; color: var(--text); }
 
@@ -204,10 +205,20 @@ code {
   border-color: transparent;
 }
 .btn-primary:hover:not(:disabled) {
-  background: #ff88be;
+  background: var(--accent-hover);
 }
 .btn-primary:active:not(:disabled) {
   background: var(--accent-dim);
+}
+
+/* Active buttons & tabs across the site */
+.btn.active,
+.btn[aria-selected="true"],
+.btn[aria-pressed="true"],
+.btn-active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
 }
 
 .btn-secondary {

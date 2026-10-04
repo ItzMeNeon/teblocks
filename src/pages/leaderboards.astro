@@ -73,11 +73,102 @@ import { SITE_TITLE } from '../consts';
 				overflow: hidden;
 				box-shadow: var(--shadow);
 			}
+			.mode-info-banner {
+				display: flex;
+				align-items: center;
+				gap: 1.1rem;
+				padding: 1rem 1.4rem;
+				margin-bottom: 1.2rem;
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				background: #14141e;
+				box-shadow: var(--shadow-sm);
+			}
+			.mode-info-icon {
+				width: 44px;
+				height: 44px;
+				background: rgba(0, 194, 255, 0.1);
+				border: 1px solid rgba(0, 194, 255, 0.25);
+				border-radius: var(--radius);
+				display: grid;
+				place-items: center;
+				color: var(--accent);
+				font-size: 1.25rem;
+				flex-shrink: 0;
+			}
+			.mode-info-text {
+				flex: 1;
+				min-width: 0;
+			}
+			.mode-info-title {
+				margin: 0 0 0.15rem;
+				font-size: 1.05rem;
+				font-weight: 800;
+				color: #ffffff;
+			}
+			.mode-info-desc {
+				margin: 0;
+				font-size: 0.86rem;
+				color: var(--text-dim);
+				line-height: 1.4;
+			}
+			.mode-tags {
+				display: flex;
+				gap: 0.4rem;
+				flex-wrap: wrap;
+				margin-top: 0.45rem;
+			}
+			.mode-tag {
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				font-weight: 700;
+				padding: 0.15em 0.55em;
+				border-radius: var(--radius-sm);
+				background: var(--bg-elevated);
+				border: 1px solid var(--border);
+				color: var(--text-muted);
+			}
+			.empty-state-cell {
+				text-align: center;
+				padding: 3.5rem 1.5rem !important;
+			}
+			.empty-state-card {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.7rem;
+				max-width: 480px;
+				margin: 0 auto;
+			}
+			.empty-icon {
+				font-size: 2.2rem;
+				color: var(--accent);
+				margin-bottom: 0.2rem;
+			}
+			.empty-title {
+				font-size: 1.15rem;
+				font-weight: 800;
+				color: #ffffff;
+			}
+			.empty-desc {
+				margin: 0;
+				color: var(--text-dim);
+				font-size: 0.88rem;
+				line-height: 1.5;
+			}
+			.empty-actions {
+				display: flex;
+				gap: 0.6rem;
+				margin-top: 0.6rem;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
 			@media (max-width: 680px) {
 				.leaderboard-panel { margin-top: 1.5rem; }
 				.leaderboard-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
 				.mode-tabs { width: 100%; }
 				.mode-tab { flex: 1; text-align: center; padding: 0.4rem 0.6rem; font-size: 0.76rem; }
+				.mode-info-banner { flex-direction: column; align-items: flex-start; }
 			}
 		</style>
 		<style is:global>
@@ -224,6 +315,7 @@ import { SITE_TITLE } from '../consts';
 						<button class="mode-tab" role="tab" aria-selected="false" data-category="sprint"><i class="fa-solid fa-gauge-high"></i> Sprint 100L</button>
 					</div>
 				</div>
+				<div class="mode-info-banner" id="mode-info-banner" aria-live="polite"></div>
 				<div class="table-card">
 					<div id="leaderboard-content">
 						<div class="state" role="status">Loading leaderboard...</div>
@@ -235,19 +327,76 @@ import { SITE_TITLE } from '../consts';
 
 		<script>
 			const content = document.getElementById('leaderboard-content');
+			const banner = document.getElementById('mode-info-banner');
 			const tabs = document.querySelectorAll('.mode-tab');
 
-			const categories: Record<string, { kind: string; url: string }> = {
-				ranked: { kind: 'ranked', url: '/api/leaderboards?mode=ranked_1v1' },
-				daily: { kind: 'daily', url: '/api/daily/leaderboard' },
-				lines40: { kind: 'score', url: '/api/score/sprint_40l' },
-				sprint: { kind: 'score', url: '/api/score/sprint_100l' },
+			interface CategoryConfig {
+				kind: 'ranked' | 'daily' | 'sprint';
+				url: string;
+				title: string;
+				desc: string;
+				icon: string;
+				tags: string[];
+				emptyHint: string;
+			}
+
+			const categories: Record<string, CategoryConfig> = {
+				ranked: {
+					kind: 'ranked',
+					url: '/api/leaderboards?mode=ranked_1v1',
+					title: 'Ranked 1v1 Elo Ladder',
+					desc: 'Competitive duel matchmaking divisions & ELO rating. Win duel rounds to climb divisions.',
+					icon: 'fa-solid fa-trophy',
+					tags: ['Competitive', 'Season 0', '1v1 Matchmaking'],
+					emptyHint: 'No ranked players calibrated yet. Play 10 placement matches in TeBlocks to claim rank #1!',
+				},
+				daily: {
+					kind: 'daily',
+					url: '/api/daily/leaderboard',
+					title: 'Daily 40L Challenge',
+					desc: 'Server-seeded daily 40L sprint speedrun with daily twists and global rankings.',
+					icon: 'fa-solid fa-calendar-day',
+					tags: ['Daily Seed', 'Server Twist', '40 Lines'],
+					emptyHint: 'No challenge runs submitted yet for today. Be the first to set today’s speedrun benchmark!',
+				},
+				lines40: {
+					kind: 'sprint',
+					url: '/api/score/sprint_40l',
+					title: '40 Lines Sprint',
+					desc: 'The gold-standard block stacking speedrun. Clear 40 lines in the fastest possible time.',
+					icon: 'fa-solid fa-stopwatch',
+					tags: ['40 Lines', 'Speedrun', 'Singleplayer', 'SRS Rotation'],
+					emptyHint: 'No 40L sprint runs recorded yet. Jump into Singleplayer > 40L Sprint in TeBlocks to set a record!',
+				},
+				sprint: {
+					kind: 'sprint',
+					url: '/api/score/sprint_100l',
+					title: 'Sprint 100L Marathon',
+					desc: '100 Lines endurance speedrun testing sustained APM/PPS, stacking precision, and zero error tolerance.',
+					icon: 'fa-solid fa-gauge-high',
+					tags: ['100 Lines', 'Marathon Sprint', 'Singleplayer', 'Endurance'],
+					emptyHint: 'No 100L sprint runs recorded yet. Complete a 100 Lines run in TeBlocks to claim the #1 spot!',
+				},
 			};
 
 			function escapeHtml(str: string) {
-				return String(str).replace(/[&<>"']/g, (c) => ({
+				return String(str || '').replace(/[&<>"']/g, (c) => ({
 					'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 				}[c as keyof { '&': string; '<': string; '>': string; '"': string; "'": string }]));
+			}
+
+			function updateBanner(cfg: CategoryConfig) {
+				if (!banner) return;
+				banner.innerHTML = `
+					<div class="mode-info-icon"><i class="${cfg.icon}"></i></div>
+					<div class="mode-info-text">
+						<h2 class="mode-info-title">${escapeHtml(cfg.title)}</h2>
+						<p class="mode-info-desc">${escapeHtml(cfg.desc)}</p>
+						<div class="mode-tags">
+							${cfg.tags.map((t) => `<span class="mode-tag">${escapeHtml(t)}</span>`).join('')}
+						</div>
+					</div>
+				`;
 			}
 
 			function avatarMarkup(entry: any) {
@@ -284,7 +433,7 @@ import { SITE_TITLE } from '../consts';
 			}
 
 			function formatTimeMs(ms: number) {
-				if (!ms) return '--';
+				if (!ms || ms <= 0) return '--';
 				const totalSec = ms / 1000;
 				const m = Math.floor(totalSec / 60);
 				const s = (totalSec % 60).toFixed(2).padStart(5, '0');
@@ -305,16 +454,62 @@ import { SITE_TITLE } from '../consts';
 					</tr>`;
 			}
 
-			function renderScoreRow(entry: any, index: number) {
+			function renderSprintRow(entry: any, index: number) {
 				const rank = index + 1;
 				const rankClass = rank <= 3 ? `rank-${rank}` : '';
-				const score = entry.score != null ? Number(entry.score).toLocaleString() : '--';
+				let timeDisplay = '--';
+				let paceDisplay = 'Singleplayer';
+				if (entry.time != null || entry.timeMs != null || entry.time_ms != null) {
+					timeDisplay = formatTimeMs(entry.time ?? entry.timeMs ?? entry.time_ms);
+				} else if (entry.score != null) {
+					const num = Number(entry.score);
+					if (num > 500 && num < 3600000) {
+						timeDisplay = formatTimeMs(num);
+						paceDisplay = `${(num / 1000).toFixed(2)}s clear`;
+					} else {
+						timeDisplay = `${num.toLocaleString()} pts`;
+					}
+				}
+				if (entry.pieceCount || entry.pieces) {
+					paceDisplay = `${entry.pieceCount || entry.pieces} pcs`;
+				}
 				return `
 					<tr>
 						<td class="rank-cell ${rankClass}">#${rank}</td>
 						<td><div class="player-cell">${avatarMarkup(entry)}${playerName(entry)}</div></td>
-						<td class="stat-cell">${score}</td>
+						<td class="stat-cell">${timeDisplay}</td>
+						<td class="stat-cell dim">${paceDisplay}</td>
+						<td><span class="rank-badge"><i class="fa-solid fa-circle-check"></i> Recorded</span></td>
 					</tr>`;
+			}
+
+			function renderEmptyTable(cfg: CategoryConfig) {
+				const colCount = cfg.kind === 'ranked' ? 6 : cfg.kind === 'daily' ? 4 : 5;
+				const head =
+					cfg.kind === 'ranked'
+						? `<th>Rank</th><th>Player</th><th>Tier</th><th>Rating</th><th>Matches</th><th>Win rate</th>`
+						: cfg.kind === 'daily'
+						? `<th>Rank</th><th>Player</th><th>Clear Time</th><th>Pieces</th>`
+						: `<th>Rank</th><th>Player</th><th>Clear Time</th><th>Speed / Details</th><th>Status</th>`;
+				return `
+					<table class="leaderboard-table">
+						<thead><tr>${head}</tr></thead>
+						<tbody>
+							<tr>
+								<td colspan="${colCount}" class="empty-state-cell">
+									<div class="empty-state-card">
+										<div class="empty-icon"><i class="${cfg.icon}"></i></div>
+										<div class="empty-title">No ${escapeHtml(cfg.title)} records yet</div>
+										<p class="empty-desc">${escapeHtml(cfg.emptyHint)}</p>
+										<div class="empty-actions">
+											<a href="/#download" class="btn btn-primary btn-sm"><i class="fa-solid fa-play"></i> Get TeBlocks Client</a>
+											<a href="/wiki/" class="btn btn-secondary btn-sm"><i class="fa-solid fa-book"></i> Read Sprint Guide</a>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>`;
 			}
 
 			function renderTable(kind: string, rows: any[]) {
@@ -322,13 +517,13 @@ import { SITE_TITLE } from '../consts';
 					kind === 'ranked'
 						? `<th>Rank</th><th>Player</th><th>Tier</th><th>Rating</th><th>Matches</th><th>Win rate</th>`
 						: kind === 'daily'
-						? `<th>Rank</th><th>Player</th><th>Time</th><th>Pieces</th>`
-						: `<th>Rank</th><th>Player</th><th>Score</th>`;
+						? `<th>Rank</th><th>Player</th><th>Clear Time</th><th>Pieces</th>`
+						: `<th>Rank</th><th>Player</th><th>Clear Time</th><th>Speed / Details</th><th>Status</th>`;
 				const body = rows
 					.map((entry, i) => (
 						kind === 'ranked' ? renderRankedRow(entry, i) :
 						kind === 'daily' ? renderDailyRow(entry, i) :
-						renderScoreRow(entry, i)
+						renderSprintRow(entry, i)
 					))
 					.join('');
 				return `
@@ -341,6 +536,7 @@ import { SITE_TITLE } from '../consts';
 			async function loadLeaderboard(category: string, attempts = 2) {
 				const cfg = categories[category];
 				if (!cfg || !content) return;
+				updateBanner(cfg);
 				content.innerHTML = '<div class="state" role="status">Loading leaderboard...</div>';
 				for (let attempt = 0; attempt < attempts; attempt += 1) {
 					try {
@@ -348,21 +544,21 @@ import { SITE_TITLE } from '../consts';
 						const timeout = window.setTimeout(() => controller.abort(), 8000);
 						const response = await fetch(cfg.url, { signal: controller.signal });
 						window.clearTimeout(timeout);
-						if (response.status === 404 || response.status === 405) {
-							content.innerHTML = '<div class="state">Leaderboards aren’t available for this mode yet.</div>';
-							return;
-						}
-						if (!response.ok) {
+						if (!response.ok && response.status !== 404 && response.status !== 405) {
 							const body = await response.json().catch(() => ({}));
 							content.innerHTML = `<div class="state error">${body.error || body.message || 'Failed to load leaderboard.'}</div>`;
 							return;
 						}
-						const data = await response.json();
+						const data = response.ok ? await response.json().catch(() => ({})) : {};
 						const rows = cfg.kind === 'ranked'
-							? (data.entries || [])
-							: (data.data?.leaderboard || data.data || []);
-						if (!rows.length) {
-							content.innerHTML = '<div class="state">No rankings yet — be the first to compete.</div>';
+							? (Array.isArray(data.entries) ? data.entries : (Array.isArray(data) ? data : []))
+							: (Array.isArray(data.data?.leaderboard)
+								? data.data.leaderboard
+								: (Array.isArray(data.data)
+									? data.data
+									: (Array.isArray(data.entries) ? data.entries : (Array.isArray(data) ? data : []))));
+						if (!rows || !rows.length) {
+							content.innerHTML = renderEmptyTable(cfg);
 							return;
 						}
 						content.innerHTML = renderTable(cfg.kind, rows);

@@ -15,11 +15,14 @@ export const GET: APIRoute = async (context) => {
 	try {
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), 8000);
-		const response = await apiFetch(context, `/score/${mode}?limit=${limit}`, { signal: controller.signal });
+		let response = await apiFetch(context, `/api/score/${mode}?limit=${limit}`, { signal: controller.signal });
+		if (response && response !== API_CONFIGURATION_ERROR && response.status === 404) {
+			response = await apiFetch(context, `/score/${mode}?limit=${limit}`, { signal: controller.signal });
+		}
 		clearTimeout(timeout);
 		if (response === null) return json({ error: 'Leaderboard service is unavailable.' }, 503);
 		if (response === API_CONFIGURATION_ERROR) return json({ error: 'Site authentication is not configured.' }, 503);
-		if (response.status === 404 || response.status === 405) return json({ error: 'Leaderboards are not yet available on the server.' }, 503);
+		if (response.status === 404 || response.status === 405) return json({ code: 200, data: [] }, 200);
 		if (response.status >= 500) return json({ error: 'Leaderboard service error.' }, response.status);
 		return forwardedResponse(response);
 	} catch {
